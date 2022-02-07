@@ -1,0 +1,7 @@
+.vs 
+*/[Dd]ebug/
+*/*.exe
+[Dd]ebug/
+*/src/*.o
+*/src/*/*.o
+*/src/*/*/*.o
