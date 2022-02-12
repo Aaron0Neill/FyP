@@ -5,15 +5,18 @@ void Game::run()
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
-	m_shapes.createPolygon(3, 1, {300,100});
+	auto id = m_shapes.createPolygon(5, 1, { 100,200 });
+	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
 
-	m_shapes.createCircle(0.5f, {250,0});
-	m_shapes.createCircle(2, {125,0});
-
-	m_shapes.createEdge({1, (float)WINDOW_HEIGHT - 10.0f}, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT - 100.0f});
+	m_shapes.createEdge({1, (float)WINDOW_HEIGHT - 10.0f}, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT - 10.0f});
 	m_shapes.createEdge({(float)WINDOW_WIDTH-1, 0}, { (float)WINDOW_WIDTH - 1, (float)WINDOW_HEIGHT});
 	m_shapes.createEdge({ 1, 0 }, { 1,(float)WINDOW_HEIGHT });
-	m_shapes.createEdge({100.f,300.0f}, { 500.0f , 500.0f});
+	//m_shapes.createEdge({100.f,300.0f}, { 500.0f , 500.0f});
+
+	//m_shapes.createDistanceJoint(id, circID, 5);
+
+	auto bd1 = m_shapes.getPolygon(id)->getBody();
+	auto bd2 = m_shapes.getPolygon(id2)->getBody();
 
 	sf::Clock clock;
 	sf::Time lag = sf::Time::Zero;
@@ -45,7 +48,12 @@ void Game::processEvents()
 	{
 		if (e.type == sf::Event::Closed)
 			m_window->close();
-
+		if (e.type == sf::Event::KeyPressed)
+			if (e.key.code == sf::Keyboard::Tab)
+			{
+				m_world->startWorld();
+				m_shapes.startWorld();
+			}
 	}
 }
 

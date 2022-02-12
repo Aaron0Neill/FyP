@@ -28,6 +28,10 @@ public:
 	/// </summary>
 	/// <returns> Returns the current scale of the shape </returns>
 	float getScale() { return m_currentScale; };
+
+	void setBodyType(b2BodyType);
+
+	b2Body* getBody() { return m_body; }
 private:
 	PolygonShape() = default;
 

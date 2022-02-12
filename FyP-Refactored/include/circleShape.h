@@ -14,6 +14,8 @@ public:
 
 	void update();
 	void draw(sf::RenderWindow* t_window);
+
+	b2Body* getBody() { return m_body; }
 private:
 	CircleShape(float t_radius);
 

@@ -7,6 +7,12 @@
 #include <shapeManager.h>
 #include <worldManager.h>
 
+#include <box2d/b2_distance_joint.h>
+#include <box2d/b2_revolute_joint.h>
+#include <box2d/b2_wheel_joint.h>
+#include <box2d/b2_pulley_joint.h>
+#include <box2d/b2_prismatic_joint.h>
+
 class Game
 {
 public:

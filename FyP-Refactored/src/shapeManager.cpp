@@ -7,10 +7,10 @@ ShapeManager::ShapeManager()
 
 //*************************************************************
 
-ShapeID ShapeManager::createPolygon(uint8 const t_sides, float t_radius, Vector t_pos)
+PolyID ShapeManager::createPolygon(uint8 const t_sides, float t_radius, Vector t_pos)
 {
 	assert(t_sides >= 3 && t_sides <= 8);
-	ShapeID currentID = m_polygonIndex ++;
+	PolyID currentID = m_polygonIndex ++;
 	PolygonShape newShape;
 	newShape.m_vertex.resize(t_sides + 1);
 	auto points = getPoints(t_sides, t_radius);
@@ -33,9 +33,9 @@ ShapeID ShapeManager::createPolygon(uint8 const t_sides, float t_radius, Vector 
 
 //*************************************************************
 
-ShapeID ShapeManager::createCircle(float t_radius, Vector t_position)
+CircleID ShapeManager::createCircle(float t_radius, Vector t_position)
 {
-	ShapeID currentID = m_circleIndex++;
+	CircleID currentID = m_circleIndex++;
 	CircleShape newShape(t_radius * PixelsPerMetre);
 
 	b2CircleShape s;
@@ -56,9 +56,9 @@ ShapeID ShapeManager::createCircle(float t_radius, Vector t_position)
 
 //*************************************************************
 
-ShapeID ShapeManager::createEdge(Vector t_p1, Vector t_p2)
+PolyID ShapeManager::createEdge(Vector t_p1, Vector t_p2)
 {
-	ShapeID currentID = m_polygonIndex++;
+	PolyID currentID = m_polygonIndex++;
 	PolygonShape newShape;
 	newShape.m_vertex.resize(2);
 	newShape.m_vertex[0].position = t_p1;
@@ -100,6 +100,32 @@ void ShapeManager::draw(sf::RenderWindow* t_window)
 
 	for (CircleShape& c : m_circles)
 		c.draw(t_window);
+}
+
+//*************************************************************
+
+b2Joint* ShapeManager::createDistanceJoint(PolyID t_polyid, CircleID t_circID, float t_distance)
+{
+	b2DistanceJointDef jointDef;
+	jointDef.bodyA = m_polygons[t_polyid].getBody();
+	jointDef.bodyB = m_circles[t_circID].getBody();
+	jointDef.maxLength = t_distance;
+
+	WorldManager::getInstance()->getWorld()->CreateJoint(&jointDef);
+
+	b2Joint* j = m_world->CreateJoint(&jointDef);
+	return j;
+}
+
+//*************************************************************
+
+void ShapeManager::startWorld()
+{
+	for (auto s : m_circles)
+		s.getBody()->SetAwake(true);
+
+	for (auto p : m_polygons)
+		p.getBody()->SetAwake(true);
 }
 
 //*************************************************************

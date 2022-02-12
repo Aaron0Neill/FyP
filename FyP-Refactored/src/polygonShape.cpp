@@ -14,6 +14,13 @@ void PolygonShape::update()
 
 //*************************************************************
 
+void PolygonShape::setBodyType(b2BodyType t_type)
+{
+	m_body->SetType(t_type);
+}
+
+//*************************************************************
+
 void PolygonShape::updatePolygon()
 {
 	b2PolygonShape* shape = static_cast<b2PolygonShape*>(m_fixture->GetShape());

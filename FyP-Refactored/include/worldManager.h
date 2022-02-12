@@ -20,13 +20,15 @@ public:
 		m_world->Step(t_dt.asSeconds(), m_velocityIterations, m_positionIterations);
 	};
 	
+	void startWorld() { m_world->SetGravity({ 0,9.8f }); }
+
 	b2World* operator->() { return m_world; }
 
 	b2World* getWorld() { return m_world; }
 private:
 	WorldManager() 
 	{
-		b2Vec2 gravity{ 0,9.8f };
+		b2Vec2 gravity{ 0,0.0f };
 		m_world = new b2World(gravity);
 	}
 
