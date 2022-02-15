@@ -2,8 +2,15 @@
 
 void Game::run()
 {
+
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
+
+	test.setFillColor(sf::Color::Transparent);
+	test.setOutlineThickness(-1.f);
+	test.setRadius(32);
+	test.setOrigin(32, 32);
+	test.setPointCount(6);
 
 	auto id = m_shapes.createPolygon(5, 1, { 100,200 });
 	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
@@ -54,6 +61,22 @@ void Game::processEvents()
 				m_world->startWorld();
 				m_shapes.startWorld();
 			}
+			else if (e.key.code == sf::Keyboard::Num3)
+				test.setPointCount(3);
+			else if (e.key.code == sf::Keyboard::Num4)
+				test.setPointCount(4);
+			else if (e.key.code == sf::Keyboard::Num5)
+				test.setPointCount(5);
+		if (e.type == sf::Event::MouseMoved)
+			test.setPosition(m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window)));
+
+		if (e.type == sf::Event::MouseButtonPressed)
+			if (e.mouseButton.button == sf::Mouse::Left)
+			{
+				size_t pointCount = test.getPointCount();
+				Vector pos = sf::Mouse::getPosition(*m_window);
+				m_shapes.createPolygon(pointCount, 1, pos);
+			}
 	}
 }
 
@@ -73,6 +96,8 @@ void Game::render()
 	m_window->clear();
 
 	m_shapes.draw(m_window);
+
+	m_window->draw(test);
 
 	m_window->display();
 }
