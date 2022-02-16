@@ -58,8 +58,10 @@
     <ClCompile Include="src\box2d\rope\b2_rope.cpp" />
     <ClCompile Include="src\circleShape.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\guiManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\polygonShape.cpp" />
+    <ClCompile Include="src\shapeBuilder.cpp" />
     <ClCompile Include="src\shapeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +108,9 @@
     <ClInclude Include="include\circleShape.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
+    <ClInclude Include="include\guiManager.h" />
     <ClInclude Include="include\polygonShape.h" />
+    <ClInclude Include="include\shapeBuilder.h" />
     <ClInclude Include="include\shapeManager.h" />
     <ClInclude Include="include\utils\json.hpp" />
     <ClInclude Include="include\utils\vector.h" />
@@ -166,7 +170,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SFML_SDK)/include;$(TGUI)/include;include;.;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SFML_SDK)/include;$(TGUI)/include;include;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

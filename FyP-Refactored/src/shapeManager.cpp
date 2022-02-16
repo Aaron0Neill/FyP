@@ -7,13 +7,13 @@ ShapeManager::ShapeManager()
 
 //*************************************************************
 
-PolyID ShapeManager::createPolygon(uint8 const t_sides, float t_radius, Vector t_pos)
+PolyID ShapeManager::createPolygon(uint8 t_sides, float t_radius, Vector t_pos)
 {
 	assert(t_sides >= 3 && t_sides <= 8);
 	PolyID currentID = m_polygonIndex ++;
 	PolygonShape newShape;
 	newShape.m_vertex.resize(t_sides + 1);
-	auto points = getPoints(t_sides, t_radius);
+	auto points = PolygonShape::getPoints(t_sides, t_radius);
 
 	b2PolygonShape s;
 	s.Set(points, t_sides);
@@ -27,6 +27,8 @@ PolyID ShapeManager::createPolygon(uint8 const t_sides, float t_radius, Vector t
 	newShape.m_fixture = newShape.m_body->CreateFixture(&fixtureDef);
 
 	m_polygons.push_back(newShape);
+
+	delete points;
 
 	return currentID;
 }
@@ -126,20 +128,6 @@ void ShapeManager::startWorld()
 
 	for (auto p : m_polygons)
 		p.getBody()->SetAwake(true);
-}
-
-//*************************************************************
-
-b2Vec2* ShapeManager::getPoints(uint8 const t_sides, float t_radius)
-{
-	b2Vec2* points = new b2Vec2[t_sides];
-	float interiorAngle = 360 / t_sides;
-	interiorAngle *= Deg2Rad;
-
-	for (uint8 i = 0; i < t_sides; ++i)
-		points[i] = { cos(interiorAngle * i) * t_radius, sin(interiorAngle * i) * t_radius };
-
-	return points;
 }
 
 //*************************************************************

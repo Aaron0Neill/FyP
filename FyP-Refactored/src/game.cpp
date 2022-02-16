@@ -1,30 +1,29 @@
 #include "Game.h"
 
-void Game::run()
+Game::Game()
 {
-
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
-	test.setFillColor(sf::Color::Transparent);
-	test.setOutlineThickness(-1.f);
-	test.setRadius(32);
-	test.setOrigin(32, 32);
-	test.setPointCount(6);
+	m_builder = new ShapeBuilder(m_window);
+	m_builder->addShapeManager(&m_shapes);
+	//m_builder->addCreateFunction(&m_shapes, &ShapeManager::createPolygon);
 
-	auto id = m_shapes.createPolygon(5, 1, { 100,200 });
+	auto id = m_shapes.createPolygon(4, 1, { 100,200 });
 	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
 
-	m_shapes.createEdge({1, (float)WINDOW_HEIGHT - 10.0f}, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT - 10.0f});
-	m_shapes.createEdge({(float)WINDOW_WIDTH-1, 0}, { (float)WINDOW_WIDTH - 1, (float)WINDOW_HEIGHT});
+	m_shapes.createEdge({ 1, (float)WINDOW_HEIGHT - 10.0f }, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT - 10.0f });
+	m_shapes.createEdge({ (float)WINDOW_WIDTH - 1, 0 }, { (float)WINDOW_WIDTH - 1, (float)WINDOW_HEIGHT });
 	m_shapes.createEdge({ 1, 0 }, { 1,(float)WINDOW_HEIGHT });
-	//m_shapes.createEdge({100.f,300.0f}, { 500.0f , 500.0f});
-
-	//m_shapes.createDistanceJoint(id, circID, 5);
 
 	auto bd1 = m_shapes.getPolygon(id)->getBody();
 	auto bd2 = m_shapes.getPolygon(id2)->getBody();
+}
 
+//*************************************************************
+
+void Game::run()
+{
 	sf::Clock clock;
 	sf::Time lag = sf::Time::Zero;
 	const sf::Time MS_PER_UPDATE = sf::seconds(1 / 60.0f);
@@ -55,27 +54,14 @@ void Game::processEvents()
 	{
 		if (e.type == sf::Event::Closed)
 			m_window->close();
+
+		m_builder->handleEvents(e);
+
 		if (e.type == sf::Event::KeyPressed)
 			if (e.key.code == sf::Keyboard::Tab)
 			{
 				m_world->startWorld();
 				m_shapes.startWorld();
-			}
-			else if (e.key.code == sf::Keyboard::Num3)
-				test.setPointCount(3);
-			else if (e.key.code == sf::Keyboard::Num4)
-				test.setPointCount(4);
-			else if (e.key.code == sf::Keyboard::Num5)
-				test.setPointCount(5);
-		if (e.type == sf::Event::MouseMoved)
-			test.setPosition(m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window)));
-
-		if (e.type == sf::Event::MouseButtonPressed)
-			if (e.mouseButton.button == sf::Mouse::Left)
-			{
-				size_t pointCount = test.getPointCount();
-				Vector pos = sf::Mouse::getPosition(*m_window);
-				m_shapes.createPolygon(pointCount, 1, pos);
 			}
 	}
 }
@@ -97,7 +83,7 @@ void Game::render()
 
 	m_shapes.draw(m_window);
 
-	m_window->draw(test);
+	m_builder->draw();
 
 	m_window->display();
 }

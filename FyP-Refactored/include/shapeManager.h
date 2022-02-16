@@ -28,7 +28,7 @@ public:
 	/// <param name="t_radius"> size of the polygon </param>
 	/// <param name="t_position"> center position of the polygon (IN SCREEN SPACE) </param>
 	/// <returns>The ID of the created polygon in the polygon vector </returns>
-	PolyID createPolygon(uint8 const t_sides = 4.0f, float t_radius = 1.0f, Vector t_position = Vector());
+	PolyID createPolygon(uint8 t_sides = 4.0f, float t_radius = 1.0f, Vector t_position = Vector());
 
 	/// <summary>
 	/// Allows for the creation of a circle of any size in any position
@@ -72,13 +72,6 @@ public:
 
 	void startWorld();
 private:
-	/// <summary>
-	/// Generates points for a n sided polygon at a given size 
-	/// </summary>
-	/// <param name="t_sides"> number of sides on the polygon </param>
-	/// <param name="t_radius"> size of the polygon </param>
-	/// <returns> points for the size </returns>
-	b2Vec2* getPoints(uint8 const t_sides, float t_radius);
 
 	/// <summary>
 	/// Function to remove similar code through the shapes

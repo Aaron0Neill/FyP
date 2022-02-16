@@ -32,6 +32,14 @@ public:
 	void setBodyType(b2BodyType);
 
 	b2Body* getBody() { return m_body; }
+
+	/// <summary>
+	/// Generates points for a n sided polygon at a given size 
+	/// </summary>
+	/// <param name="t_sides"> number of sides on the polygon </param>
+	/// <param name="t_radius"> size of the polygon </param>
+	/// <returns> points for the size </returns>
+	static b2Vec2* getPoints(uint8 const t_sides, float t_radius);
 private:
 	PolygonShape() = default;
 
@@ -48,7 +56,7 @@ private:
 	b2Body* m_body{ nullptr };
 	b2Fixture* m_fixture{ nullptr };
 	sf::VertexArray m_vertex{ sf::LinesStrip };
-	float m_currentScale;
+	float m_currentScale { 1.f };
 };
 
 #endif

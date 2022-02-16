@@ -5,6 +5,7 @@
 #include <globals.h>
 
 #include <shapeManager.h>
+#include <ShapeBuilder.h>
 #include <worldManager.h>
 
 #include <box2d/b2_distance_joint.h>
@@ -18,7 +19,7 @@
 class Game
 {
 public:
-	Game() = default;
+	Game();
 	~Game() = default;
 
 	/// <summary>
@@ -56,7 +57,7 @@ private:
 
 	WorldManager* m_world { nullptr };
 
-	sf::CircleShape test;
+	ShapeBuilder* m_builder;
 };
 
 #endif

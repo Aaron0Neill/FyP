@@ -183,6 +183,12 @@
     <ClCompile Include="src\circleShape.cpp">
       <Filter>Source Files\shapes</Filter>
     </ClCompile>
+    <ClCompile Include="src\shapeBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\guiManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\box2d\b2_api.h">
@@ -355,6 +361,12 @@
     </ClInclude>
     <ClInclude Include="include\shapeManager.h">
       <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shapeBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\guiManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
