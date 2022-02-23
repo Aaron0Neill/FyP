@@ -5,6 +5,15 @@ Game::Game()
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
+	m_gui = GUIManager::getInstance();
+	m_gui->init(m_window);
+	
+	Vector viewSize{ 1920U , 1080U };
+	sf::View view;
+	view.setSize(viewSize);
+	view.setCenter(viewSize / 2);
+	m_window->setView(view);
+
 	m_builder = new ShapeBuilder(m_window);
 	m_builder->addShapeManager(&m_shapes);
 	//m_builder->addCreateFunction(&m_shapes, &ShapeManager::createPolygon);
@@ -12,9 +21,9 @@ Game::Game()
 	auto id = m_shapes.createPolygon(4, 1, { 100,200 });
 	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
 
-	m_shapes.createEdge({ 1, (float)WINDOW_HEIGHT - 10.0f }, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT - 10.0f });
-	m_shapes.createEdge({ (float)WINDOW_WIDTH - 1, 0 }, { (float)WINDOW_WIDTH - 1, (float)WINDOW_HEIGHT });
-	m_shapes.createEdge({ 1, 0 }, { 1,(float)WINDOW_HEIGHT });
+	m_shapes.createEdge({ 0.f, 1080.0f}, { 1920.f , 1080.f });
+	m_shapes.createEdge({ 1920.f, 0.f }, { 1920.f, 1080.f });
+	m_shapes.createEdge({ 0.f, 0.f }, { 0.f, 1080.f});
 
 	auto bd1 = m_shapes.getPolygon(id)->getBody();
 	auto bd2 = m_shapes.getPolygon(id2)->getBody();
@@ -55,6 +64,8 @@ void Game::processEvents()
 		if (e.type == sf::Event::Closed)
 			m_window->close();
 
+		m_gui->handleEvent(e);
+
 		m_builder->handleEvents(e);
 
 		if (e.type == sf::Event::KeyPressed)
@@ -84,6 +95,8 @@ void Game::render()
 	m_shapes.draw(m_window);
 
 	m_builder->draw();
+
+	m_gui->draw();
 
 	m_window->display();
 }

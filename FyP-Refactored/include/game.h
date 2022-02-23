@@ -14,7 +14,7 @@
 #include <box2d/b2_pulley_joint.h>
 #include <box2d/b2_prismatic_joint.h>
 
-#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <guiManager.h>
 
 class Game
 {
@@ -58,6 +58,8 @@ private:
 	WorldManager* m_world { nullptr };
 
 	ShapeBuilder* m_builder;
+
+	GUIManager* m_gui;
 };
 
 #endif

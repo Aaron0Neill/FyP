@@ -20,7 +20,15 @@ void ShapeBuilder::handleEvents(sf::Event& t_event)
 {
 	if (t_event.type == sf::Event::MouseMoved)
 	{
-		m_centrePoint = sf::Mouse::getPosition(*m_window);
+		m_centrePoint = m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
+		if (m_state != BuilderState::CREATE)
+		{
+			Vector cp = m_manager->getPolygon(m_lastShapeID)->getBody()->GetPosition();
+
+			float scale = vectorLength(m_centrePoint - cp.fromWorldSpace()) / PixelsPerMetre;
+			m_manager->getPolygon(m_lastShapeID)->setScale(scale);
+		}
+
 		updateDrawing();
 	}
 	else if (t_event.type == sf::Event::KeyPressed)
@@ -36,14 +44,6 @@ void ShapeBuilder::handleEvents(sf::Event& t_event)
 			{
 				setState(BuilderState::EDIT);
 			}
-		}
-		else
-		{
-			if (t_event.key.code == sf::Keyboard::Num4)
-				m_manager->getPolygon(m_lastShapeID)->setScale(4.f);
-			else if (t_event.key.code == sf::Keyboard::Num1)
-				m_manager->getPolygon(m_lastShapeID)->setScale(1.f);
-
 		}
 	}
 	else if (t_event.type == sf::Event::MouseButtonPressed)

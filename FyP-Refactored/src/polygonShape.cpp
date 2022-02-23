@@ -2,13 +2,18 @@
 
 void PolygonShape::setScale(float t_newScale)
 {
-	float scalar;
-	scalar = t_newScale / m_currentScale;
-	m_currentScale = t_newScale;
-	b2PolygonShape* shape = static_cast<b2PolygonShape*>(m_fixture->GetShape());
+	if (t_newScale != 0)
+	{
+		float scalar;
+		scalar = t_newScale / m_currentScale;
+		m_currentScale = t_newScale;
+		b2PolygonShape* shape = static_cast<b2PolygonShape*>(m_fixture->GetShape());
 
-	for (auto index = 0; index < shape->m_count; ++index)
-		shape->m_vertices[index] *= scalar;
+		for (auto index = 0; index < shape->m_count; ++index)
+			shape->m_vertices[index] *= scalar;
+
+		m_body->SetAwake(true);
+	}
 }
 
 //*************************************************************

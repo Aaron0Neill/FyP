@@ -2,6 +2,7 @@
 #define SHAPE_BUILDER_INCLUDE
 
 #include "shapeManager.h"
+#include "utils/vectorMaths.h"
 #include <functional>
 
 enum class BuilderState : uint8
