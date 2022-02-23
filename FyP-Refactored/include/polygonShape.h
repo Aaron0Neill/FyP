@@ -55,7 +55,7 @@ private:
 
 	b2Body* m_body{ nullptr };
 	b2Fixture* m_fixture{ nullptr };
-	sf::VertexArray m_vertex{ sf::LinesStrip };
+	sf::VertexArray m_vertex{ sf::TriangleFan };
 	float m_currentScale { 1.f };
 };
 

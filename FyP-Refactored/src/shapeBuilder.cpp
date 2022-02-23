@@ -38,7 +38,6 @@ void ShapeBuilder::handleEvents(sf::Event& t_event)
 			if (t_event.key.code >= sf::Keyboard::Num3 && t_event.key.code <= sf::Keyboard::Num8)
 			{
 				updatePoints(t_event.key.code - sf::Keyboard::Num0);
-				updateDrawing();
 			}
 			if (t_event.key.code == sf::Keyboard::P)
 			{
@@ -49,7 +48,8 @@ void ShapeBuilder::handleEvents(sf::Event& t_event)
 	else if (t_event.type == sf::Event::MouseButtonPressed)
 	{
 		if (t_event.mouseButton.button == sf::Mouse::Left)
-			m_lastShapeID = m_manager->createPolygon(m_currentPoints, 1, m_centrePoint);
+			if (m_centrePoint.x < (1920.f - 400.f))
+				m_lastShapeID = m_manager->createPolygon(m_currentPoints, 1, m_centrePoint);
 	}
 }
 
@@ -73,6 +73,7 @@ void ShapeBuilder::updatePoints(uint8 t_sides)
 	m_currentPoints = t_sides;
 	m_drawing.resize(t_sides + 1);
 	delete points;
+	updateDrawing();
 }
 
 //*************************************************************
@@ -90,5 +91,7 @@ void ShapeBuilder::updateDrawing()
 							(cosAngle * vertice.y) + (sinAngle * vertice.x) };
 		vertexPos = rotation + m_centrePoint.toWorldSpace();
 		m_drawing[i].position = vertexPos.fromWorldSpace();
+
+		m_drawing[i].color = sf::Color::Black;
 	}
 }

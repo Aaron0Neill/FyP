@@ -16,14 +16,19 @@ Game::Game()
 
 	m_builder = new ShapeBuilder(m_window);
 	m_builder->addShapeManager(&m_shapes);
-	//m_builder->addCreateFunction(&m_shapes, &ShapeManager::createPolygon);
+
+	m_gui->addBuilder(m_builder);
+
+	m_shapes.createCircle(1.f, { 400.f,400.f });
 
 	auto id = m_shapes.createPolygon(4, 1, { 100,200 });
 	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
 
-	m_shapes.createEdge({ 0.f, 1080.0f}, { 1920.f , 1080.f });
-	m_shapes.createEdge({ 1920.f, 0.f }, { 1920.f, 1080.f });
+	auto floorID = m_shapes.createEdge({ 0.f, 1080.0f}, { 1920.f -400.f , 1080.f });
+	m_shapes.createEdge({ 1920.f - 400.f, 0.f }, { 1920.f - 400.f, 1080.f });
 	m_shapes.createEdge({ 0.f, 0.f }, { 0.f, 1080.f});
+
+	m_shapes.getPolygon(floorID)->getBody()->GetFixtureList()[0].SetRestitution(.2f);
 
 	auto bd1 = m_shapes.getPolygon(id)->getBody();
 	auto bd2 = m_shapes.getPolygon(id2)->getBody();
@@ -90,7 +95,7 @@ void Game::update(sf::Time t_dTime)
 
 void Game::render()
 {
-	m_window->clear();
+	m_window->clear({215U,217U,215U, 255U});
 
 	m_shapes.draw(m_window);
 

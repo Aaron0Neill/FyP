@@ -64,5 +64,7 @@ void PolygonShape::updatePolygon()
 							(cosAngle * vertice.y) + (sinAngle * vertice.x)};
 		vertexPos = rotation + centre;
 		m_vertex[i].position = vertexPos.fromWorldSpace();
+
+		m_vertex[i].color = {40U,40U,40U};
 	}
 }

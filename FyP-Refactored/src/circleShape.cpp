@@ -2,13 +2,14 @@
 
 CircleShape::CircleShape(float t_radius)
 {
-	m_circle.setFillColor(sf::Color::Transparent);
-	m_circle.setOutlineThickness(1.0f);
+	m_circle.setFillColor(sf::Color(40U,40U,40U,255U));
 	m_circle.setRadius(t_radius);
 	m_circle.setOrigin(t_radius, t_radius);
 
-	m_vertices[0].color = sf::Color::White;
-	m_vertices[1].color = sf::Color::White;
+	m_circle.setPointCount(t_radius * PixelsPerMetre);
+
+	//m_vertices[0].color = sf::Color::Black;
+	//m_vertices[1].color = sf::Color::Black;
 
 	m_vertices[0].position = {t_radius, t_radius}; // centre
 	m_vertices[1].position = { 0, t_radius }; // top

@@ -172,7 +172,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SFML_SDK)/include;$(TGUI)/include;include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SFML_SDK)\include;$(TGUI)\include;include;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

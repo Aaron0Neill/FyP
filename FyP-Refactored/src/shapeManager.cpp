@@ -66,6 +66,9 @@ PolyID ShapeManager::createEdge(Vector t_p1, Vector t_p2)
 	newShape.m_vertex[0].position = t_p1;
 	newShape.m_vertex[1].position = t_p2;
 
+	newShape.m_vertex[0].color = sf::Color::Black;
+	newShape.m_vertex[1].color = sf::Color::Black;
+
 	b2EdgeShape s;
 	s.SetTwoSided(t_p1.toWorldSpace(), t_p2.toWorldSpace());
 

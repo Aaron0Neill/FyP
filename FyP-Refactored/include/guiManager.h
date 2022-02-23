@@ -7,6 +7,8 @@
 #include <TGUI/Texture.hpp>
 #include <TGUI/TextureManager.hpp>
 
+#include "shapeBuilder.h"
+
 #include <iostream>
 
 class GUIManager
@@ -24,6 +26,8 @@ public:
 
 	void draw();
 
+	void addBuilder(ShapeBuilder* t_builder) { m_builder = t_builder; };
+	ShapeBuilder* getBuilder() { return m_builder; }
 private:
 	GUIManager() = default;
 	~GUIManager() = default;
@@ -31,7 +35,7 @@ private:
 	void initShapeBuild();
 
 	tgui::Gui* m_gui;
-		
+	ShapeBuilder* m_builder;
 };
 
 #endif

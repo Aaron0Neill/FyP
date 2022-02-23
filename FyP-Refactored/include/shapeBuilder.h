@@ -25,9 +25,9 @@ public:
 
 	inline void addShapeManager(ShapeManager* t_manager) { m_manager = t_manager; }
 
+	void updatePoints(uint8 t_sides);
 private:
 
-	void updatePoints(uint8 t_sides);
 
 	void updateDrawing();
 
