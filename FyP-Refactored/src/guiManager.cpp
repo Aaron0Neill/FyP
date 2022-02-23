@@ -80,6 +80,8 @@ void GUIManager::initShapeBuild()
 	circleptr->setPosition({ 25,675 });
 	circleptr->onClick([this]() {});
 
+	group->add(circleptr, circleptr->getWidgetName());
+
 	int i = 3;
 	for (auto& ptr : pics)
 	{

@@ -31,6 +31,9 @@
     <Filter Include="Source Files\shapes">
       <UniqueIdentifier>{2590b2d9-9864-491d-ac4c-6470261f7169}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\builderStates">
+      <UniqueIdentifier>{51233b23-37c2-471b-8e39-3cf87672a0ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="include\utils\vectorMaths.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IbuildState.h">
+      <Filter>Header Files\builderStates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

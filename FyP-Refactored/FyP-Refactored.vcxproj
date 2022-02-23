@@ -110,6 +110,7 @@
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\guiManager.h" />
+    <ClInclude Include="include\IbuildState.h" />
     <ClInclude Include="include\polygonShape.h" />
     <ClInclude Include="include\shapeBuilder.h" />
     <ClInclude Include="include\shapeManager.h" />
