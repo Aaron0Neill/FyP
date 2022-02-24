@@ -1,15 +1,25 @@
 #ifndef SHAPE_BUILDER_INCLUDE
 #define SHAPE_BUILDER_INCLUDE
 
+#include <functional>
+#include <unordered_map>
+
+#include "createState.h"
+#include "moveState.h"
 #include "shapeManager.h"
 #include "utils/vectorMaths.h"
-#include <functional>
 
 enum class BuilderState : uint8
 {
-	CREATE, 
-	EDIT
+	CREATE,
+	SELECT,
+	SCALE,
+	ROTATE, 
+	MOVE
 };
+
+using State = std::shared_ptr<IBuildState>;
+using StateFactory = std::unordered_map<BuilderState, std::function<State(sf::RenderWindow*, ShapeManager*)>>;
 
 class ShapeBuilder
 {
@@ -25,23 +35,22 @@ public:
 
 	inline void addShapeManager(ShapeManager* t_manager) { m_manager = t_manager; }
 
-	void updatePoints(uint8 t_sides);
+	State getState() { return m_currentState; }
 private:
 
+	template<typename T>
+	void initFactory(BuilderState t_state)
+	{
+		m_factory.emplace(t_state, [](sf::RenderWindow* t_window, ShapeManager* t_manager) {
+			return std::make_shared<T>(t_window, t_manager);
+			});
+	};
 
-	void updateDrawing();
+	State m_currentState;
 
-	Vector m_vertices[b2_maxPolygonVertices];
-	Vector m_centrePoint;
-	float m_scale { 1.f };
-	sf::VertexArray m_drawing { sf::LinesStrip };
-	BuilderState m_state;
-	sf::RenderWindow* m_window { nullptr };
-	uint8 m_currentPoints { 0U };
+	StateFactory m_factory;
 	ShapeManager* m_manager;
-	uint8 m_lastShapeID;
-
-	//std::function<uint8(uint8, float, Vector)> m_function;
+	sf::RenderWindow* m_window;
 };
 
 #endif

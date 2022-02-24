@@ -36,6 +36,8 @@ private:
 
 	tgui::Gui* m_gui;
 	ShapeBuilder* m_builder;
+	tgui::RadioButton::Ptr m_buildButton;
+	tgui::RadioButton::Ptr m_editButton;
 };
 
 #endif

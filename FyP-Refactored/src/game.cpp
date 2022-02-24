@@ -19,7 +19,7 @@ Game::Game()
 
 	m_gui->addBuilder(m_builder);
 
-	m_shapes.createCircle(1.f, { 400.f,400.f });
+	auto cid = m_shapes.createCircle(1.f, { 400.f,400.f });
 
 	auto id = m_shapes.createPolygon(4, 1, { 100,200 });
 	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
@@ -28,10 +28,8 @@ Game::Game()
 	m_shapes.createEdge({ 1920.f - 400.f, 0.f }, { 1920.f - 400.f, 1080.f });
 	m_shapes.createEdge({ 0.f, 0.f }, { 0.f, 1080.f});
 
-	m_shapes.getPolygon(floorID)->getBody()->GetFixtureList()[0].SetRestitution(.2f);
-
-	auto bd1 = m_shapes.getPolygon(id)->getBody();
-	auto bd2 = m_shapes.getPolygon(id2)->getBody();
+	auto bd1 = m_shapes[id]->getBody();
+	auto bd2 = m_shapes[id2]->getBody();
 }
 
 //*************************************************************

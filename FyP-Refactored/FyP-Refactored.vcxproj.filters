@@ -34,6 +34,9 @@
     <Filter Include="Header Files\builderStates">
       <UniqueIdentifier>{51233b23-37c2-471b-8e39-3cf87672a0ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\builderState">
+      <UniqueIdentifier>{2895f174-bdfa-42ec-971b-f9e81b80250f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -194,6 +197,21 @@
     </ClCompile>
     <ClCompile Include="src\utils\vectorMaths.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\createState.cpp">
+      <Filter>Source Files\builderState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\selectState.cpp">
+      <Filter>Source Files\builderState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rotateState.cpp">
+      <Filter>Source Files\builderState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scaleState.cpp">
+      <Filter>Source Files\builderState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\moveState.cpp">
+      <Filter>Source Files\builderState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +397,24 @@
     </ClInclude>
     <ClInclude Include="include\IbuildState.h">
       <Filter>Header Files\builderStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\createState.h">
+      <Filter>Header Files\builderStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moveState.h">
+      <Filter>Header Files\builderStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rotateState.h">
+      <Filter>Header Files\builderStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scaleState.h">
+      <Filter>Header Files\builderStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\selectState.h">
+      <Filter>Header Files\builderStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ishape.h">
+      <Filter>Header Files\shapes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

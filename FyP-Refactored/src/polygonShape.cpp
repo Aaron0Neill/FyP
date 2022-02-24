@@ -5,8 +5,8 @@ void PolygonShape::setScale(float t_newScale)
 	if (t_newScale != 0)
 	{
 		float scalar;
-		scalar = t_newScale / m_currentScale;
-		m_currentScale = t_newScale;
+		scalar = t_newScale / m_scale;
+		m_scale = t_newScale;
 		b2PolygonShape* shape = static_cast<b2PolygonShape*>(m_fixture->GetShape());
 
 		for (auto index = 0; index < shape->m_count; ++index)
@@ -26,9 +26,9 @@ void PolygonShape::update()
 
 //*************************************************************
 
-void PolygonShape::setBodyType(b2BodyType t_type)
+void PolygonShape::draw(sf::RenderWindow* t_window)
 {
-	m_body->SetType(t_type);
+	t_window->draw(m_vertex);
 }
 
 //*************************************************************

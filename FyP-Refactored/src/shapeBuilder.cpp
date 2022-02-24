@@ -2,96 +2,31 @@
 
 ShapeBuilder::ShapeBuilder(sf::RenderWindow* t_window) :
 	m_window(t_window), 
-	m_state(BuilderState::CREATE)
+	m_currentState(nullptr)
 {
-	updatePoints(4U);
+	initFactory<CreateState>(BuilderState::CREATE);
+	initFactory<MoveState>(BuilderState::MOVE);
 }
 
 //*************************************************************
 
 void ShapeBuilder::setState(BuilderState t_newState)
 {
-	m_state = t_newState;
+	m_currentState = m_factory[t_newState](m_window, m_manager);
 }
 
 //*************************************************************
 
 void ShapeBuilder::handleEvents(sf::Event& t_event)
 {
-	if (t_event.type == sf::Event::MouseMoved)
-	{
-		m_centrePoint = m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
-		if (m_state != BuilderState::CREATE)
-		{
-			Vector cp = m_manager->getPolygon(m_lastShapeID)->getBody()->GetPosition();
-
-			float scale = vectorLength(m_centrePoint - cp.fromWorldSpace()) / PixelsPerMetre;
-			m_manager->getPolygon(m_lastShapeID)->setScale(scale);
-		}
-
-		updateDrawing();
-	}
-	else if (t_event.type == sf::Event::KeyPressed)
-	{
-		if (m_state == BuilderState::CREATE)
-		{
-			if (t_event.key.code >= sf::Keyboard::Num3 && t_event.key.code <= sf::Keyboard::Num8)
-			{
-				updatePoints(t_event.key.code - sf::Keyboard::Num0);
-			}
-			if (t_event.key.code == sf::Keyboard::P)
-			{
-				setState(BuilderState::EDIT);
-			}
-		}
-	}
-	else if (t_event.type == sf::Event::MouseButtonPressed)
-	{
-		if (t_event.mouseButton.button == sf::Mouse::Left)
-			if (m_centrePoint.x < (1920.f - 400.f))
-				m_lastShapeID = m_manager->createPolygon(m_currentPoints, 1, m_centrePoint);
-	}
+	if (m_currentState)
+		m_currentState->handleEvent(t_event);
 }
 
 //*************************************************************
 
 void ShapeBuilder::draw()
 {
-	if (m_state == BuilderState::CREATE)
-		m_window->draw(m_drawing);
-}
-
-//*************************************************************
-
-void ShapeBuilder::updatePoints(uint8 t_sides)
-{
-	auto points = PolygonShape::getPoints(t_sides, 1);
-
-	for (int i = 0; i < t_sides; ++i)
-		m_vertices[i] = Vector(points[i]);
-	
-	m_currentPoints = t_sides;
-	m_drawing.resize(t_sides + 1);
-	delete points;
-	updateDrawing();
-}
-
-//*************************************************************
-
-void ShapeBuilder::updateDrawing()
-{
-	float cosAngle = cos(0.f);
-	float sinAngle = sin(0.f);
-	Vector vertexPos;
-
-	for (uint8 i = 0; i < m_currentPoints + 1; ++i)
-	{
-		Vector vertice = m_vertices[i % m_currentPoints];
-		Vector rotation = { (cosAngle * vertice.x) - (sinAngle * vertice.y),
-							(cosAngle * vertice.y) + (sinAngle * vertice.x) };
-		vertexPos = rotation + m_centrePoint.toWorldSpace();
-		m_drawing[i].position = vertexPos.fromWorldSpace();
-
-		m_drawing[i].color = sf::Color::Black;
-	}
+	if (m_currentState)
+		m_currentState->render();
 }
