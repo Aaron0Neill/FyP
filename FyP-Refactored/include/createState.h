@@ -23,7 +23,10 @@ private:
 	Vector m_centrePoint;
 	float m_scale{ 1.f };
 	sf::VertexArray m_drawing{ sf::LinesStrip };
+	sf::CircleShape m_circle;
 	uint8 m_currentPoints{ 0U };
+	bool m_drawingPolygon { false };
+	bool m_drawingCircle { false };
 };
 
 #endif

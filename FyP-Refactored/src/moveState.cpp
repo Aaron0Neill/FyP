@@ -5,6 +5,8 @@ MoveState::MoveState(sf::RenderWindow* t_window, ShapeManager* t_manager) :
 {
 }
 
+//*************************************************************
+
 void MoveState::handleEvent(sf::Event& e)
 {
 	if (sf::Event::MouseButtonPressed == e.type)
@@ -12,31 +14,29 @@ void MoveState::handleEvent(sf::Event& e)
 		if (sf::Mouse::Left == e.mouseButton.button)
 		{
 			Vector mouse = m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
-			if (m_selectedObject = m_manager->isMouseOnShape(mouse))
-			{
-				m_objectSelected = true;
-			}
+			if (mouse.x < 1520)
+				if (m_selectedShape = m_manager->isMouseOnShape(mouse))
+				{
+					m_selectedShape->getBody()->SetAwake(false);
+					m_editing = true;
+				}
 		}
 	}
 	else if (sf::Event::MouseMoved == e.type)
 	{
-		if (m_objectSelected)
+		if (m_selectedShape && m_editing)
 		{
 			Vector mouse = m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
-			m_selectedObject->setPosition(mouse);
+			m_selectedShape->setPosition(mouse);
 		}
 	}
 	else if (sf::Event::MouseButtonReleased == e.type)
-	{
 		if (sf::Mouse::Left == e.mouseButton.button)
-		{
-			m_objectSelected = false;
-			if (m_selectedObject)
+			if (m_selectedShape) 
 			{
-				m_selectedObject->getBody()->SetAwake(true);
-				m_selectedObject = nullptr;
+				m_selectedShape->getBody()->SetAwake(true);
+				std::cout << &*m_selectedShape << std::endl;
+				m_editing = false;
 			}
-		}
-	}
 
 }

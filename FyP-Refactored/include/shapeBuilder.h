@@ -6,6 +6,8 @@
 
 #include "createState.h"
 #include "moveState.h"
+#include "rotateState.h"
+#include "scaleState.h"
 #include "shapeManager.h"
 #include "utils/vectorMaths.h"
 

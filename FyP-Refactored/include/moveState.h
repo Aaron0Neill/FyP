@@ -14,8 +14,7 @@ public:
 
 	void render() {};
 private:
-	bool m_objectSelected { false };
-	IShape* m_selectedObject { nullptr };
+	bool m_editing;
 };
 
 #endif

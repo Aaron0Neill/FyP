@@ -6,6 +6,8 @@ ShapeBuilder::ShapeBuilder(sf::RenderWindow* t_window) :
 {
 	initFactory<CreateState>(BuilderState::CREATE);
 	initFactory<MoveState>(BuilderState::MOVE);
+	initFactory<ScaleState>(BuilderState::SCALE);
+	initFactory<RotateState>(BuilderState::ROTATE);
 }
 
 //*************************************************************

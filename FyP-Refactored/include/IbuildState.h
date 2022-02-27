@@ -20,6 +20,7 @@ public:
 protected:
 	sf::RenderWindow* m_window;
 	ShapeManager* m_manager;
+	static IShape* m_selectedShape;
 };
 
 #endif

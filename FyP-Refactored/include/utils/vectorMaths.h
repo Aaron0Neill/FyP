@@ -13,6 +13,10 @@ float vectorLength(const Vector& t_v1);
 
 float vectorLengthSquared(const Vector& t_v1);
 
+float vector2Heading(const Vector& t_v);
+
+float angleBetween(const Vector& t_v1, const Vector& t_v2);
+
 
 
 #endif

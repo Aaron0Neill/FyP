@@ -93,7 +93,9 @@ void GUIManager::initShapeBuild()
 	auto circleptr = tgui::Picture::create(circleTex);
 	circleptr->setWidgetName("Circle");
 	circleptr->setPosition(startPos + rowOffset * 3.f);
-	circleptr->onClick([this]() {});
+	circleptr->onClick([this]() {
+		static_cast<CreateState*>(this->getBuilder()->getState().get())->updatePoints(9);
+	});
 
 	group->add(circleptr, circleptr->getWidgetName());
 
@@ -110,6 +112,28 @@ void GUIManager::initShapeBuild()
 	}
 
 	panel->add(group, "BuildGroup");
+
+	auto editGroup = tgui::Group::create({ 400,1080 });
+	editGroup->setVisible(false);
+
+	auto moveBtn = tgui::Button::create("Move");
+	moveBtn->setSize({ 300,100 });
+	moveBtn->setPosition({ 50, 100 });
+	moveBtn->onClick([this]() { this->getBuilder()->setState(BuilderState::MOVE); });
+
+	auto rotateBtn = tgui::Button::create("Rotate");
+	rotateBtn->setSize({ 300,100 });
+	rotateBtn->setPosition({ 50, 225 });
+	rotateBtn->onClick([this]() { this->getBuilder()->setState(BuilderState::ROTATE); });
+
+	auto scaleBtn = tgui::Button::create("Scale");
+	scaleBtn->setSize({ 300,100 });
+	scaleBtn->setPosition({ 50, 350 });
+	scaleBtn->onClick([this]() { this->getBuilder()->setState(BuilderState::SCALE); });
+
+	editGroup->add(moveBtn, "Move");
+	editGroup->add(rotateBtn, "Rotate");
+	editGroup->add(scaleBtn, "Scale");
 
 	tgui::RadioButtonGroup::Ptr radioGroup;
 	radioGroup = tgui::RadioButtonGroup::create();
@@ -149,17 +173,21 @@ void GUIManager::initShapeBuild()
 	m_editButton->getRenderer()->setTextureUnchecked(radioTex);
 	m_editButton->getRenderer()->setTextureUncheckedHover(radioHover);
 
-	m_editButton->onCheck([this]() {
-		this->getBuilder()->setState(BuilderState::MOVE);
+	m_editButton->onCheck([this, editGroup]() {
+		editGroup->setVisible(true);
 		});
 
+	m_editButton->onUncheck([editGroup]() {
+		editGroup->setVisible(false);
+		});
 
 	radioGroup->add(m_editButton, "Edit");
 	radioGroup->add(m_buildButton, "Build");
+
+	panel->add(editGroup, "EditGroup");
 	panel->add(radioGroup, "Radio");
 	panel->add(editLabel, "editLabel");
 	panel->add(createLabel, "createLabel");
-
 
 	m_gui->add(panel, "Background");
 
