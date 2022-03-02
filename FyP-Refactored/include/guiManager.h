@@ -33,11 +33,13 @@ private:
 	~GUIManager() = default;
 
 	void initShapeBuild();
+	void initSceneManagment();
 
 	tgui::Gui* m_gui;
 	ShapeBuilder* m_builder;
-	tgui::RadioButton::Ptr m_buildButton;
-	tgui::RadioButton::Ptr m_editButton;
+	tgui::RadioButton::Ptr m_buildButton { nullptr };
+	tgui::RadioButton::Ptr m_editButton { nullptr };
+	tgui::RadioButton::Ptr m_shapeButton { nullptr };
 };
 
 #endif

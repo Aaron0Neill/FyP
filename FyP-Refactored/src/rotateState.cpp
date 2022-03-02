@@ -3,9 +3,6 @@
 RotateState::RotateState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
 	IBuildState(t_window, t_manager)
 {
-	m_points[0].color = sf::Color::Green;
-	m_points[1].color = sf::Color::Green;
-	m_points[2].color = sf::Color::Green;
 }
 
 //*************************************************************
@@ -41,6 +38,4 @@ void RotateState::handleEvent(sf::Event& e)
 
 void RotateState::render()
 {
-	if (m_selectedShape)
-		m_window->draw(m_points, 3, sf::Triangles);
 }

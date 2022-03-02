@@ -7,7 +7,9 @@ CreateState::CreateState(sf::RenderWindow* t_window, ShapeManager* t_manager) :
 	IBuildState(t_window, t_manager),
 	m_centrePoint({})
 {
-	m_circle.setFillColor({ 40U,40U,40U,255U });
+	m_circle.setFillColor(sf::Color::Transparent);
+	m_circle.setOutlineThickness(-1.f);
+	m_circle.setOutlineColor({ 40U,40U,40U,255U });
 	m_circle.setRadius(PixelsPerMetre);
 	m_circle.setOrigin({ PixelsPerMetre, PixelsPerMetre });
 }

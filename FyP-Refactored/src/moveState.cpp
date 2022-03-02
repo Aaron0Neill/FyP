@@ -32,10 +32,9 @@ void MoveState::handleEvent(sf::Event& e)
 	}
 	else if (sf::Event::MouseButtonReleased == e.type)
 		if (sf::Mouse::Left == e.mouseButton.button)
-			if (m_selectedShape) 
+			if (m_selectedShape)
 			{
 				m_selectedShape->getBody()->SetAwake(true);
-				std::cout << &*m_selectedShape << std::endl;
 				m_editing = false;
 			}
 

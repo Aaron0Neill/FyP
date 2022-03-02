@@ -2,10 +2,12 @@
 
 void GUIManager::init(sf::RenderWindow* t_window)
 {
-	m_gui = new tgui::Gui();
-	m_gui->setWindow(*t_window);
-	m_gui->setAbsoluteView({ 0,0,1920,1080 });
+	m_gui = new tgui::Gui(*t_window);
+	auto size = t_window->getView().getSize();
+	m_gui->setAbsoluteView({ 0,0, size.x ,size.y });
+	
 	initShapeBuild();
+	initSceneManagment();
 }
 
 //*************************************************************
@@ -138,15 +140,20 @@ void GUIManager::initShapeBuild()
 	tgui::RadioButtonGroup::Ptr radioGroup;
 	radioGroup = tgui::RadioButtonGroup::create();
 
-	tgui::Label::Ptr editLabel = tgui::Label::create("Edit");
-	editLabel->setTextSize(24);
-	editLabel->setPosition({ 225 - editLabel->getSize().x/2.f,0});
-	editLabel->getRenderer()->setTextColor(tgui::Color::White);
-
 	tgui::Label::Ptr createLabel = tgui::Label::create("Create");
 	createLabel->setTextSize(24);
 	createLabel->setPosition({ 75 - createLabel->getSize().x / 2.f,0});
 	createLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	tgui::Label::Ptr editLabel = tgui::Label::create("Edit");
+	editLabel->setTextSize(24);
+	editLabel->setPosition({ 200 - editLabel->getSize().x/2.f ,0});
+	editLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	tgui::Label::Ptr shapeLabel = tgui::Label::create("Shape");
+	shapeLabel->setTextSize(24);
+	shapeLabel->setPosition({ 325 - shapeLabel->getSize().x / 2.f ,0 });
+	shapeLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	m_buildButton = tgui::RadioButton::create();
 	m_buildButton->getRenderer()->setTextureChecked(radioSelected);
@@ -167,7 +174,7 @@ void GUIManager::initShapeBuild()
 
 	m_editButton = tgui::RadioButton::create();
 	m_editButton->setSize({ 100,50 });
-	m_editButton->setPosition({ 175,25 });
+	m_editButton->setPosition({ 150,25 });
 
 	m_editButton->getRenderer()->setTextureChecked(radioSelected);
 	m_editButton->getRenderer()->setTextureUnchecked(radioTex);
@@ -181,14 +188,55 @@ void GUIManager::initShapeBuild()
 		editGroup->setVisible(false);
 		});
 
+	auto shapeButton = tgui::RadioButton::create();
+	shapeButton->setSize({ 100,50 });
+	shapeButton->setPosition({ 275,25 });
+
+	shapeButton->getRenderer()->setTextureChecked(radioSelected);
+	shapeButton->getRenderer()->setTextureUnchecked(radioTex);
+	shapeButton->getRenderer()->setTextureUncheckedHover(radioHover);
+
 	radioGroup->add(m_editButton, "Edit");
 	radioGroup->add(m_buildButton, "Build");
+	radioGroup->add(shapeButton, "Shape");
 
 	panel->add(editGroup, "EditGroup");
 	panel->add(radioGroup, "Radio");
-	panel->add(editLabel, "editLabel");
 	panel->add(createLabel, "createLabel");
+	panel->add(editLabel, "editLabel");
+	panel->add(shapeLabel, "shapeLabel");
 
 	m_gui->add(panel, "Background");
 
+}
+
+//*************************************************************
+
+void GUIManager::initSceneManagment()
+{
+	auto panel = m_gui->get<tgui::Panel>("Background");
+	
+
+	auto sceneName = tgui::TextArea::create();
+	sceneName->setDefaultText("Input Scene Name");
+	sceneName->setSize({ 350,50 });
+	sceneName->setPosition({ 25, 900 });
+	sceneName->setTextSize(32U);
+	sceneName->setVerticalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
+
+	auto saveBtn = tgui::Button::create("Save");
+	saveBtn->setPosition({ 25,975 });
+	saveBtn->setSize({ 150,75 });
+	saveBtn->setTextSize(32U);
+	saveBtn->onClick([](){std::cout << "Save\n"; });
+
+	auto loadBtn = tgui::Button::create("Load");
+	loadBtn->setPosition({ 225,975 });
+	loadBtn->setSize({ 150,75 });
+	loadBtn->setTextSize(32U);
+	loadBtn->onClick([]() {std::cout << "Load\n"; });
+
+	panel->add(sceneName, "SceneName");
+	panel->add(saveBtn, "SaveButton");
+	panel->add(loadBtn, "LoadButton");
 }

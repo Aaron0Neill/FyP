@@ -5,14 +5,14 @@ Game::Game()
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
-	m_gui = GUIManager::getInstance();
-	m_gui->init(m_window);
-	
 	Vector viewSize{ 1920U , 1080U };
 	sf::View view;
 	view.setSize(viewSize);
 	view.setCenter(viewSize / 2);
 	m_window->setView(view);
+
+	m_gui = GUIManager::getInstance();
+	m_gui->init(m_window);
 
 	m_builder = new ShapeBuilder(m_window);
 	m_builder->addShapeManager(&m_shapes);

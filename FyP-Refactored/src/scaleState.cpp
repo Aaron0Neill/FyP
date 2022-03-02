@@ -40,6 +40,6 @@ void ScaleState::handleEvent(sf::Event& e)
 
 void ScaleState::render()
 {
-	if (m_selectedShape)
+	if (m_selectedShape && m_editing)
 		m_window->draw(m_points, 2, sf::Lines);
 }
