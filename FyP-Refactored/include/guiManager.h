@@ -28,12 +28,16 @@ public:
 
 	void addBuilder(ShapeBuilder* t_builder) { m_builder = t_builder; };
 	ShapeBuilder* getBuilder() { return m_builder; }
+
+	void showFolder();
+
 private:
 	GUIManager() = default;
 	~GUIManager() = default;
 
 	void initShapeBuild();
 	void initSceneManagment();
+
 
 	tgui::Gui* m_gui;
 	ShapeBuilder* m_builder;

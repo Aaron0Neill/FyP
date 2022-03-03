@@ -14,7 +14,7 @@
 #include <box2d/b2_pulley_joint.h>
 #include <box2d/b2_prismatic_joint.h>
 
-#include <guiManager.h>
+#include <guiManager.h> 
 
 class Game
 {

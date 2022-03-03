@@ -34,6 +34,12 @@ void GUIManager::draw()
 
 //*************************************************************
 
+void GUIManager::showFolder()
+{
+}
+
+//*************************************************************
+
 void GUIManager::initShapeBuild()
 {
 
@@ -55,6 +61,7 @@ void GUIManager::initShapeBuild()
 	tgui::Texture septagonTex("assets/images/Septagon.png");
 	tgui::Texture octagonTex("assets/images/Octagon.png");
 	tgui::Texture circleTex("assets/images/Circle.png");
+	tgui::Texture edgeTex("assets/images/Edge.png");
 	tgui::Texture radioTex("assets/images/RadioButtonTex.png");
 	tgui::Texture radioHover("assets/images/RadioButtonHover.png");
 	tgui::Texture radioSelected("assets/images/RadioButtonSelected.png");
@@ -91,6 +98,9 @@ void GUIManager::initShapeBuild()
 	pics[index]->setWidgetName("Octagon");
 	pics[index++]->setPosition(startPos + rowOffset * 2.f + colOffset);
 
+	pics.push_back(tgui::Picture::create(edgeTex));
+	pics[index]->setWidgetName("Edge");
+	pics[index++]->setPosition(startPos + rowOffset * 3.f + colOffset);
 
 	auto circleptr = tgui::Picture::create(circleTex);
 	circleptr->setWidgetName("Circle");
@@ -104,7 +114,6 @@ void GUIManager::initShapeBuild()
 	int i = 3;
 	for (auto& ptr : pics)
 	{
-		
 		ptr->onClick([this, i]() {
 			static_cast<CreateState*>(this->getBuilder()->getState().get())->updatePoints(i);
 			});
@@ -215,7 +224,6 @@ void GUIManager::initShapeBuild()
 void GUIManager::initSceneManagment()
 {
 	auto panel = m_gui->get<tgui::Panel>("Background");
-	
 
 	auto sceneName = tgui::TextArea::create();
 	sceneName->setDefaultText("Input Scene Name");
@@ -228,15 +236,30 @@ void GUIManager::initSceneManagment()
 	saveBtn->setPosition({ 25,975 });
 	saveBtn->setSize({ 150,75 });
 	saveBtn->setTextSize(32U);
-	saveBtn->onClick([](){std::cout << "Save\n"; });
+	saveBtn->onClick([this](){});
 
 	auto loadBtn = tgui::Button::create("Load");
 	loadBtn->setPosition({ 225,975 });
 	loadBtn->setSize({ 150,75 });
 	loadBtn->setTextSize(32U);
-	loadBtn->onClick([]() {std::cout << "Load\n"; });
 
 	panel->add(sceneName, "SceneName");
 	panel->add(saveBtn, "SaveButton");
 	panel->add(loadBtn, "LoadButton");
+
+	auto fileDialogue = tgui::FileDialog::create("File Window");
+	fileDialogue->setPath("assets/levels");
+	fileDialogue->setVisible(false);
+	fileDialogue->setFileTypeFilters({
+		{"Level", { "*.json" }}
+	});
+	fileDialogue->onFileSelect([fileDialogue](const std::vector<tgui::Filesystem::Path>& t_file) {
+		for (auto& f : t_file)
+			std::cout << f.getFilename() << std::endl;
+
+		fileDialogue->setVisible(false);
+		});
+	m_gui->add(fileDialogue, "FolderWindow");
+
+	loadBtn->onClick([fileDialogue]() { fileDialogue->setVisible(true); });
 }
