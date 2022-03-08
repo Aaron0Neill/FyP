@@ -18,7 +18,6 @@ void ScaleState::handleEvent(sf::Event& e)
 			if (m_selectedShape)
 			{
 				m_selectedShape->getBody()->SetAwake(false);
-				m_selectedShape->getBody()->SetType(b2_kinematicBody);
 				m_points[0].position = Vector(m_selectedShape->getBody()->GetPosition()).fromWorldSpace();
 				m_editing = true;
 			}
@@ -30,10 +29,16 @@ void ScaleState::handleEvent(sf::Event& e)
 			m_points[1] = m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
 			float scale = vectorLength(m_points[0].position - m_points[1].position) / PixelsPerMetre;
 			m_selectedShape->setScale(scale);
+			m_selectedShape->getBody()->SetAwake(false);
 		}
 	}
-	else if (e.type == sf::Event::MouseButtonReleased)
+	else if (e.type == sf::Event::MouseButtonReleased) 
+	{
+		if (m_selectedShape)
+			m_selectedShape->getBody()->SetAwake(true);
 		m_editing = false;
+		
+	}
 }
 
 //*************************************************************

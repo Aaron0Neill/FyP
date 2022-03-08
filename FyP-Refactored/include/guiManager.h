@@ -7,7 +7,8 @@
 #include <TGUI/Texture.hpp>
 #include <TGUI/TextureManager.hpp>
 
-#include "shapeBuilder.h"
+#include "shapeEditor.h"
+#include "levelLoader.h"
 
 #include <iostream>
 
@@ -26,10 +27,11 @@ public:
 
 	void draw();
 
-	void addBuilder(ShapeBuilder* t_builder) { m_builder = t_builder; };
-	ShapeBuilder* getBuilder() { return m_builder; }
+	void addBuilder(ShapeEditor* t_builder) { m_builder = t_builder; };
+	void addLevelLoader(LevelLoader* t_loader) { m_loader = t_loader; }
 
-	void showFolder();
+	ShapeEditor* getBuilder() { return m_builder; }
+	LevelLoader* getLoader() { return m_loader; }
 
 private:
 	GUIManager() = default;
@@ -40,7 +42,8 @@ private:
 
 
 	tgui::Gui* m_gui;
-	ShapeBuilder* m_builder;
+	ShapeEditor* m_builder;
+	LevelLoader* m_loader;
 	tgui::RadioButton::Ptr m_buildButton { nullptr };
 	tgui::RadioButton::Ptr m_editButton { nullptr };
 	tgui::RadioButton::Ptr m_shapeButton { nullptr };

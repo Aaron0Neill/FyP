@@ -34,12 +34,6 @@ void GUIManager::draw()
 
 //*************************************************************
 
-void GUIManager::showFolder()
-{
-}
-
-//*************************************************************
-
 void GUIManager::initShapeBuild()
 {
 
@@ -130,17 +124,17 @@ void GUIManager::initShapeBuild()
 	auto moveBtn = tgui::Button::create("Move");
 	moveBtn->setSize({ 300,100 });
 	moveBtn->setPosition({ 50, 100 });
-	moveBtn->onClick([this]() { this->getBuilder()->setState(BuilderState::MOVE); });
+	moveBtn->onClick([this]() { this->getBuilder()->setState(EditState::MOVE); });
 
 	auto rotateBtn = tgui::Button::create("Rotate");
 	rotateBtn->setSize({ 300,100 });
 	rotateBtn->setPosition({ 50, 225 });
-	rotateBtn->onClick([this]() { this->getBuilder()->setState(BuilderState::ROTATE); });
+	rotateBtn->onClick([this]() { this->getBuilder()->setState(EditState::ROTATE); });
 
 	auto scaleBtn = tgui::Button::create("Scale");
 	scaleBtn->setSize({ 300,100 });
 	scaleBtn->setPosition({ 50, 350 });
-	scaleBtn->onClick([this]() { this->getBuilder()->setState(BuilderState::SCALE); });
+	scaleBtn->onClick([this]() { this->getBuilder()->setState(EditState::SCALE); });
 
 	editGroup->add(moveBtn, "Move");
 	editGroup->add(rotateBtn, "Rotate");
@@ -171,7 +165,7 @@ void GUIManager::initShapeBuild()
 
 	m_buildButton->onCheck([group, this]() { 
 		group->setVisible(true); 
-		this->getBuilder()->setState(BuilderState::CREATE); 
+		this->getBuilder()->setState(EditState::CREATE); 
 		});
 
 	m_buildButton->onUncheck([group]() {
@@ -236,7 +230,11 @@ void GUIManager::initSceneManagment()
 	saveBtn->setPosition({ 25,975 });
 	saveBtn->setSize({ 150,75 });
 	saveBtn->setTextSize(32U);
-	saveBtn->onClick([this](){});
+	saveBtn->onClick([this, sceneName]()
+		{
+			if (sceneName->getText().size() != 0)
+				this->getLoader()->saveLevel("assets/levels/" + sceneName->getText().toStdString() + ".json");
+		});
 
 	auto loadBtn = tgui::Button::create("Load");
 	loadBtn->setPosition({ 225,975 });
@@ -247,19 +245,32 @@ void GUIManager::initSceneManagment()
 	panel->add(saveBtn, "SaveButton");
 	panel->add(loadBtn, "LoadButton");
 
-	auto fileDialogue = tgui::FileDialog::create("File Window");
+	auto fileDialogue = tgui::FileDialog::create("Level Loader", "Load");
 	fileDialogue->setPath("assets/levels");
 	fileDialogue->setVisible(false);
+	fileDialogue->setMultiSelect(false);
+	fileDialogue->setFileMustExist(true);
 	fileDialogue->setFileTypeFilters({
 		{"Level", { "*.json" }}
 	});
-	fileDialogue->onFileSelect([fileDialogue](const std::vector<tgui::Filesystem::Path>& t_file) {
-		for (auto& f : t_file)
-			std::cout << f.getFilename() << std::endl;
+	fileDialogue->onFileSelect([this, sceneName](const std::vector<tgui::Filesystem::Path>& t_file) {
+		if (t_file.size())
+		{
+			std::string filePath = t_file.at(0).getParentPath().asString().toStdString();
+			filePath += "/" + t_file[0].getFilename().toStdString();
+			this->getLoader()->loadLevel(filePath);
 
-		fileDialogue->setVisible(false);
-		});
+			auto text = t_file[0].getFilename();
+			text = text.substr(0, text.find('.'));
+
+			sceneName->setText(text);
+		}
+	});
+
 	m_gui->add(fileDialogue, "FolderWindow");
 
-	loadBtn->onClick([fileDialogue]() { fileDialogue->setVisible(true); });
+	loadBtn->onClick([fileDialogue]() {
+		fileDialogue->setEnabled(true);
+		fileDialogue->setVisible(true);
+		});
 }

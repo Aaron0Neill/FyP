@@ -144,6 +144,43 @@ void ShapeManager::startWorld()
 
 //*************************************************************
 
+void ShapeManager::saveWorld(jsonf& t_data)
+{
+	ShapeID id = 0;
+	for (auto& shape : m_shapes)
+	{
+		jsonf& data = t_data[id++];
+		int type = shape->getFixture()->GetType();
+		data["ShapeType"] = type;
+
+		if (type == b2Shape::Type::e_polygon)
+		{
+			auto pos = Vector(shape->getBody()->GetPosition()).fromWorldSpace();
+			data["Centre"] = { pos.x , pos.y };
+			data["PolyCount"] = static_cast<b2PolygonShape*>(shape->getFixture()->GetShape())->m_count;
+		}
+		else if (type == b2Shape::Type::e_circle)
+		{
+			auto pos = Vector(shape->getBody()->GetPosition()).fromWorldSpace();
+			data["Centre"] = { pos.x , pos.y };
+		}
+		else if (type == b2Shape::Type::e_edge)
+		{
+			Vector pos1 = static_cast<b2EdgeShape*>(shape->getFixture()->GetShape())->m_vertex1;
+			Vector pos2 = static_cast<b2EdgeShape*>(shape->getFixture()->GetShape())->m_vertex2;
+			pos1 = pos1.fromWorldSpace();
+			pos2 = pos2.fromWorldSpace();
+
+			data["Points"] = { pos1.x , pos1.y , pos2.x, pos2.y };
+		}
+
+		data["Scale"] = shape->getScale();
+		data["Rotation"] = shape->getBody()->GetAngle();
+	}
+}
+
+//*************************************************************
+
 b2BodyDef ShapeManager::generateBodyDef(Vector t_pos)
 {
 	b2BodyDef bodyDef;

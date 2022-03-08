@@ -2,25 +2,25 @@
 #define GAME_INCLUDE
 
 #include <SFML/Graphics.hpp>
-#include <globals.h>
 
-#include <shapeManager.h>
-#include <ShapeBuilder.h>
-#include <worldManager.h>
+#include "box2d/b2_distance_joint.h"
+#include "box2d/b2_revolute_joint.h"
+#include "box2d/b2_wheel_joint.h"
+#include "box2d/b2_pulley_joint.h"
+#include "box2d/b2_prismatic_joint.h"
 
-#include <box2d/b2_distance_joint.h>
-#include <box2d/b2_revolute_joint.h>
-#include <box2d/b2_wheel_joint.h>
-#include <box2d/b2_pulley_joint.h>
-#include <box2d/b2_prismatic_joint.h>
-
-#include <guiManager.h> 
+#include "globals.h"
+#include "guiManager.h"
+#include "levelLoader.h"
+#include "shapeManager.h"
+#include "shapeEditor.h"
+#include "worldManager.h"
 
 class Game
 {
 public:
 	Game();
-	~Game() = default;
+	~Game();
 
 	/// <summary>
 	/// Initializes and starts the game loop
@@ -57,9 +57,11 @@ private:
 
 	WorldManager* m_world { nullptr };
 
-	ShapeBuilder* m_builder;
+	ShapeEditor* m_builder;
 
 	GUIManager* m_gui;
+
+	LevelLoader* m_levelManager;
 };
 
 #endif

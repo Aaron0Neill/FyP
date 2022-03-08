@@ -1,5 +1,5 @@
-#ifndef SHAPE_BUILDER_INCLUDE
-#define SHAPE_BUILDER_INCLUDE
+#ifndef SHAPE_EDITOR_INCLUDE
+#define SHAPE_EDITOR_INCLUDE
 
 #include <functional>
 #include <unordered_map>
@@ -11,7 +11,7 @@
 #include "shapeManager.h"
 #include "utils/vectorMaths.h"
 
-enum class BuilderState : uint8
+enum class EditState : uint8
 {
 	CREATE,
 	SELECT,
@@ -21,15 +21,15 @@ enum class BuilderState : uint8
 };
 
 using State = std::shared_ptr<IBuildState>;
-using StateFactory = std::unordered_map<BuilderState, std::function<State(sf::RenderWindow*, ShapeManager*)>>;
+using StateFactory = std::unordered_map<EditState, std::function<State(sf::RenderWindow*, ShapeManager*)>>;
 
-class ShapeBuilder
+class ShapeEditor
 {
 public:
-	ShapeBuilder(sf::RenderWindow* t_window);
-	~ShapeBuilder()=default;
+	ShapeEditor(sf::RenderWindow* t_window);
+	~ShapeEditor()=default;
 
-	void setState(BuilderState);
+	void setState(EditState);
 
 	void handleEvents(sf::Event& t_event);
 
@@ -41,7 +41,7 @@ public:
 private:
 
 	template<typename T>
-	void initFactory(BuilderState t_state)
+	void initFactory(EditState t_state)
 	{
 		m_factory.emplace(t_state, [](sf::RenderWindow* t_window, ShapeManager* t_manager) {
 			return std::make_shared<T>(t_window, t_manager);

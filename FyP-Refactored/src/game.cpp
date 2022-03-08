@@ -14,22 +14,22 @@ Game::Game()
 	m_gui = GUIManager::getInstance();
 	m_gui->init(m_window);
 
-	m_builder = new ShapeBuilder(m_window);
+	m_builder = new ShapeEditor(m_window);
 	m_builder->addShapeManager(&m_shapes);
 
+	m_levelManager = new LevelLoader(&m_shapes);
+
 	m_gui->addBuilder(m_builder);
+	m_gui->addLevelLoader(m_levelManager);
 
-	auto cid = m_shapes.createCircle(1.f, { 400.f,400.f });
+	m_shapes.createEdge({ 0,viewSize.y }, viewSize);
+}
 
-	auto id = m_shapes.createPolygon(4, 1, { 100,200 });
-	auto id2 = m_shapes.createPolygon(3, 1, { 700,600 });
+//*************************************************************
 
-	auto floorID = m_shapes.createEdge({ 0.f, 1080.0f}, { 1920.f -400.f , 1080.f });
-	m_shapes.createEdge({ 1920.f - 400.f, 0.f }, { 1920.f - 400.f, 1080.f });
-	m_shapes.createEdge({ 0.f, 0.f }, { 0.f, 1080.f});
-
-	auto bd1 = m_shapes[id]->getBody();
-	auto bd2 = m_shapes[id2]->getBody();
+Game::~Game()
+{
+	delete m_levelManager;
 }
 
 //*************************************************************

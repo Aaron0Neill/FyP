@@ -19,6 +19,8 @@ public:
 
 	void setScale(float t_scale)override;
 
+	void setRotation(float t_newRotation)override;
+
 private:
 	friend class ShapeManager;
 	CircleShape(float t_radius);

@@ -68,6 +68,7 @@
     <ClCompile Include="src\selectState.cpp" />
     <ClCompile Include="src\shapeBuilder.cpp" />
     <ClCompile Include="src\shapeManager.cpp" />
+    <ClCompile Include="src\utils\levelLoader.cpp" />
     <ClCompile Include="src\utils\vectorMaths.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +124,10 @@
     <ClInclude Include="include\rotateState.h" />
     <ClInclude Include="include\scaleState.h" />
     <ClInclude Include="include\selectState.h" />
-    <ClInclude Include="include\shapeBuilder.h" />
+    <ClInclude Include="include\shapeEditor.h" />
     <ClInclude Include="include\shapeManager.h" />
     <ClInclude Include="include\utils\json.hpp" />
+    <ClInclude Include="include\utils\levelLoader.h" />
     <ClInclude Include="include\utils\vector.h" />
     <ClInclude Include="include\utils\vectorMaths.h" />
     <ClInclude Include="include\worldManager.h" />
@@ -184,7 +186,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SFML_SDK)\include;$(TGUI)\include;include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SFML_SDK)\include;$(TGUI)\include;include;include/utils;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

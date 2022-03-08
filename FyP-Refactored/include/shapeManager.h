@@ -1,17 +1,16 @@
 #ifndef SHAPE_MANAGER_INCLUDE
 #define SHAPE_MANAGER_INCLUDE
 
-#include <utils/vector.h>
+#include <iostream>
 #include <vector>
 
-#include <polygonShape.h>
-#include <circleShape.h>
+#include "box2d/b2_distance_joint.h"
+#include "circleShape.h"
+#include "polygonShape.h"
+#include "worldManager.h"
+#include "vector.h"
+#include "json.hpp"
 
-#include <worldManager.h>
-
-#include <box2d/b2_distance_joint.h>
-
-#include <iostream>
 using ShapeID = uint8;
 
 class ShapeManager
@@ -61,6 +60,8 @@ public:
 	b2Joint* createDistanceJoint(ShapeID, ShapeID, float);
 
 	void startWorld();
+
+	void saveWorld(jsonf& t_data);
 private:
 
 	/// <summary>

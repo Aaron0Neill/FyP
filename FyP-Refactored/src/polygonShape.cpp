@@ -18,6 +18,14 @@ void PolygonShape::setScale(float t_newScale)
 
 //*************************************************************
 
+void PolygonShape::setRotation(float t_newRotation)
+{
+	auto pos = m_body->GetPosition();
+	m_body->SetTransform(pos, t_newRotation);
+}
+
+//*************************************************************
+
 void PolygonShape::update()
 {
 	if (b2Shape::Type::e_polygon == m_fixture->GetType())

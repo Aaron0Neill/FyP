@@ -25,6 +25,7 @@ public:
 	};
 
 	virtual void setScale(float t_newScale) = 0;
+	virtual void setRotation(float t_newRotation) = 0;
 	virtual void setBodyType(b2BodyType t_type) { m_body->SetType(t_type); }
 
 

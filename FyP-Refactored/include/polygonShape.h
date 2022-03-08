@@ -7,6 +7,7 @@
 #include <box2d/b2_edge_shape.h>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <utils/vector.h>
+#include <stdlib.h>
 
 class PolygonShape : 
 	public IShape
@@ -18,6 +19,8 @@ public:
 	/// </summary>
 	/// <param name="t_newScale"> scale to set it to </param>
 	void setScale(float t_newScale)override;
+
+	void setRotation(float t_newRotation)override;
 
 	/// <summary>
 	/// Update the drawing of the polyon based on its body
