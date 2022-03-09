@@ -8,6 +8,7 @@ ShapeEditor::ShapeEditor(sf::RenderWindow* t_window) :
 	initFactory<MoveState>(EditState::MOVE);
 	initFactory<ScaleState>(EditState::SCALE);
 	initFactory<RotateState>(EditState::ROTATE);
+	initFactory<SelectState>(EditState::SELECT);
 }
 
 //*************************************************************

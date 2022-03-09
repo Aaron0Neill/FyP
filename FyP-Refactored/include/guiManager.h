@@ -30,7 +30,7 @@ public:
 	void addBuilder(ShapeEditor* t_builder) { m_builder = t_builder; };
 	void addLevelLoader(LevelLoader* t_loader) { m_loader = t_loader; }
 
-	ShapeEditor* getBuilder() { return m_builder; }
+	ShapeEditor* getEditor() { return m_builder; }
 	LevelLoader* getLoader() { return m_loader; }
 
 private:
@@ -41,9 +41,9 @@ private:
 	void initSceneManagment();
 
 
-	tgui::Gui* m_gui;
-	ShapeEditor* m_builder;
-	LevelLoader* m_loader;
+	tgui::Gui* m_gui{ nullptr };
+	ShapeEditor* m_builder{ nullptr };
+	LevelLoader* m_loader{ nullptr };
 	tgui::RadioButton::Ptr m_buildButton { nullptr };
 	tgui::RadioButton::Ptr m_editButton { nullptr };
 	tgui::RadioButton::Ptr m_shapeButton { nullptr };

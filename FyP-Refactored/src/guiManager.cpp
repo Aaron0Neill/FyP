@@ -38,10 +38,8 @@ void GUIManager::initShapeBuild()
 {
 
 	tgui::Panel::Ptr panel;
-	panel = tgui::Panel::create();
-	panel->setSize({ 400,1080 });
+	panel = tgui::Panel::create({ 400,1080 });
 	panel->setPosition({ 1920 - 400,0 });
-	panel->setWidgetName("ShapeBackground");
 	panel->getRenderer()->setBackgroundColor(tgui::Color(109U,26U,54U));
 	
 	tgui::Group::Ptr group;
@@ -100,7 +98,7 @@ void GUIManager::initShapeBuild()
 	circleptr->setWidgetName("Circle");
 	circleptr->setPosition(startPos + rowOffset * 3.f);
 	circleptr->onClick([this]() {
-		static_cast<CreateState*>(this->getBuilder()->getState().get())->updatePoints(9);
+		static_cast<CreateState*>(this->getEditor()->getState().get())->updatePoints(9);
 	});
 
 	group->add(circleptr, circleptr->getWidgetName());
@@ -109,7 +107,7 @@ void GUIManager::initShapeBuild()
 	for (auto& ptr : pics)
 	{
 		ptr->onClick([this, i]() {
-			static_cast<CreateState*>(this->getBuilder()->getState().get())->updatePoints(i);
+			static_cast<CreateState*>(this->getEditor()->getState().get())->updatePoints(i);
 			});
 
 		group->add(ptr, ptr->getWidgetName());
@@ -124,17 +122,17 @@ void GUIManager::initShapeBuild()
 	auto moveBtn = tgui::Button::create("Move");
 	moveBtn->setSize({ 300,100 });
 	moveBtn->setPosition({ 50, 100 });
-	moveBtn->onClick([this]() { this->getBuilder()->setState(EditState::MOVE); });
+	moveBtn->onClick([this]() { getEditor()->setState(EditState::MOVE); });
 
 	auto rotateBtn = tgui::Button::create("Rotate");
 	rotateBtn->setSize({ 300,100 });
 	rotateBtn->setPosition({ 50, 225 });
-	rotateBtn->onClick([this]() { this->getBuilder()->setState(EditState::ROTATE); });
+	rotateBtn->onClick([this]() { getEditor()->setState(EditState::ROTATE); });
 
 	auto scaleBtn = tgui::Button::create("Scale");
 	scaleBtn->setSize({ 300,100 });
 	scaleBtn->setPosition({ 50, 350 });
-	scaleBtn->onClick([this]() { this->getBuilder()->setState(EditState::SCALE); });
+	scaleBtn->onClick([this]() { getEditor()->setState(EditState::SCALE); });
 
 	editGroup->add(moveBtn, "Move");
 	editGroup->add(rotateBtn, "Rotate");
@@ -165,7 +163,7 @@ void GUIManager::initShapeBuild()
 
 	m_buildButton->onCheck([group, this]() { 
 		group->setVisible(true); 
-		this->getBuilder()->setState(EditState::CREATE); 
+		getEditor()->setState(EditState::CREATE); 
 		});
 
 	m_buildButton->onUncheck([group]() {
@@ -203,11 +201,33 @@ void GUIManager::initShapeBuild()
 	radioGroup->add(m_buildButton, "Build");
 	radioGroup->add(shapeButton, "Shape");
 
+	auto shapeModi = tgui::Group::create({ 400,1080 });
+
+	auto xValue = tgui::EditBox::create();
+	xValue->setPosition({ 250,150 });
+	xValue->setSize({ 50,25 });
+
+	auto yValue = tgui::EditBox::create();
+	yValue->setPosition({ 325, 150 });
+	yValue->setSize({ 50,25 });
+
+	shapeModi->add(xValue, "ShapeXValue");
+	shapeModi->add(yValue, "ShapeYValue");
+
+	shapeModi->setVisible(false);
+
 	panel->add(editGroup, "EditGroup");
 	panel->add(radioGroup, "Radio");
 	panel->add(createLabel, "createLabel");
 	panel->add(editLabel, "editLabel");
 	panel->add(shapeLabel, "shapeLabel");
+
+	panel->add(shapeModi, "modificationGroup");
+
+	shapeButton->onClick([this, shapeModi]() {
+		getEditor()->setState(EditState::SELECT);
+		shapeModi->setVisible(true);
+		});
 
 	m_gui->add(panel, "Background");
 
