@@ -1,9 +1,11 @@
 #ifndef VECTOR_INCLUDE
 #define VECTOR_INCLUDE
 
-#include <SFML/System/Vector2.hpp>
+#include "globals.h"
+
 #include <box2d/b2_math.h>
-#include <globals.h>
+#include <SFML/System/Vector2.hpp>
+#include <TGUI/Layout.hpp>
 
 
 class Vector 
@@ -16,8 +18,10 @@ public:
 	~Vector() = default;
 	Vector(float t_x, float t_y) : x(t_x), y(t_y) {};
 	Vector(b2Vec2 t_vec) : x(t_vec.x), y(t_vec.y) {};
+	Vector(tgui::Vector2f t_vec) : x(t_vec.x), y(t_vec.y) {}
+	Vector(tgui::Layout2d t_lay) : x(t_lay.getValue().x), y(t_lay.getValue().y) {}
 	Vector(sf::Vector2f t_vec) : x(t_vec.x), y(t_vec.y) {};
-	Vector(sf::Vector2i t_vec) : x(t_vec.x), y(t_vec.y) {};
+	Vector(sf::Vector2i t_vec) : x((float)t_vec.x), y((float)t_vec.y) {};
 
 	Vector toWorldSpace()
 	{
@@ -39,13 +43,16 @@ public:
 	Vector operator-(Vector t_rhs) { return { x - t_rhs.x, y - t_rhs.y }; }
 	Vector operator* (float t_rhs) { return { x * t_rhs, y * t_rhs }; }
 	Vector operator/(float t_rhs) { return { x / t_rhs, y / t_rhs }; }
+	void operator+=(Vector t_rhs) { x += t_rhs.x; y += t_rhs.y; };
 
 	// = operator
 	Vector operator=(b2Vec2& t_rhs) { return { t_rhs }; };
+
 	// implicit conversion
 	operator b2Vec2() { return { x,y }; };
 	operator sf::Vector2f() { return { x,y }; };
 	operator sf::Vector2i() { return { (int)x,(int)y }; };
+	operator tgui::Layout2d() { return { x, y }; }
 };
 
 #endif

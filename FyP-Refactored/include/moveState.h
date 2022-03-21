@@ -3,18 +3,30 @@
 
 #include "IbuildState.h"
 
+#include <unordered_map>
+#include <TGUI/Widgets/Group.hpp>
+
 class MoveState : 
 	public IBuildState
 {
 public:
 	MoveState(sf::RenderWindow* t_window, ShapeManager* t_manager);
-	~MoveState() = default;
+	~MoveState();
 
 	void handleEvent(sf::Event& e);
 
 	void render() {};
 private:
-	bool m_editing;
+
+	void initArrows();
+
+	void updateArrows();
+
+	bool m_editingY { false };
+	bool m_editingX { false };
+	Vector m_offsetVector;
+	tgui::Group::Ptr m_horizontalGroup;
+	tgui::Group::Ptr m_verticalGroup;
 };
 
 #endif

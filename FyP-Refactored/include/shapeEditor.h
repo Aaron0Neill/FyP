@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "createState.h"
+#include "distanceJoint.h"
 #include "moveState.h"
 #include "rotateState.h"
 #include "scaleState.h"
@@ -18,7 +19,8 @@ enum class EditState : uint8
 	SELECT,
 	SCALE,
 	ROTATE, 
-	MOVE
+	MOVE, 
+	DISTANCE_JOINT
 };
 
 using State = std::shared_ptr<IBuildState>;
@@ -39,6 +41,7 @@ public:
 	inline void addShapeManager(ShapeManager* t_manager) { m_manager = t_manager; }
 
 	State getState() { return m_currentState; }
+	IShape* getCurrentShape() { return m_currentState->getSelected(); }
 private:
 
 	template<typename T>

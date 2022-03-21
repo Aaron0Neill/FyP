@@ -7,8 +7,12 @@ CreateState::CreateState(sf::RenderWindow* t_window, ShapeManager* t_manager) :
 	IBuildState(t_window, t_manager),
 	m_centrePoint({})
 {
+	m_drawing.resize(b2_maxPolygonVertices + 1);
+	for (int i = 0; i < b2_maxPolygonVertices; ++i)
+		m_drawing[i].color = sf::Color({ 40U,40U,40U,255U });
+
 	m_circle.setFillColor(sf::Color::Transparent);
-	m_circle.setOutlineThickness(-1.f);
+	m_circle.setOutlineThickness(-1.5f);
 	m_circle.setOutlineColor({ 40U,40U,40U,255U });
 	m_circle.setRadius(PixelsPerMetre);
 	m_circle.setOrigin({ PixelsPerMetre, PixelsPerMetre });
@@ -26,21 +30,30 @@ void CreateState::handleEvent(sf::Event& e)
 	else if (e.type == sf::Event::KeyPressed)
 	{
 		if (e.key.code >= sf::Keyboard::Num3 && e.key.code <= sf::Keyboard::Num9)
-			updatePoints(e.key.code - sf::Keyboard::Num0);	
+			updateShape(static_cast<ShapeType>(e.key.code - sf::Keyboard::Num0));
 		else if (e.key.code == sf::Keyboard::Escape)
-		{
-			m_drawingCircle = false;
-			m_drawingPolygon = false;
-		}
+			m_currentShape = ShapeType::NONE;
 	}
 	else if (e.type == sf::Event::MouseButtonPressed)
 	{
 		if (e.mouseButton.button == sf::Mouse::Left)
 			if (m_centrePoint.x < (1920.f - 400.f))
-				if (m_drawingPolygon)
+				if (m_currentShape >= ShapeType::TRIANGLE && m_currentShape <= ShapeType::OCTAGON)
 					m_manager->createPolygon(m_currentPoints, 1, m_centrePoint);
-				else if (m_drawingCircle)
+				else if (m_currentShape == ShapeType::CIRCLE)
 					m_manager->createCircle(1, m_centrePoint);
+				else if (m_currentShape == ShapeType::EDGE)
+					if (m_drawing[1].position.x == -10)
+					{
+						m_drawing[0].position = m_centrePoint;
+						m_drawing[1].position = m_centrePoint;
+					}
+					else
+					{
+						m_manager->createEdge(m_drawing[0].position, m_centrePoint);
+						for (int i = 0; i < 2; ++i)
+							m_drawing[i].position = { -10.f,-10.f };
+					}
 	}
 }
 
@@ -48,36 +61,37 @@ void CreateState::handleEvent(sf::Event& e)
 
 void CreateState::render()
 { 
-	if (m_drawingPolygon)
-		m_window->draw(m_drawing);
-	else if (m_drawingCircle)
+	if (m_currentShape != ShapeType::NONE && m_currentShape != ShapeType::CIRCLE)
+		m_window->draw(&m_drawing[0], m_currentPoints + 1, sf::LinesStrip);
+	else 	if (m_currentShape >= ShapeType::CIRCLE)
 		m_window->draw(m_circle);
 }
 
 //*************************************************************
 
-void CreateState::updatePoints(uint8 t_sides)
+void CreateState::updateShape(ShapeType t_sides)
 {
-	if (t_sides >= 3 && t_sides <= 8)
+	m_currentShape = t_sides;
+	switch (t_sides)
 	{
-		m_drawingPolygon = true;
-		m_drawingCircle = false;
-
-		auto points = PolygonShape::getPoints(t_sides, 1);
-
-		for (int i = 0; i < t_sides; ++i)
-			m_vertices[i] = Vector(points[i]);
-
-		m_currentPoints = t_sides;
-		m_drawing.resize(t_sides + 1);
-		delete points;
+	case ShapeType::NONE:
+		break;
+	case ShapeType::EDGE:
+		m_currentPoints = 1U;
+		for (int i = 0; i < 2; ++i)
+			m_drawing[i].position = { -10,-10 };
+		break;
+	case ShapeType::TRIANGLE:
+	case ShapeType::SQUARE:
+	case ShapeType::PENTAGON:
+	case ShapeType::HEXAGON:
+	case ShapeType::SEPTAGON:
+	case ShapeType::OCTAGON:
+		m_currentPoints = (uint8_t)t_sides;
+		showShape();
+	default:
+		break;
 	}
-	else if (t_sides == 9)
-	{
-		m_drawingPolygon = false;
-		m_drawingCircle = true;
-	}
-
 	updateDrawing();
 }
 
@@ -85,7 +99,7 @@ void CreateState::updatePoints(uint8 t_sides)
 
 void CreateState::updateDrawing()
 {
-	if (m_drawingPolygon)
+	if (m_currentShape >= ShapeType::TRIANGLE && m_currentShape <= ShapeType::OCTAGON)
 	{
 		float cosAngle = cos(0.f);
 		float sinAngle = sin(0.f);
@@ -102,8 +116,21 @@ void CreateState::updateDrawing()
 			m_drawing[i].color = sf::Color::Black;
 		}
 	}
-	else if (m_drawingCircle)
-	{
+	else if (m_currentShape == ShapeType::CIRCLE)
 		m_circle.setPosition(m_centrePoint);
-	}
+	else if (m_currentShape == ShapeType::EDGE)
+		if (m_drawing[0].position.x != -10.f)
+			m_drawing[1].position = m_centrePoint;
+}
+
+//*************************************************************
+
+void CreateState::showShape()
+{
+	auto points = PolygonShape::getPoints(m_currentPoints, 1);
+
+	for (int i = 0; i < m_currentPoints; ++i)
+		m_vertices[i] = Vector(points[i]);
+
+	delete points;
 }

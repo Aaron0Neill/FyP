@@ -32,6 +32,7 @@ public:
 
 	ShapeEditor* getEditor() { return m_builder; }
 	LevelLoader* getLoader() { return m_loader; }
+	tgui::Gui* getGui() { return m_gui; }
 
 private:
 	GUIManager() = default;
@@ -39,11 +40,17 @@ private:
 
 	void initShapeBuild();
 	void initSceneManagment();
+	void initShapeEditor();
+	void initTextures();
 
 
 	tgui::Gui* m_gui{ nullptr };
 	ShapeEditor* m_builder{ nullptr };
 	LevelLoader* m_loader{ nullptr };
+
+	tgui::Texture* m_shapeTexture;
+	tgui::Texture* m_radioTexture;
+
 	tgui::RadioButton::Ptr m_buildButton { nullptr };
 	tgui::RadioButton::Ptr m_editButton { nullptr };
 	tgui::RadioButton::Ptr m_shapeButton { nullptr };

@@ -6,8 +6,10 @@ void GUIManager::init(sf::RenderWindow* t_window)
 	auto size = t_window->getView().getSize();
 	m_gui->setAbsoluteView({ 0,0, size.x ,size.y });
 	
+	initTextures();
 	initShapeBuild();
 	initSceneManagment();
+	initShapeEditor();
 }
 
 //*************************************************************
@@ -36,7 +38,6 @@ void GUIManager::draw()
 
 void GUIManager::initShapeBuild()
 {
-
 	tgui::Panel::Ptr panel;
 	panel = tgui::Panel::create({ 400,1080 });
 	panel->setPosition({ 1920 - 400,0 });
@@ -45,18 +46,6 @@ void GUIManager::initShapeBuild()
 	tgui::Group::Ptr group;
 	group = tgui::Group::create({ 400,1080 });
 	group->setVisible(false);
-
-	tgui::Texture triangleTex("assets/images/Triangle.png");
-	tgui::Texture squareTex("assets/images/Square.png");
-	tgui::Texture pentagoTex("assets/images/Pentagon.png");
-	tgui::Texture hexagonTex("assets/images/Hexagon.png");
-	tgui::Texture septagonTex("assets/images/Septagon.png");
-	tgui::Texture octagonTex("assets/images/Octagon.png");
-	tgui::Texture circleTex("assets/images/Circle.png");
-	tgui::Texture edgeTex("assets/images/Edge.png");
-	tgui::Texture radioTex("assets/images/RadioButtonTex.png");
-	tgui::Texture radioHover("assets/images/RadioButtonHover.png");
-	tgui::Texture radioSelected("assets/images/RadioButtonSelected.png");
 	
 	float picSize = 150.f;
 	tgui::Layout2d startPos{ 25.f,125.f };
@@ -65,49 +54,50 @@ void GUIManager::initShapeBuild()
 
 	int index = 0;
 	std::vector<tgui::Picture::Ptr> pics;
-
-	pics.push_back(tgui::Picture::create(triangleTex));
-	pics[index]->setWidgetName("Triangle");
-	pics[index++]->setPosition(startPos);
-
-	pics.push_back(tgui::Picture::create(squareTex));
-	pics[index]->setWidgetName("Square");
-	pics[index++]->setPosition(startPos + rowOffset);
-
-	pics.push_back(tgui::Picture::create(pentagoTex));
-	pics[index]->setWidgetName("Pentagon");
-	pics[index++]->setPosition(startPos + colOffset);
-
-	pics.push_back(tgui::Picture::create(hexagonTex));
-	pics[index]->setWidgetName("Hexagon");
-	pics[index++]->setPosition(startPos + rowOffset + colOffset);
-
-	pics.push_back(tgui::Picture::create(septagonTex));
-	pics[index]->setWidgetName("Septagon");
-	pics[index++]->setPosition(startPos + rowOffset * 2.f);
-
-	pics.push_back(tgui::Picture::create(octagonTex));
-	pics[index]->setWidgetName("Octagon");
-	pics[index++]->setPosition(startPos + rowOffset * 2.f + colOffset);
-
-	pics.push_back(tgui::Picture::create(edgeTex));
+	
+	pics.push_back(tgui::Picture::create(m_shapeTexture[0]));
 	pics[index]->setWidgetName("Edge");
 	pics[index++]->setPosition(startPos + rowOffset * 3.f + colOffset);
 
-	auto circleptr = tgui::Picture::create(circleTex);
+	pics.push_back(tgui::Picture::create(m_shapeTexture[1]));
+	pics[index]->setWidgetName("Triangle");
+	pics[index++]->setPosition(startPos);
+
+	pics.push_back(tgui::Picture::create(m_shapeTexture[2]));
+	pics[index]->setWidgetName("Square");
+	pics[index++]->setPosition(startPos + rowOffset);
+
+	pics.push_back(tgui::Picture::create(m_shapeTexture[3]));
+	pics[index]->setWidgetName("Pentagon");
+	pics[index++]->setPosition(startPos + colOffset);
+
+	pics.push_back(tgui::Picture::create(m_shapeTexture[4]));
+	pics[index]->setWidgetName("Hexagon");
+	pics[index++]->setPosition(startPos + rowOffset + colOffset);
+
+	pics.push_back(tgui::Picture::create(m_shapeTexture[5]));
+	pics[index]->setWidgetName("Septagon");
+	pics[index++]->setPosition(startPos + rowOffset * 2.f);
+
+	pics.push_back(tgui::Picture::create(m_shapeTexture[6]));
+	pics[index]->setWidgetName("Octagon");
+	pics[index++]->setPosition(startPos + rowOffset * 2.f + colOffset);
+
+
+	auto circleptr = tgui::Picture::create(m_shapeTexture[7]);
 	circleptr->setWidgetName("Circle");
 	circleptr->setPosition(startPos + rowOffset * 3.f);
 	circleptr->onClick([this]() {
-		static_cast<CreateState*>(this->getEditor()->getState().get())->updatePoints(9);
+		static_cast<CreateState*>(getEditor()->getState().get())->updateShape(ShapeType::CIRCLE);
 	});
 
 	group->add(circleptr, circleptr->getWidgetName());
 
-	int i = 3;
+	int i = 2;
 	for (auto& ptr : pics)
 	{
 		ptr->onClick([this, i]() {
-			static_cast<CreateState*>(this->getEditor()->getState().get())->updatePoints(i);
+			static_cast<CreateState*>(getEditor()->getState().get())->updateShape(static_cast<ShapeType>(i));
 			});
 
 		group->add(ptr, ptr->getWidgetName());
@@ -134,9 +124,15 @@ void GUIManager::initShapeBuild()
 	scaleBtn->setPosition({ 50, 350 });
 	scaleBtn->onClick([this]() { getEditor()->setState(EditState::SCALE); });
 
+	auto distJoint = tgui::Button::create("Distance Joint");
+	distJoint->setSize({ 300,100 });
+	distJoint->setPosition({ 50, 475 });
+	distJoint->onClick([this]() { getEditor()->setState(EditState::DISTANCE_JOINT); });
+
 	editGroup->add(moveBtn, "Move");
 	editGroup->add(rotateBtn, "Rotate");
 	editGroup->add(scaleBtn, "Scale");
+	editGroup->add(distJoint, "Distance");
 
 	tgui::RadioButtonGroup::Ptr radioGroup;
 	radioGroup = tgui::RadioButtonGroup::create();
@@ -157,9 +153,9 @@ void GUIManager::initShapeBuild()
 	shapeLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	m_buildButton = tgui::RadioButton::create();
-	m_buildButton->getRenderer()->setTextureChecked(radioSelected);
-	m_buildButton->getRenderer()->setTextureUnchecked(radioTex);
-	m_buildButton->getRenderer()->setTextureUncheckedHover(radioHover);
+	m_buildButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
+	m_buildButton->getRenderer()->setTextureUncheckedHover(m_radioTexture[1]);
+	m_buildButton->getRenderer()->setTextureChecked(m_radioTexture[2]);
 
 	m_buildButton->onCheck([group, this]() { 
 		group->setVisible(true); 
@@ -177,9 +173,9 @@ void GUIManager::initShapeBuild()
 	m_editButton->setSize({ 100,50 });
 	m_editButton->setPosition({ 150,25 });
 
-	m_editButton->getRenderer()->setTextureChecked(radioSelected);
-	m_editButton->getRenderer()->setTextureUnchecked(radioTex);
-	m_editButton->getRenderer()->setTextureUncheckedHover(radioHover);
+	m_editButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
+	m_editButton->getRenderer()->setTextureUncheckedHover(m_radioTexture[1]);
+	m_editButton->getRenderer()->setTextureChecked(m_radioTexture[2]);
 
 	m_editButton->onCheck([this, editGroup]() {
 		editGroup->setVisible(true);
@@ -189,45 +185,14 @@ void GUIManager::initShapeBuild()
 		editGroup->setVisible(false);
 		});
 
-	auto shapeButton = tgui::RadioButton::create();
-	shapeButton->setSize({ 100,50 });
-	shapeButton->setPosition({ 275,25 });
-
-	shapeButton->getRenderer()->setTextureChecked(radioSelected);
-	shapeButton->getRenderer()->setTextureUnchecked(radioTex);
-	shapeButton->getRenderer()->setTextureUncheckedHover(radioHover);
-
 	radioGroup->add(m_editButton, "Edit");
 	radioGroup->add(m_buildButton, "Build");
-	radioGroup->add(shapeButton, "Shape");
-
-	auto shapeModi = tgui::Group::create({ 400,1080 });
-
-	auto xValue = tgui::EditBox::create();
-	xValue->setPosition({ 250,150 });
-	xValue->setSize({ 50,25 });
-
-	auto yValue = tgui::EditBox::create();
-	yValue->setPosition({ 325, 150 });
-	yValue->setSize({ 50,25 });
-
-	shapeModi->add(xValue, "ShapeXValue");
-	shapeModi->add(yValue, "ShapeYValue");
-
-	shapeModi->setVisible(false);
 
 	panel->add(editGroup, "EditGroup");
 	panel->add(radioGroup, "Radio");
 	panel->add(createLabel, "createLabel");
 	panel->add(editLabel, "editLabel");
 	panel->add(shapeLabel, "shapeLabel");
-
-	panel->add(shapeModi, "modificationGroup");
-
-	shapeButton->onClick([this, shapeModi]() {
-		getEditor()->setState(EditState::SELECT);
-		shapeModi->setVisible(true);
-		});
 
 	m_gui->add(panel, "Background");
 
@@ -293,4 +258,141 @@ void GUIManager::initSceneManagment()
 		fileDialogue->setEnabled(true);
 		fileDialogue->setVisible(true);
 		});
+}
+
+//*************************************************************
+
+void GUIManager::initShapeEditor()
+{
+	/* info to show
+		- Position (updating)
+		- Rotation (updating)
+		- BodyType (changable)
+		- Joints (toggleable)
+	*/
+
+	auto panel = m_gui->get<tgui::Panel>("Background");
+	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
+	auto shapeGroup = tgui::Group::create({ 400,1080 });
+	shapeGroup->setVisible(false);
+
+	auto shapeButton = tgui::RadioButton::create();
+	shapeButton->setSize({ 100,50 });
+	shapeButton->setPosition({ 275,25 });
+
+	shapeButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
+	shapeButton->getRenderer()->setTextureUncheckedHover(m_radioTexture[1]);
+	shapeButton->getRenderer()->setTextureChecked(m_radioTexture[2]);
+
+	shapeButton->onClick([this, shapeGroup]() {
+		getEditor()->setState(EditState::SELECT);
+		shapeGroup->setVisible(true);
+		});
+	shapeButton->onUncheck([shapeGroup]() {
+		shapeGroup->setVisible(false);
+		});
+	radioGroup->add(shapeButton, "Shape");
+
+	auto idLabel = tgui::Label::create("Current Shape id: ");
+	idLabel->setSize({ 400,50 });
+	idLabel->setPosition({ 25,85 });
+	idLabel->setTextSize(32);
+	idLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	/// <summary>
+	/// Position
+	/// </summary>
+	auto positionLabel = tgui::Label::create("Position");
+	positionLabel->setSize({ 150,50 });
+	positionLabel->setPosition({ 25,150 });
+	positionLabel->setTextSize(32);
+	positionLabel->getRenderer()->setTextColor(tgui::Color::White);
+	
+	auto xValue = tgui::EditBox::create();
+	xValue->setPosition({ 175,150 });
+	xValue->setSize({ 100,50 });
+	xValue->setTextSize(32);
+	xValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	
+	auto yValue = tgui::EditBox::create();
+	yValue->setPosition({ 290, 150 });
+	yValue->setSize({ 100,50 });
+	yValue->setTextSize(32);
+	yValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+
+	/// <summary>
+	/// **************************
+	/// Rotation
+	/// </summary>
+
+	auto rotationLabel = tgui::Label::create("Rotation");
+	rotationLabel->setSize({ 150,50 });
+	rotationLabel->setPosition({ 25,225 });
+	rotationLabel->setTextSize(32);
+	rotationLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto rotVal = tgui::EditBox::create();
+	rotVal->setSize({ 175, 50 });
+	rotVal->setPosition({ 200,225 });
+	rotVal->setTextSize(32);
+	rotVal->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	
+
+	/// <summary>
+	/// **************************
+	/// Type
+	/// </summary>
+
+	auto TypeLabel = tgui::Label::create("Body Type");
+	TypeLabel->setSize({ 175,50 });
+	TypeLabel->setPosition({ 25,300 });
+	TypeLabel->setTextSize(32);
+	TypeLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto typeBox = tgui::ComboBox::create();
+	typeBox->setPosition({ 200,300 });
+	typeBox->setSize({ 175, 50 });
+	typeBox->addItem("Static Body");
+	typeBox->addItem("Kinematic Body");
+	typeBox->addItem("Dynamic Body");
+
+	typeBox->onItemSelect([this](int t_index) {
+		if (IShape* currentShape = m_builder->getCurrentShape())
+		{
+			currentShape->setBodyType((b2BodyType)t_index);
+		}
+	});
+	
+	
+	
+	shapeGroup->add(xValue, "ShapeXValue");
+	shapeGroup->add(yValue, "ShapeYValue");
+	shapeGroup->add(idLabel, "ShapeID");
+	shapeGroup->add(positionLabel);
+	shapeGroup->add(rotationLabel);
+	shapeGroup->add(rotVal, "ShapeRotation");
+	shapeGroup->add(TypeLabel);
+	shapeGroup->add(typeBox, "ShapeType");
+	panel->add(shapeGroup, "modificationGroup");
+}
+
+//*************************************************************
+
+void GUIManager::initTextures()
+{
+	m_shapeTexture = new tgui::Texture[8];
+	m_radioTexture = new tgui::Texture[3];
+
+	m_shapeTexture[0] = tgui::Texture("assets/images/Edge.png");
+	m_shapeTexture[1] = tgui::Texture("assets/images/Triangle.png");
+	m_shapeTexture[2] = tgui::Texture("assets/images/Square.png");
+	m_shapeTexture[3] = tgui::Texture("assets/images/Pentagon.png");
+	m_shapeTexture[4] = tgui::Texture("assets/images/Hexagon.png");
+	m_shapeTexture[5] = tgui::Texture("assets/images/Septagon.png");
+	m_shapeTexture[6] = tgui::Texture("assets/images/Octagon.png");
+	m_shapeTexture[7] = tgui::Texture("assets/images/Circle.png");
+
+	m_radioTexture[0] = tgui::Texture("assets/images/RadioButtonTex.png");
+	m_radioTexture[1] = tgui::Texture("assets/images/RadioButtonHover.png");
+	m_radioTexture[2] = tgui::Texture("assets/images/RadioButtonSelected.png");
 }

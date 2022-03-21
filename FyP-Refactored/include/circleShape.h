@@ -21,12 +21,15 @@ public:
 
 	void setRotation(float t_newRotation)override;
 
+
 private:
+	void updateJoint();
 	friend class ShapeManager;
 	CircleShape(float t_radius);
 
 	sf::CircleShape m_circle;
 	sf::Vertex m_vertices[2];
+	sf::VertexArray m_joints;
 };
 
 #endif

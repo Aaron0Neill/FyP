@@ -71,6 +71,7 @@ ShapeID ShapeManager::createEdge(Vector t_p1, Vector t_p2)
 	ShapeID currentID = m_currentID++;
 	PolygonShape* newShape = new PolygonShape();
 	newShape->m_vertex.resize(2);
+	newShape->m_vertex.setPrimitiveType(sf::Lines);
 	newShape->m_vertex[0].position = t_p1;
 	newShape->m_vertex[1].position = t_p2;
 
@@ -85,7 +86,6 @@ ShapeID ShapeManager::createEdge(Vector t_p1, Vector t_p2)
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &s;
- 	fixtureDef.density = 1.0f;
 	newShape->m_fixture = newShape->m_body->CreateFixture(&fixtureDef);
 
 	m_shapes.push_back(newShape);
@@ -121,12 +121,30 @@ void ShapeManager::draw(sf::RenderWindow* t_window)
 
 //*************************************************************
 
-b2Joint* ShapeManager::createDistanceJoint(ShapeID t_polyid, ShapeID t_circID, float t_distance)
+ShapeID ShapeManager::getID(IShape* t_shape)
+{
+	auto it = std::find(m_shapes.begin(), m_shapes.end(), t_shape);
+	return it - m_shapes.begin();
+}
+
+//*************************************************************
+
+b2Joint* ShapeManager::createDistanceJoint(ShapeID t_shapeA, ShapeID t_shapeB, float t_distance)
+{
+	IShape* bodyA = m_shapes[t_shapeA];
+	IShape* bodyB = m_shapes[t_shapeB];
+	return createDistanceJoint(bodyA, bodyB, t_distance);
+}
+
+//*************************************************************
+
+b2Joint* ShapeManager::createDistanceJoint(IShape* t_bodyA, IShape* t_bodyB, float t_distance)
 {
 	b2DistanceJointDef jointDef;
-	jointDef.bodyA = m_shapes[t_polyid]->getBody();
-	jointDef.bodyB = m_shapes[t_circID]->getBody();
-	jointDef.maxLength = t_distance;
+	auto bodyA = t_bodyA->getBody();
+	auto bodyB = t_bodyB->getBody();
+
+	jointDef.Initialize(bodyA, bodyB, bodyA->GetPosition(), bodyB->GetPosition());
 
 	WorldManager::getInstance()->getWorld()->CreateJoint(&jointDef);
 

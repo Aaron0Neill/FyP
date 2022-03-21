@@ -58,6 +58,7 @@
     <ClCompile Include="src\box2d\rope\b2_rope.cpp" />
     <ClCompile Include="src\circleShape.cpp" />
     <ClCompile Include="src\createState.cpp" />
+    <ClCompile Include="src\distanceJoint.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\guiManager.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -66,7 +67,7 @@
     <ClCompile Include="src\rotateState.cpp" />
     <ClCompile Include="src\scaleState.cpp" />
     <ClCompile Include="src\selectState.cpp" />
-    <ClCompile Include="src\shapeBuilder.cpp" />
+    <ClCompile Include="src\shapeEditor.cpp" />
     <ClCompile Include="src\shapeManager.cpp" />
     <ClCompile Include="src\utils\levelLoader.cpp" />
     <ClCompile Include="src\utils\vectorMaths.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="include\box2d\box2d.h" />
     <ClInclude Include="include\circleShape.h" />
     <ClInclude Include="include\createState.h" />
+    <ClInclude Include="include\distanceJoint.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\guiManager.h" />

@@ -17,6 +17,8 @@ public:
 
 	virtual void render() = 0;
 
+	virtual IShape* getSelected() { return m_selectedShape; }
+
 protected:
 	sf::RenderWindow* m_window;
 	ShapeManager* m_manager;

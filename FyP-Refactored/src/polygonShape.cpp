@@ -44,7 +44,7 @@ void PolygonShape::draw(sf::RenderWindow* t_window)
 b2Vec2* PolygonShape::getPoints(uint8 const t_sides, float t_radius)
 {
 	b2Vec2* points = new b2Vec2[t_sides];
-	float interiorAngle = 360 / t_sides;
+	float interiorAngle = (float)(360 / t_sides);
 	interiorAngle *= Deg2Rad;
 
 	for (uint8 i = 0; i < t_sides; ++i)

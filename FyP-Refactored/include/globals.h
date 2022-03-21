@@ -9,9 +9,9 @@
 
 #define PixelsPerMetre 32.0f //conversion to pixels on screen to metres in box2d
 
-#define PI 3.14159263
+#define PI 3.14159263f
 
-#define Deg2Rad PI / 180
-#define Rad2Deg 180 / PI
+#define Deg2Rad PI / 180.f
+#define Rad2Deg 180.f / PI
 
 #endif

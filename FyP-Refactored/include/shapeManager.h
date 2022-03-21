@@ -45,7 +45,11 @@ public:
 	/// <returns> The ID of the created edge in the polygonVector </returns>
 	ShapeID createEdge(Vector t_p1, Vector t_p2);
 
-
+	/// <summary>
+	/// Checks if there is a shape at any given position
+	/// </summary>
+	/// <param name="t_mousePos"> Position to check </param>
+	/// <returns> The shape that's at the point NULL if no shapes</returns>
 	IShape* isMouseOnShape(Vector t_mousePos);
 	
 	/// <summary>
@@ -54,10 +58,14 @@ public:
 	void update();
 
 	IShape* operator[](ShapeID t_id) { return m_shapes[t_id]; }
+	std::vector<IShape*>& getShapes() { return m_shapes; }
 
 	void draw(sf::RenderWindow* t_window);
 
+	ShapeID getID(IShape* t_shape);
+
 	b2Joint* createDistanceJoint(ShapeID, ShapeID, float);
+	b2Joint* createDistanceJoint(IShape*, IShape*, float);
 
 	void startWorld();
 
