@@ -129,6 +129,17 @@ ShapeID ShapeManager::getID(IShape* t_shape)
 
 //*************************************************************
 
+ShapeID ShapeManager::getID(b2Body* t_shape)
+{
+	auto end = m_shapes.end();
+
+	for (auto it = m_shapes.begin(); it != end; ++it)
+		if ((*it)->getBody() == t_shape)
+			return it - m_shapes.begin();
+}
+
+//*************************************************************
+
 b2Joint* ShapeManager::createDistanceJoint(ShapeID t_shapeA, ShapeID t_shapeB, float t_distance)
 {
 	IShape* bodyA = m_shapes[t_shapeA];
@@ -162,7 +173,7 @@ void ShapeManager::startWorld()
 
 //*************************************************************
 
-void ShapeManager::saveWorld(jsonf& t_data)
+void ShapeManager::saveShapes(jsonf& t_data)
 {
 	ShapeID id = 0;
 	for (auto& shape : m_shapes)
@@ -195,6 +206,25 @@ void ShapeManager::saveWorld(jsonf& t_data)
 		data["Scale"] = shape->getScale();
 		data["Rotation"] = shape->getBody()->GetAngle();
 	}
+}
+
+//*************************************************************
+
+void ShapeManager::saveJoints(jsonf& t_data)
+{
+	ShapeID id = 0;
+	for (auto& shape : m_shapes)
+		if (shape->getBody()->GetJointList())
+		{
+			jsonf& data = t_data[id++];
+			auto joint = shape->getBody()->GetJointList()->joint;
+			int jointType = joint->GetType();
+			data["Bodies"] = { getID(joint->GetBodyA()), getID(joint->GetBodyB()) };
+			if (jointType == b2JointType::e_distanceJoint)
+			{
+
+			}
+		}
 }
 
 //*************************************************************

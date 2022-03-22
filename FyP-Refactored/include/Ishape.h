@@ -30,11 +30,31 @@ public:
 	virtual void setRotation(float t_newRotation) = 0;
 	virtual void setBodyType(b2BodyType t_type) { m_body->SetType(t_type); }
 
-
 protected:
 	IShape() = default;
 	virtual ~IShape() = default;
 	friend class ShapeManager;
+
+	virtual void updateJoints()
+	{
+		if (!m_body->GetJointList())return;
+
+		auto* joint = m_body->GetJointList();
+		int iter = 0;
+		while (joint)
+		{
+			if (iter >= m_joints.getVertexCount())
+				m_joints.resize(iter + 2U);
+			Vector currPos = joint->joint->GetAnchorA();
+			Vector jointPos = joint->joint->GetAnchorB();
+
+			m_joints[iter++].position = currPos.fromWorldSpace();
+			m_joints[iter++].position = jointPos.fromWorldSpace();
+			joint = joint->next;
+		}
+	}
+
+	sf::VertexArray m_joints{sf::Lines};
 	b2Body* m_body { nullptr };
 	b2Fixture* m_fixture { nullptr };
 	float m_scale { 1.f };

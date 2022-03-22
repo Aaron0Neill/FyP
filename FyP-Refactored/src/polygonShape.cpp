@@ -30,6 +30,8 @@ void PolygonShape::update()
 {
 	if (b2Shape::Type::e_polygon == m_fixture->GetType())
 		updatePolygon();
+
+	updateJoints();
 }
 
 //*************************************************************
@@ -37,6 +39,7 @@ void PolygonShape::update()
 void PolygonShape::draw(sf::RenderWindow* t_window)
 {
 	t_window->draw(m_vertex);
+	t_window->draw(m_joints);
 }
 
 //*************************************************************

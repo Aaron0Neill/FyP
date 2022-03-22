@@ -23,10 +23,6 @@ Game::Game()
 	m_gui->addLevelLoader(m_levelManager);
 
 	m_shapes.createEdge({ 0,viewSize.y }, viewSize);
-
-	auto circID = m_shapes.createCircle(1.f, { 400,100 });
-	m_shapes[circID]->setBodyType(b2BodyType::b2_staticBody);
-
 }
 
 //*************************************************************

@@ -18,7 +18,7 @@ CircleShape::CircleShape(float t_radius)
 
 void CircleShape::update()
 {
-	updateJoint();
+	updateJoints();
 	Vector pos = Vector(m_body->GetPosition()).fromWorldSpace();
 	float angle = m_body->GetAngle();
 	float rad = m_circle.getRadius() * 0.7f;
@@ -69,25 +69,4 @@ void CircleShape::setRotation(float t_newRotation)
 {
 	auto pos = m_body->GetPosition();
 	m_body->SetTransform(pos, t_newRotation);
-}
-
-//*************************************************************
-
-void CircleShape::updateJoint()
-{
-	if (!m_body->GetJointList())return;
-
-	auto* joint = m_body->GetJointList();
-	int iter = 0;
-	while (joint)
-	{
-		if (iter >= m_joints.getVertexCount())
-			m_joints.resize(iter + 2U);
-		Vector currPos = joint->joint->GetAnchorA();
-		Vector jointPos = joint->joint->GetAnchorB();
-
-		m_joints[iter++].position = currPos.fromWorldSpace();
-		m_joints[iter++].position = jointPos.fromWorldSpace();
-		joint = joint->next;
-	}
 }

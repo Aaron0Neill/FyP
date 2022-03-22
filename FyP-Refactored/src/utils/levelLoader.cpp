@@ -6,7 +6,8 @@ void LevelLoader::saveLevel(const std::string& t_levelPath)
 
 	jsonf data;
 
-	m_managerPtr->saveWorld(data["shapes"]);
+	m_managerPtr->saveShapes(data["shapes"]);
+	m_managerPtr->saveJoints(data["joints"]);
 
 	if (file.is_open())
 	{

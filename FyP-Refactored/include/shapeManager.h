@@ -63,13 +63,15 @@ public:
 	void draw(sf::RenderWindow* t_window);
 
 	ShapeID getID(IShape* t_shape);
+	ShapeID getID(b2Body* t_shape);
 
 	b2Joint* createDistanceJoint(ShapeID, ShapeID, float);
 	b2Joint* createDistanceJoint(IShape*, IShape*, float);
 
 	void startWorld();
 
-	void saveWorld(jsonf& t_data);
+	void saveShapes(jsonf& t_data);
+	void saveJoints(jsonf& t_data);
 private:
 
 	/// <summary>
