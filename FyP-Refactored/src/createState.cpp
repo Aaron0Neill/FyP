@@ -101,8 +101,15 @@ void CreateState::updateDrawing()
 {
 	if (m_currentShape >= ShapeType::TRIANGLE && m_currentShape <= ShapeType::OCTAGON)
 	{
-		float cosAngle = cos(0.f);
-		float sinAngle = sin(0.f);
+		float cosAngle = cosf(0.f);
+		float sinAngle = sinf(0.f);
+
+		if (m_currentShape == ShapeType::SQUARE)
+		{
+			cosAngle = cosf(45.f * Deg2Rad);
+			sinAngle = sinf(45.f * Deg2Rad);
+		}
+
 		Vector vertexPos;
 
 		for (uint8 i = 0; i < m_currentPoints + 1; ++i)

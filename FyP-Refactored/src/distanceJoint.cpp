@@ -19,7 +19,7 @@ void DistanceJointState::handleEvent(sf::Event& e)
 				if (m_bodyB = m_manager->isMouseOnShape(pos))
 					if (m_bodyA != m_bodyB)
 					{
-						m_manager->createDistanceJoint(m_bodyA, m_bodyB, 10.f);
+						m_manager->createDistanceJoint(m_bodyA, m_bodyB);
 						m_bodyA = nullptr;
 						m_bodyB = nullptr;
 					}

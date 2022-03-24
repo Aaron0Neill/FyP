@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "box2d/b2_distance_joint.h"
+#include "box2d/b2_world_callbacks.h"
 #include "circleShape.h"
 #include "polygonShape.h"
 #include "worldManager.h"
@@ -43,7 +44,7 @@ public:
 	/// <param name="t_p1"> Pixel co-ordinates of the first point </param>
 	/// <param name="t_p2"> Pixel co-ordinates of the second point </param>
 	/// <returns> The ID of the created edge in the polygonVector </returns>
-	ShapeID createEdge(Vector t_p1, Vector t_p2);
+	ShapeID createEdge(Vector t_p1 = Vector(), Vector t_p2 = Vector());
 
 	/// <summary>
 	/// Checks if there is a shape at any given position
@@ -65,8 +66,8 @@ public:
 	ShapeID getID(IShape* t_shape);
 	ShapeID getID(b2Body* t_shape);
 
-	b2Joint* createDistanceJoint(ShapeID, ShapeID, float);
-	b2Joint* createDistanceJoint(IShape*, IShape*, float);
+	b2Joint* createDistanceJoint(ShapeID, ShapeID);
+	b2Joint* createDistanceJoint(IShape*, IShape*);
 
 	void startWorld();
 
@@ -84,7 +85,9 @@ private:
 
 	std::vector<IShape*> m_shapes;
 
-	std::vector<b2DistanceJointDef*> m_distanceJoints;
+	std::vector<b2Joint*> m_joints;
+
+	sf::VertexArray m_jointsArray{ sf::Lines };
 
 	ShapeID m_currentID { 0 };
 

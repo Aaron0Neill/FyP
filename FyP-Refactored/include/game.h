@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "box2d/b2_distance_joint.h"
+#include "box2d/b2_weld_joint.h"
 #include "box2d/b2_revolute_joint.h"
 #include "box2d/b2_wheel_joint.h"
 #include "box2d/b2_pulley_joint.h"
@@ -15,6 +16,7 @@
 #include "shapeManager.h"
 #include "shapeEditor.h"
 #include "worldManager.h"
+#include "shapeContactListener.h"
 
 class Game
 {

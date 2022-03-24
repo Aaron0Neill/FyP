@@ -16,7 +16,6 @@ public:
 
 	void loadLevel(const std::string& t_levelPath);
 
-
 private:
 	ShapeManager* m_managerPtr;
 };

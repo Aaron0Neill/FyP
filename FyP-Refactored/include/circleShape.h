@@ -18,8 +18,11 @@ public:
 	void draw(sf::RenderWindow* t_window)override;
 
 	void setScale(float t_scale)override;
+	virtual void setXScale(float t_newScale)override;
+	virtual void setYScale(float t_newScale)override;
 
-	void setRotation(float t_newRotation)override;
+	void toJson(jsonf& t_json)override;
+	void fromJson(jsonf& t_json)override;
 
 private:
 	friend class ShapeManager;

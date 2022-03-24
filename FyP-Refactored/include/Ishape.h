@@ -2,6 +2,7 @@
 #define I_SHAPE_INCLUDE
 
 #include "utils/vector.h"
+#include "utils/json.hpp"
 
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
@@ -18,7 +19,7 @@ public:
 
 	inline virtual b2Fixture* getFixture() { return m_fixture; }
 	inline virtual b2Body* getBody() { return m_body; }
-	inline virtual float getScale() { return m_scale; }
+	inline virtual sf::Vector2f getScale() { return m_scale; }
 
 	inline virtual void setPosition(Vector t_pos)
 	{
@@ -26,38 +27,44 @@ public:
 		m_body->SetTransform(t_pos.toWorldSpace(), angle);
 	};
 
+	inline virtual void setXPosition(float t_x)
+	{
+		Vector pos = m_body->GetPosition();
+		pos = pos.fromWorldSpace();
+		pos.x = t_x;
+		setPosition(pos);
+	}
+
+	inline virtual void setYPosition(float t_y)
+	{
+		Vector pos = m_body->GetPosition();
+		pos = pos.fromWorldSpace();
+		pos.y = t_y;
+		setPosition(pos);
+	}
+
+	inline virtual void setRotation(float t_rot)
+	{
+		Vector pos = m_body->GetPosition();
+		m_body->SetTransform(pos, t_rot * Deg2Rad);
+	}
+
 	virtual void setScale(float t_newScale) = 0;
-	virtual void setRotation(float t_newRotation) = 0;
+	virtual void setXScale(float t_newScale) = 0;
+	virtual void setYScale(float t_newScale) = 0;
 	virtual void setBodyType(b2BodyType t_type) { m_body->SetType(t_type); }
+
+	virtual void toJson(jsonf& t_json) = 0;
+	virtual void fromJson(jsonf& t_json) = 0;
 
 protected:
 	IShape() = default;
 	virtual ~IShape() = default;
 	friend class ShapeManager;
 
-	virtual void updateJoints()
-	{
-		if (!m_body->GetJointList())return;
-
-		auto* joint = m_body->GetJointList();
-		int iter = 0;
-		while (joint)
-		{
-			if (iter >= m_joints.getVertexCount())
-				m_joints.resize(iter + 2U);
-			Vector currPos = joint->joint->GetAnchorA();
-			Vector jointPos = joint->joint->GetAnchorB();
-
-			m_joints[iter++].position = currPos.fromWorldSpace();
-			m_joints[iter++].position = jointPos.fromWorldSpace();
-			joint = joint->next;
-		}
-	}
-
-	sf::VertexArray m_joints{sf::Lines};
 	b2Body* m_body { nullptr };
 	b2Fixture* m_fixture { nullptr };
-	float m_scale { 1.f };
+	sf::Vector2f m_scale {1.f, 1.f};
 };
 
 #endif

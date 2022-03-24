@@ -31,6 +31,22 @@ void LevelLoader::loadLevel(const std::string& t_levelPath)
 		file.close();
 	}
 
+	//for (auto& shape : data["shapes"])
+	//{
+	//	b2Shape::Type type = shape["ShapeType"].get<b2Shape::Type>();
+
+	//	ShapeID currID = 0;
+
+	//	if (type == b2Shape::Type::e_polygon)
+	//		currID = m_managerPtr->createPolygon();
+	//	else if (type == b2Shape::Type::e_circle)
+	//		currID = m_managerPtr->createCircle();
+	//	else
+	//		currID = m_managerPtr->createEdge();
+
+	//	(*m_managerPtr)[currID]->fromJson(shape);
+	//}
+
 	auto shapePtr = data["shapes"].begin();
 	auto shapeEnd = data["shapes"].end();
 
@@ -38,6 +54,7 @@ void LevelLoader::loadLevel(const std::string& t_levelPath)
 	{
 		jsonf& shapeData = *shapePtr;
 		auto type = shapeData["ShapeType"].get<int>();
+		auto bodyType = shapeData["BodyType"].get<b2BodyType>();
 
 		if (type == b2Shape::Type::e_circle)
 		{
@@ -46,12 +63,13 @@ void LevelLoader::loadLevel(const std::string& t_levelPath)
 			float x = pts->get<float>();
 			float y = (++pts)->get<float>();
 
-			float scale = shapeData["Scale"].get<float>();
+			float scale = shapeData["Scale"][0].get<float>();
 
 			auto shape = m_managerPtr->createCircle(scale, {x,y});
 
 			float rot = shapeData["Rotation"].get<float>();
 			(*m_managerPtr)[shape]->setRotation(rot);
+			(*m_managerPtr)[shape]->setBodyType(bodyType);
 		}
 		else if (type == b2Shape::Type::e_polygon)
 		{
@@ -62,12 +80,14 @@ void LevelLoader::loadLevel(const std::string& t_levelPath)
 			float y = yPtr->get<float>();
 			uint8_t polyCount = shapeData["PolyCount"].get<uint8_t>();
 
-			float scale = shapeData["Scale"].get<float>();
+			float scaleX = shapeData["Scale"][0].get<float>();
+			float scaleY = shapeData["Scale"][1].get<float>();
 
-			auto shape = m_managerPtr->createPolygon(polyCount, scale, { x,y });
+			auto shape = m_managerPtr->createPolygon(polyCount, scaleX, { x,y });
 
 			float rot = shapeData["Rotation"].get<float>();
 			(*m_managerPtr)[shape]->setRotation(rot);
+			(*m_managerPtr)[shape]->setBodyType(bodyType);
 		}
 		else if (type == b2Shape::Type::e_edge)
 		{
@@ -80,5 +100,14 @@ void LevelLoader::loadLevel(const std::string& t_levelPath)
 
 			m_managerPtr->createEdge({ x1,y1 }, { x2,y2 });
 		}
+	}
+
+
+	for (auto& jointData : data["joints"])
+	{
+		auto bodyA = jointData["Bodies"][0].get<ShapeID>();
+		auto bodyB = jointData["Bodies"][1].get<ShapeID>();
+
+		m_managerPtr->createDistanceJoint(bodyA, bodyB);
 	}
 }

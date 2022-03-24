@@ -25,6 +25,9 @@ ShapeID ShapeManager::createPolygon(uint8 t_sides, float t_radius, Vector t_pos)
 
 	b2PolygonShape s;
 	s.Set(points, t_sides);
+
+	if (t_sides == 4)
+		s.SetAsBox(t_radius / 1.5f, t_radius / 1.5f);
 	
 	b2BodyDef def = generateBodyDef(t_pos.toWorldSpace());
 	newShape->m_body = m_world->CreateBody(&def);
@@ -109,6 +112,17 @@ void ShapeManager::update()
 {
 	for (auto& shape : m_shapes)
 		shape->update();
+
+	size_t jointCount = m_joints.size();
+	if (m_jointsArray.getVertexCount() < m_joints.size() * 2)
+		m_jointsArray.resize(jointCount * 2U);
+
+	for (size_t i = 0; i < jointCount; ++i)
+	{
+		size_t vertIndex = i * 2;
+		m_jointsArray[vertIndex].position = Vector(m_joints[i]->GetBodyA()->GetPosition()).fromWorldSpace();
+		m_jointsArray[vertIndex+1].position = Vector(m_joints[i]->GetBodyB()->GetPosition()).fromWorldSpace();
+	}
 }
 
 //*************************************************************
@@ -117,6 +131,8 @@ void ShapeManager::draw(sf::RenderWindow* t_window)
 {
 	for (auto& shape : m_shapes)
 		shape->draw(t_window);
+
+	t_window->draw(m_jointsArray);
 }
 
 //*************************************************************
@@ -140,16 +156,16 @@ ShapeID ShapeManager::getID(b2Body* t_shape)
 
 //*************************************************************
 
-b2Joint* ShapeManager::createDistanceJoint(ShapeID t_shapeA, ShapeID t_shapeB, float t_distance)
+b2Joint* ShapeManager::createDistanceJoint(ShapeID t_shapeA, ShapeID t_shapeB)
 {
 	IShape* bodyA = m_shapes[t_shapeA];
 	IShape* bodyB = m_shapes[t_shapeB];
-	return createDistanceJoint(bodyA, bodyB, t_distance);
+	return createDistanceJoint(bodyA, bodyB);
 }
 
 //*************************************************************
 
-b2Joint* ShapeManager::createDistanceJoint(IShape* t_bodyA, IShape* t_bodyB, float t_distance)
+b2Joint* ShapeManager::createDistanceJoint(IShape* t_bodyA, IShape* t_bodyB)
 {
 	b2DistanceJointDef jointDef;
 	auto bodyA = t_bodyA->getBody();
@@ -159,8 +175,9 @@ b2Joint* ShapeManager::createDistanceJoint(IShape* t_bodyA, IShape* t_bodyB, flo
 
 	WorldManager::getInstance()->getWorld()->CreateJoint(&jointDef);
 
-	b2Joint* j = m_world->CreateJoint(&jointDef);
-	return j;
+	m_joints.push_back(m_world->CreateJoint(&jointDef));
+	size_t size = m_joints.size();
+	return m_joints[size-1];
 }
 
 //*************************************************************
@@ -178,33 +195,10 @@ void ShapeManager::saveShapes(jsonf& t_data)
 	ShapeID id = 0;
 	for (auto& shape : m_shapes)
 	{
+		if (shape == *m_shapes.begin())continue;
+
 		jsonf& data = t_data[id++];
-		int type = shape->getFixture()->GetType();
-		data["ShapeType"] = type;
-
-		if (type == b2Shape::Type::e_polygon)
-		{
-			auto pos = Vector(shape->getBody()->GetPosition()).fromWorldSpace();
-			data["Centre"] = { pos.x , pos.y };
-			data["PolyCount"] = static_cast<b2PolygonShape*>(shape->getFixture()->GetShape())->m_count;
-		}
-		else if (type == b2Shape::Type::e_circle)
-		{
-			auto pos = Vector(shape->getBody()->GetPosition()).fromWorldSpace();
-			data["Centre"] = { pos.x , pos.y };
-		}
-		else if (type == b2Shape::Type::e_edge)
-		{
-			Vector pos1 = static_cast<b2EdgeShape*>(shape->getFixture()->GetShape())->m_vertex1;
-			Vector pos2 = static_cast<b2EdgeShape*>(shape->getFixture()->GetShape())->m_vertex2;
-			pos1 = pos1.fromWorldSpace();
-			pos2 = pos2.fromWorldSpace();
-
-			data["Points"] = { pos1.x , pos1.y , pos2.x, pos2.y };
-		}
-
-		data["Scale"] = shape->getScale();
-		data["Rotation"] = shape->getBody()->GetAngle();
+		shape->toJson(data);
 	}
 }
 
@@ -213,18 +207,13 @@ void ShapeManager::saveShapes(jsonf& t_data)
 void ShapeManager::saveJoints(jsonf& t_data)
 {
 	ShapeID id = 0;
-	for (auto& shape : m_shapes)
-		if (shape->getBody()->GetJointList())
-		{
-			jsonf& data = t_data[id++];
-			auto joint = shape->getBody()->GetJointList()->joint;
-			int jointType = joint->GetType();
-			data["Bodies"] = { getID(joint->GetBodyA()), getID(joint->GetBodyB()) };
-			if (jointType == b2JointType::e_distanceJoint)
-			{
 
-			}
-		}
+	for (auto& j : m_joints)
+	{
+		jsonf& data = t_data[id++];
+		int jointType = j->GetType();
+		data["Bodies"] = { getID(j->GetBodyA()), getID(j->GetBodyB()) };
+	}
 }
 
 //*************************************************************

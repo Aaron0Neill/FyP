@@ -126,6 +126,7 @@
     <ClInclude Include="include\rotateState.h" />
     <ClInclude Include="include\scaleState.h" />
     <ClInclude Include="include\selectState.h" />
+    <ClInclude Include="include\shapeContactListener.h" />
     <ClInclude Include="include\shapeEditor.h" />
     <ClInclude Include="include\shapeManager.h" />
     <ClInclude Include="include\utils\json.hpp" />

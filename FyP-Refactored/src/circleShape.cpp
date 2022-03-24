@@ -10,15 +10,12 @@ CircleShape::CircleShape(float t_radius)
 
 	m_vertices[0].position = {t_radius, t_radius}; // centre
 	m_vertices[1].position = { 0, t_radius }; // top
-
-	m_joints.setPrimitiveType(sf::Lines);
 }
 
 //*************************************************************
 
 void CircleShape::update()
 {
-	updateJoints();
 	Vector pos = Vector(m_body->GetPosition()).fromWorldSpace();
 	float angle = m_body->GetAngle();
 	float rad = m_circle.getRadius() * 0.7f;
@@ -37,7 +34,6 @@ void CircleShape::draw(sf::RenderWindow* t_window)
 {
 	t_window->draw(m_circle);
 	t_window->draw(m_vertices,2, sf::Lines);
-	t_window->draw(m_joints);
 }
 
 //*************************************************************
@@ -47,8 +43,8 @@ void CircleShape::setScale(float t_scale)
 	if (t_scale != 0)
 	{
 		float scalar;
-		scalar = t_scale / m_scale;
-		m_scale = t_scale;
+		scalar = t_scale / m_scale.x;
+		m_scale.x = t_scale;
 		
 		b2CircleShape* shape = static_cast<b2CircleShape*>(m_fixture->GetShape());
 		shape->m_radius *= scalar;
@@ -65,8 +61,34 @@ void CircleShape::setScale(float t_scale)
 
 //*************************************************************
 
-void CircleShape::setRotation(float t_newRotation)
+void CircleShape::setXScale(float t_newScale)
 {
-	auto pos = m_body->GetPosition();
-	m_body->SetTransform(pos, t_newRotation);
+}
+
+//*************************************************************
+
+void CircleShape::setYScale(float t_newScale)
+{
+}
+
+//*************************************************************
+
+void CircleShape::toJson(jsonf& t_json)
+{
+	t_json["ShapeType"] = m_fixture->GetType();
+
+	Vector pos = m_body->GetPosition();
+	pos = pos.fromWorldSpace();
+	t_json["Centre"] = { pos.x, pos.y };
+
+	t_json["Scale"] = { m_scale.x, m_scale.y };
+	t_json["Rotation"] = m_body->GetAngle() * Rad2Deg;
+	t_json["BodyType"] = m_body->GetType();
+}
+
+//*************************************************************
+
+void CircleShape::fromJson(jsonf& t_json)
+{
+
 }

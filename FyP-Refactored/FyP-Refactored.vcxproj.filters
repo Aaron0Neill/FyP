@@ -428,5 +428,8 @@
     <ClInclude Include="include\distanceJoint.h">
       <Filter>Header Files\builderStates</Filter>
     </ClInclude>
+    <ClInclude Include="include\shapeContactListener.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

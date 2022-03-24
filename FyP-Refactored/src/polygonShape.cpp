@@ -2,15 +2,23 @@
 
 void PolygonShape::setScale(float t_newScale)
 {
+	setXScale(t_newScale);
+	setYScale(t_newScale);
+}
+
+//*************************************************************
+
+void PolygonShape::setXScale(float t_newScale)
+{
 	if (t_newScale != 0)
 	{
 		float scalar;
-		scalar = t_newScale / m_scale;
-		m_scale = t_newScale;
+		scalar = t_newScale / m_scale.x;
+		m_scale.x = t_newScale;
 		b2PolygonShape* shape = static_cast<b2PolygonShape*>(m_fixture->GetShape());
 
 		for (auto index = 0; index < shape->m_count; ++index)
-			shape->m_vertices[index] *= scalar;
+			shape->m_vertices[index].x *= scalar;
 
 		m_body->SetAwake(true);
 	}
@@ -18,10 +26,20 @@ void PolygonShape::setScale(float t_newScale)
 
 //*************************************************************
 
-void PolygonShape::setRotation(float t_newRotation)
+void PolygonShape::setYScale(float t_newScale)
 {
-	auto pos = m_body->GetPosition();
-	m_body->SetTransform(pos, t_newRotation);
+	if (t_newScale != 0)
+	{
+		float scalar;
+		scalar = t_newScale / m_scale.y;
+		m_scale.y = t_newScale;
+		b2PolygonShape* shape = static_cast<b2PolygonShape*>(m_fixture->GetShape());
+
+		for (auto index = 0; index < shape->m_count; ++index)
+			shape->m_vertices[index].y *= scalar;
+
+		m_body->SetAwake(true);
+	}
 }
 
 //*************************************************************
@@ -30,8 +48,6 @@ void PolygonShape::update()
 {
 	if (b2Shape::Type::e_polygon == m_fixture->GetType())
 		updatePolygon();
-
-	updateJoints();
 }
 
 //*************************************************************
@@ -39,7 +55,41 @@ void PolygonShape::update()
 void PolygonShape::draw(sf::RenderWindow* t_window)
 {
 	t_window->draw(m_vertex);
-	t_window->draw(m_joints);
+}
+
+//*************************************************************
+
+void PolygonShape::toJson(jsonf& t_json)
+{
+	b2Shape::Type type = m_fixture->GetType();
+
+	t_json["ShapeType"] = type;
+
+	if (type == b2Shape::Type::e_polygon)
+	{
+		Vector pos = m_body->GetPosition();
+		pos = pos.fromWorldSpace();
+		t_json["Centre"] = { pos.x, pos.y };
+		t_json["PolyCount"] = static_cast<b2PolygonShape*>(m_fixture->GetShape())->m_count;
+	}
+	else
+	{
+		Vector pos1 = static_cast<b2EdgeShape*>(m_fixture->GetShape())->m_vertex1;
+		Vector pos2 = static_cast<b2EdgeShape*>(m_fixture->GetShape())->m_vertex2;
+		pos1 = pos1.fromWorldSpace();
+		pos2 = pos2.fromWorldSpace();
+
+		t_json["Points"] = { pos1.x , pos1.y , pos2.x, pos2.y };
+	}
+	t_json["Scale"] = { m_scale.x, m_scale.y };
+	t_json["Rotation"] = m_body->GetAngle() * Rad2Deg;
+	t_json["BodyType"] = m_body->GetType();
+}
+
+//*************************************************************
+
+void PolygonShape::fromJson(jsonf& t_json)
+{
 }
 
 //*************************************************************

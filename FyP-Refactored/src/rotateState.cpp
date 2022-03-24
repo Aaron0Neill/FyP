@@ -19,6 +19,8 @@ void RotateState::handleEvent(sf::Event& e)
 				m_points[0].position = Vector(m_selectedShape->getBody()->GetPosition()).fromWorldSpace();
 				m_startAngle = vector2Heading(m_points[1].position - m_points[0].position);
 			}
+			else
+				m_selectedShape = m_manager->isMouseOnShape(m_points[1].position);
 	}
 	else if (sf::Event::MouseMoved == e.type)
 	{

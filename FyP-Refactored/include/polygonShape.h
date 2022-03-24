@@ -13,21 +13,37 @@ class PolygonShape :
 	public IShape
 {
 public:
-	
-	/// <summary>
-	/// Allow the user to change the scale of the shape
-	/// </summary>
-	/// <param name="t_newScale"> scale to set it to </param>
-	void setScale(float t_newScale)override;
-
-	void setRotation(float t_newRotation)override;
 
 	/// <summary>
 	/// Update the drawing of the polyon based on its body
 	/// </summary>
 	void update()override;
+	
+	/// <summary>
+	/// Allow the user to change the scale of the shape
+	/// </summary>
+	/// <param name="t_newScale"> scale to set it to </param>
+	void setScale	(float t_newScale)override;
+	void setXScale	(float t_newScale)override;
+	void setYScale	(float t_newScale)override;
 
+	/// <summary>
+	/// draw the PolygonShape
+	/// </summary>
+	/// <param name="t_window"> Window to draw it too</param>
 	void draw(sf::RenderWindow* t_window)override;
+
+	/// <summary>
+	/// Convert the current shape into json and push it onto the data
+	/// </summary>
+	/// <param name="t_json"> Json file to add it to </param>
+	void toJson(jsonf& t_json)override;
+
+	/// <summary>
+	/// Read the information from the json file and use to it make the shape
+	/// </summary>
+	/// <param name="t_json"></param>
+	void fromJson(jsonf& t_json)override;
 
 	b2Body* getBody() { return m_body; }
 

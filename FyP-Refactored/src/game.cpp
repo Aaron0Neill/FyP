@@ -5,6 +5,9 @@ Game::Game()
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
+	ContactListener* listener = new ContactListener(&m_shapes);
+	m_world->getWorld()->SetContactListener(listener);
+
 	Vector viewSize{ 1920U , 1080U };
 	sf::View view;
 	view.setSize(viewSize);

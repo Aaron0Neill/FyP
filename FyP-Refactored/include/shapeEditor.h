@@ -20,7 +20,8 @@ enum class EditState : uint8
 	SCALE,
 	ROTATE, 
 	MOVE, 
-	DISTANCE_JOINT
+	DISTANCE_JOINT,
+	WHEEL_JOINT
 };
 
 using State = std::shared_ptr<IBuildState>;

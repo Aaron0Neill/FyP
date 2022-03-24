@@ -4,6 +4,8 @@
 SelectState::SelectState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
 	IBuildState(t_window, t_manager)
 {
+	if (m_selectedShape)
+		updateUI();
 }
 
 //*************************************************************
@@ -19,6 +21,13 @@ void SelectState::handleEvent(sf::Event& e)
 				tgui::Gui* gui = GUIManager::getInstance()->getGui();
 				ShapeID id = m_manager->getID(m_selectedShape);
 				gui->get<tgui::Label>("ShapeID")->setText("Current Shape id: " + std::to_string(id));
+				updateUI();
 			}
 	}
+}
+
+void SelectState::updateUI()
+{
+	GUIManager* gui = GUIManager::getInstance();
+	gui->updateSelectedShape(m_selectedShape);
 }

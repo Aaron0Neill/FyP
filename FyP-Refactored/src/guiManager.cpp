@@ -36,6 +36,28 @@ void GUIManager::draw()
 
 //*************************************************************
 
+void GUIManager::updateSelectedShape(IShape* t_selectedShape)
+{
+	auto group = m_gui->get<tgui::Group>("modificationGroup");
+
+	Vector shapePos = t_selectedShape->getBody()->GetPosition();
+	shapePos = shapePos.fromWorldSpace();
+	auto xPos = group->get<tgui::EditBox>("ShapeXValue");
+	auto yPos = group->get<tgui::EditBox>("ShapeYValue");
+	xPos->setText(std::to_string((int)shapePos.x));
+	yPos->setText(std::to_string((int)shapePos.y));
+
+	float angle = t_selectedShape->getBody()->GetAngle() * Rad2Deg;
+	auto rot = group->get<tgui::EditBox>("ShapeRotation");
+	rot->setText(std::to_string((int)angle));
+
+	auto type = t_selectedShape->getBody()->GetType();
+	auto typeBox = group->get<tgui::ComboBox>("ShapeType");
+	typeBox->setSelectedItemByIndex(type);
+}
+
+//*************************************************************
+
 void GUIManager::initShapeBuild()
 {
 	tgui::Panel::Ptr panel;
@@ -125,6 +147,11 @@ void GUIManager::initShapeBuild()
 	scaleBtn->onClick([this]() { getEditor()->setState(EditState::SCALE); });
 
 	auto distJoint = tgui::Button::create("Distance Joint");
+	distJoint->setSize({ 300,100 });
+	distJoint->setPosition({ 50, 475 });
+	distJoint->onClick([this]() { getEditor()->setState(EditState::DISTANCE_JOINT); });
+
+	auto revoJoint = tgui::Button::create("Wheel Joint");
 	distJoint->setSize({ 300,100 });
 	distJoint->setPosition({ 50, 475 });
 	distJoint->onClick([this]() { getEditor()->setState(EditState::DISTANCE_JOINT); });
@@ -313,12 +340,23 @@ void GUIManager::initShapeEditor()
 	xValue->setSize({ 100,50 });
 	xValue->setTextSize(32);
 	xValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	xValue->onTextChange([this](tgui::String t_newText) {
+		if (!t_newText.size())
+			return;
+		float newX = stof(t_newText.toStdString());
+		getEditor()->getCurrentShape()->setXPosition(newX);
+		});
 	
 	auto yValue = tgui::EditBox::create();
 	yValue->setPosition({ 290, 150 });
 	yValue->setSize({ 100,50 });
 	yValue->setTextSize(32);
 	yValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	yValue->onTextChange([this](tgui::String t_newText) {
+		if (!t_newText.size())
+			return;
+		getEditor()->getCurrentShape()->setYPosition(stof(t_newText.toStdString()));
+		});
 
 	/// <summary>
 	/// **************************
@@ -336,6 +374,11 @@ void GUIManager::initShapeEditor()
 	rotVal->setPosition({ 200,225 });
 	rotVal->setTextSize(32);
 	rotVal->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	rotVal->onTextChange([this](tgui::String t_newText) {
+		if (!t_newText.size())
+			return;
+		getEditor()->getCurrentShape()->setRotation(stof(t_newText.toStdString()));
+		});
 	
 
 	/// <summary>
@@ -363,7 +406,44 @@ void GUIManager::initShapeEditor()
 		}
 	});
 	
-	
+	/// <summary>
+	/// Scale
+	/// </summary>
+	auto scaleLabel = tgui::Label::create("Scale");
+	scaleLabel->setSize({ 150,50 });
+	scaleLabel->setPosition({ 25,375 });
+	scaleLabel->setTextSize(32);
+	scaleLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto xScale = tgui::EditBox::create();
+	xScale->setPosition({ 175,375});
+	xScale->setSize({ 100,50 });
+	xScale->setTextSize(32);
+	xScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+
+	xScale->onTextChange([this](tgui::String t_newText) {
+		if (!t_newText.size())
+			return;
+
+		auto xScale = std::stof(t_newText.toStdString());
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setXScale(xScale);
+		});
+
+	auto yScale = tgui::EditBox::create();
+	yScale->setPosition({ 290, 375 });
+	yScale->setSize({ 100,50 });
+	yScale->setTextSize(32);
+	yScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	yScale->onTextChange([this](tgui::String t_newText) {
+		if (!t_newText.size())
+			return;
+
+		auto yScale = std::stof(t_newText.toStdString());
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setYScale(yScale);
+		});
+
 	
 	shapeGroup->add(xValue, "ShapeXValue");
 	shapeGroup->add(yValue, "ShapeYValue");
@@ -373,6 +453,9 @@ void GUIManager::initShapeEditor()
 	shapeGroup->add(rotVal, "ShapeRotation");
 	shapeGroup->add(TypeLabel);
 	shapeGroup->add(typeBox, "ShapeType");
+	shapeGroup->add(scaleLabel);
+	shapeGroup->add(xScale, "ShapeXScale");
+	shapeGroup->add(yScale, "ShapeYScale");
 	panel->add(shapeGroup, "modificationGroup");
 }
 
