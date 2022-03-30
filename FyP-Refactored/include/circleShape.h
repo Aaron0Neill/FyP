@@ -17,12 +17,15 @@ public:
 
 	void draw(sf::RenderWindow* t_window)override;
 
-	void setScale(float t_scale)override;
-	virtual void setXScale(float t_newScale)override;
-	virtual void setYScale(float t_newScale)override;
+	/// <summary>
+	/// Set Function
+	/// </summary>
+	void setScale	(float t_scale)		override;
+	void setXScale	(float t_newScale)	override;
+	void setYScale	(float t_newScale)	override;
 
-	void toJson(jsonf& t_json)override;
-	void fromJson(jsonf& t_json)override;
+	void toJson		(jsonf& t_json)		override;
+	void fromJson	(jsonf& t_json)		override;
 
 private:
 	friend class ShapeManager;

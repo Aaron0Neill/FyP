@@ -44,7 +44,7 @@ public:
 	/// <param name="t_p1"> Pixel co-ordinates of the first point </param>
 	/// <param name="t_p2"> Pixel co-ordinates of the second point </param>
 	/// <returns> The ID of the created edge in the polygonVector </returns>
-	ShapeID createEdge(Vector t_p1 = Vector(), Vector t_p2 = Vector());
+	ShapeID createEdge(Vector t_p1 = Vector(), Vector t_p2 = Vector(10,0));
 
 	/// <summary>
 	/// Checks if there is a shape at any given position
@@ -58,7 +58,7 @@ public:
 	/// </summary>
 	void update();
 
-	IShape* operator[](ShapeID t_id) { return m_shapes[t_id]; }
+	IShape* operator[](ShapeID t_id) { return m_shapes[t_id]; } 
 	std::vector<IShape*>& getShapes() { return m_shapes; }
 
 	void draw(sf::RenderWindow* t_window);

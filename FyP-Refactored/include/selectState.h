@@ -11,10 +11,8 @@ public:
 	~SelectState() = default;
 
 	void handleEvent(sf::Event & e);
-
 	void render() {};
 	
-
 private:
 	void updateUI();
 };

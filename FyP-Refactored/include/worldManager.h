@@ -37,9 +37,9 @@ private:
 		delete m_world;
 	}
 
-	b2World* m_world{nullptr};
-	uint8 m_velocityIterations { 6 };
-	uint8 m_positionIterations { 2 };
+	b2World* m_world			{ nullptr };
+	uint8 m_velocityIterations	{ 6 };
+	uint8 m_positionIterations	{ 2 };
 };
 
 #endif

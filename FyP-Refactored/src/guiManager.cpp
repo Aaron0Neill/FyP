@@ -298,6 +298,9 @@ void GUIManager::initShapeEditor()
 		- Joints (toggleable)
 	*/
 
+	float indent = 25.f;
+	float yLevel = 85.f;
+
 	auto panel = m_gui->get<tgui::Panel>("Background");
 	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
 	auto shapeGroup = tgui::Group::create({ 400,1080 });
@@ -320,23 +323,46 @@ void GUIManager::initShapeEditor()
 		});
 	radioGroup->add(shapeButton, "Shape");
 
+	auto nameLabel = tgui::Label::create("Shape Name");
+	nameLabel->setSize({ 185,50 });
+	nameLabel->setPosition({ indent, yLevel });
+	nameLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	nameLabel->setTextSize(26U);
+	nameLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto nameBox = tgui::EditBox::create();
+	nameBox->setSize({ 185,50 });
+	nameBox->setPosition({ 212.5, yLevel });
+	nameBox->setTextSize(24);
+	nameBox->setInputValidator("^[a-zA-Z]+$");
+	nameBox->onTextChange([this](tgui::String t_newText) {
+		if (IShape* current = m_builder->getCurrentShape())
+			current->setName(t_newText.toStdString());
+		});
+
+	yLevel += 75.f;
+
 	auto idLabel = tgui::Label::create("Current Shape id: ");
 	idLabel->setSize({ 400,50 });
-	idLabel->setPosition({ 25,85 });
+	idLabel->setPosition({ indent, yLevel });
+	idLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 	idLabel->setTextSize(32);
 	idLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	yLevel += 75.f;
 
 	/// <summary>
 	/// Position
 	/// </summary>
 	auto positionLabel = tgui::Label::create("Position");
 	positionLabel->setSize({ 150,50 });
-	positionLabel->setPosition({ 25,150 });
+	positionLabel->setPosition({ indent,yLevel });
+	positionLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 	positionLabel->setTextSize(32);
 	positionLabel->getRenderer()->setTextColor(tgui::Color::White);
 	
 	auto xValue = tgui::EditBox::create();
-	xValue->setPosition({ 175,150 });
+	xValue->setPosition({ 175, yLevel });
 	xValue->setSize({ 100,50 });
 	xValue->setTextSize(32);
 	xValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
@@ -348,7 +374,7 @@ void GUIManager::initShapeEditor()
 		});
 	
 	auto yValue = tgui::EditBox::create();
-	yValue->setPosition({ 290, 150 });
+	yValue->setPosition({ 290, yLevel });
 	yValue->setSize({ 100,50 });
 	yValue->setTextSize(32);
 	yValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
@@ -358,6 +384,8 @@ void GUIManager::initShapeEditor()
 		getEditor()->getCurrentShape()->setYPosition(stof(t_newText.toStdString()));
 		});
 
+	yLevel += 75.f;
+
 	/// <summary>
 	/// **************************
 	/// Rotation
@@ -365,13 +393,14 @@ void GUIManager::initShapeEditor()
 
 	auto rotationLabel = tgui::Label::create("Rotation");
 	rotationLabel->setSize({ 150,50 });
-	rotationLabel->setPosition({ 25,225 });
+	rotationLabel->setPosition({ 25,yLevel });
+	rotationLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 	rotationLabel->setTextSize(32);
 	rotationLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto rotVal = tgui::EditBox::create();
 	rotVal->setSize({ 175, 50 });
-	rotVal->setPosition({ 200,225 });
+	rotVal->setPosition({ 200,yLevel });
 	rotVal->setTextSize(32);
 	rotVal->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
 	rotVal->onTextChange([this](tgui::String t_newText) {
@@ -380,20 +409,22 @@ void GUIManager::initShapeEditor()
 		getEditor()->getCurrentShape()->setRotation(stof(t_newText.toStdString()));
 		});
 	
+	yLevel += 75.f;
 
 	/// <summary>
 	/// **************************
 	/// Type
 	/// </summary>
 
-	auto TypeLabel = tgui::Label::create("Body Type");
-	TypeLabel->setSize({ 175,50 });
-	TypeLabel->setPosition({ 25,300 });
-	TypeLabel->setTextSize(32);
-	TypeLabel->getRenderer()->setTextColor(tgui::Color::White);
+	auto typeLabel = tgui::Label::create("Body Type");
+	typeLabel->setSize({ 175,50 });
+	typeLabel->setPosition({ 25,yLevel });
+	typeLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	typeLabel->setTextSize(32);
+	typeLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto typeBox = tgui::ComboBox::create();
-	typeBox->setPosition({ 200,300 });
+	typeBox->setPosition({ 200,yLevel });
 	typeBox->setSize({ 175, 50 });
 	typeBox->addItem("Static Body");
 	typeBox->addItem("Kinematic Body");
@@ -405,18 +436,22 @@ void GUIManager::initShapeEditor()
 			currentShape->setBodyType((b2BodyType)t_index);
 		}
 	});
+
+	yLevel += 75.f;
 	
 	/// <summary>
+	/// **************************
 	/// Scale
 	/// </summary>
 	auto scaleLabel = tgui::Label::create("Scale");
 	scaleLabel->setSize({ 150,50 });
-	scaleLabel->setPosition({ 25,375 });
+	scaleLabel->setPosition({ indent, yLevel });
+	scaleLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 	scaleLabel->setTextSize(32);
 	scaleLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto xScale = tgui::EditBox::create();
-	xScale->setPosition({ 175,375});
+	xScale->setPosition({ 175, yLevel });
 	xScale->setSize({ 100,50 });
 	xScale->setTextSize(32);
 	xScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
@@ -431,7 +466,7 @@ void GUIManager::initShapeEditor()
 		});
 
 	auto yScale = tgui::EditBox::create();
-	yScale->setPosition({ 290, 375 });
+	yScale->setPosition({ 290, yLevel });
 	yScale->setSize({ 100,50 });
 	yScale->setTextSize(32);
 	yScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
@@ -444,18 +479,49 @@ void GUIManager::initShapeEditor()
 			shape->setYScale(yScale);
 		});
 
+
+	yLevel += 75.f;
+
+
+	/// <summary>
+	/// **************************
+	/// Trigger
+	/// </summary>
+	auto triggerLabel = tgui::Label::create("Trigger");
+	triggerLabel->setSize({ 235,50 });
+	triggerLabel->setPosition({ 25,yLevel });
+	triggerLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	triggerLabel->setTextSize(32);
+	triggerLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto triggerCheckbox = tgui::CheckBox::create();
+	triggerCheckbox->setPosition({ 265,yLevel });
+	triggerCheckbox->setSize({50,50});
+	triggerCheckbox->onChange([this](bool t_newState) {
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->getFixture()->SetSensor(t_newState);
+		});
+
 	
+	/// <summary>
+	/// **************************
+	/// add the shapes
+	/// </summary>
+	shapeGroup->add(nameLabel);
+	shapeGroup->add(nameBox, "ShapeName");
+	shapeGroup->add(idLabel, "ShapeID");
 	shapeGroup->add(xValue, "ShapeXValue");
 	shapeGroup->add(yValue, "ShapeYValue");
-	shapeGroup->add(idLabel, "ShapeID");
 	shapeGroup->add(positionLabel);
 	shapeGroup->add(rotationLabel);
 	shapeGroup->add(rotVal, "ShapeRotation");
-	shapeGroup->add(TypeLabel);
+	shapeGroup->add(typeLabel);
 	shapeGroup->add(typeBox, "ShapeType");
 	shapeGroup->add(scaleLabel);
 	shapeGroup->add(xScale, "ShapeXScale");
 	shapeGroup->add(yScale, "ShapeYScale");
+	shapeGroup->add(triggerCheckbox, "ShapeTrigger");
+	shapeGroup->add(triggerLabel);
 	panel->add(shapeGroup, "modificationGroup");
 }
 

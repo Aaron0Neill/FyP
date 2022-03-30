@@ -12,11 +12,13 @@ public:
 		: m_window(t_window), m_manager(t_manager) {}
 
 	virtual ~IBuildState() = default;
-
 	virtual void handleEvent(sf::Event& e) = 0;
-
 	virtual void render() = 0;
 
+	/// <summary>
+	/// Allows other classes to get the currently selected shape 
+	/// </summary>
+	/// <returns> Currently selected shape </returns>
 	virtual IShape* getSelected() { return m_selectedShape; }
 
 protected:

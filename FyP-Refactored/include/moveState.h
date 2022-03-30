@@ -14,12 +14,18 @@ public:
 	~MoveState();
 
 	void handleEvent(sf::Event& e);
-
 	void render() {};
+
 private:
 
+	/// <summary>
+	/// initialise the arrows 
+	/// </summary>
 	void initArrows();
 
+	/// <summary>
+	/// update the position of the arrows 
+	/// </summary>
 	void updateArrows();
 
 	bool m_editingY { false };

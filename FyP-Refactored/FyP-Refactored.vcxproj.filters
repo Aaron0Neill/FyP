@@ -219,6 +219,9 @@
     <ClCompile Include="src\distanceJoint.cpp">
       <Filter>Source Files\builderState</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ishape.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\box2d\b2_api.h">
@@ -430,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="include\shapeContactListener.h">
       <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\ContactCallback.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

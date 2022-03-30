@@ -12,8 +12,16 @@ public:
 		m_managerPtr(t_manager) {};
 	~LevelLoader()=default;
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="t_levelPath"></param>
 	void saveLevel(const std::string& t_levelPath);
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="t_levelPath"></param>
 	void loadLevel(const std::string& t_levelPath);
 
 private:

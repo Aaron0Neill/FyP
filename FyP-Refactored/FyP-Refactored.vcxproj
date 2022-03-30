@@ -61,6 +61,7 @@
     <ClCompile Include="src\distanceJoint.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\guiManager.cpp" />
+    <ClCompile Include="src\Ishape.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\moveState.cpp" />
     <ClCompile Include="src\polygonShape.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="include\shapeContactListener.h" />
     <ClInclude Include="include\shapeEditor.h" />
     <ClInclude Include="include\shapeManager.h" />
+    <ClInclude Include="include\utils\ContactCallback.h" />
     <ClInclude Include="include\utils\json.hpp" />
     <ClInclude Include="include\utils\levelLoader.h" />
     <ClInclude Include="include\utils\vector.h" />

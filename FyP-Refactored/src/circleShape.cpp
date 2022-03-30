@@ -90,5 +90,23 @@ void CircleShape::toJson(jsonf& t_json)
 
 void CircleShape::fromJson(jsonf& t_json)
 {
+	auto posPtr = t_json["Centre"].begin();
 
+	float xPos = (*posPtr++);
+	float yPos = *posPtr;
+
+	setPosition({xPos, yPos});
+
+	auto scalePtr = t_json["Scale"].begin();
+	float xScale = (*scalePtr++);
+	float yScale = *scalePtr;
+
+	setXScale(xScale);
+	setYScale(yScale);
+
+	float rot = t_json["Rotation"].get<float>();
+	setRotation(rot);
+
+	b2BodyType type = t_json["BodyType"].get<b2BodyType>();
+	setBodyType(type);
 }

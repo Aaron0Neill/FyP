@@ -90,6 +90,59 @@ void PolygonShape::toJson(jsonf& t_json)
 
 void PolygonShape::fromJson(jsonf& t_json)
 {
+	//b2Shape::Type type = t_json["ShapeType"].get<b2Shape::Type>();
+
+	//if (type == b2Shape::Type::e_edge)
+	//{
+	//	float x1, x2, y1, y2;
+
+	//	auto pointsPtr = t_json["Points"].begin();
+	//	x1 = (*pointsPtr++);
+	//	y1 = (*pointsPtr++);
+	//	x2 = (*pointsPtr++);
+	//	y2 = (*pointsPtr);
+
+	//	Vector v1(x1, y1);
+	//	Vector v2(x2, y2);
+
+	//	static_cast<b2EdgeShape*>(m_fixture->GetShape())->SetTwoSided(v1, v2);
+	//	return;
+	//}
+
+	auto posPtr = t_json["Centre"].begin();
+	float x = (*posPtr++);
+	float y = (*posPtr);
+
+	int32 polyCount = t_json["PolyCount"].get<int32>();
+
+	if (polyCount == 4)
+	{
+		float size = 1.f / 1.5f;
+		static_cast<b2PolygonShape*>(m_fixture->GetShape())->SetAsBox(size,size);
+	}
+	else
+	{
+		auto points = getPoints(polyCount, 1);
+		static_cast<b2PolygonShape*>(m_fixture->GetShape())->Set(points, polyCount);
+		delete points;
+	}
+
+	setPosition({ x,y });
+		
+	float scaleX, scaleY;
+	auto scalePtr = t_json["Scale"].begin();
+	scaleX = (*scalePtr++);
+	scaleY = *scalePtr;
+
+	setXScale(scaleX);
+	setYScale(scaleY);
+
+	float rotation = t_json["Rotation"].get<float>();
+	setRotation(rotation);
+
+	auto bodyType = t_json["BodyType"].get<b2BodyType>();
+	setBodyType(bodyType);
+
 }
 
 //*************************************************************
