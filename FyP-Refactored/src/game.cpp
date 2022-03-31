@@ -5,6 +5,11 @@ Game::Game()
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
+	sf::Image icon;
+	if (icon.loadFromFile("assets/images/icon.png"))
+		m_window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
+
 	ContactListener* listener = new ContactListener(&m_shapes);
 	m_world->getWorld()->SetContactListener(listener);
 
@@ -27,29 +32,36 @@ Game::Game()
 
 	auto floorID = m_shapes.createEdge({ 0,viewSize.y }, viewSize);
 
-	auto triID = m_shapes.createPolygon(4, 0.5, { 250,250 });
-	auto lWheel = m_shapes.createCircle(0.5, { 300,300 });
-	auto rWheel = m_shapes.createCircle(0.5, { 200,300 });
+	auto triID = m_shapes.createPolygon(4, 1, { 250,275 });
+	auto lWheel = m_shapes.createCircle(.5, { 300,300 });
+	auto rWheel = m_shapes.createCircle(.5, { 200,300 });
+
+	m_shapes[triID]->setXScale(2);
 
 	b2WheelJointDef lWheelDef;
 	lWheelDef.Initialize(m_shapes[triID]->getBody(), m_shapes[lWheel]->getBody(), m_shapes[lWheel]->getBody()->GetPosition(), { 0,1 });
-	lWheelDef.lowerTranslation = 0.01f;
-	lWheelDef.upperTranslation = 0.05f;
+	lWheelDef.lowerTranslation = 0.05f;
+	lWheelDef.upperTranslation = 2.75f;
 	lWheelDef.enableLimit = true;
 
 	b2WheelJointDef rWheelDef;
 	rWheelDef.Initialize(m_shapes[triID]->getBody(), m_shapes[rWheel]->getBody(), m_shapes[rWheel]->getBody()->GetPosition(), { 0,1 });
-	rWheelDef.lowerTranslation = 0.01f;
-	rWheelDef.upperTranslation = 0.05f;
+	rWheelDef.lowerTranslation = 0.05f;
+	rWheelDef.upperTranslation = 2.0f;
 	rWheelDef.enableLimit = true;
 
-	rWheelDef.motorSpeed = 1.f;
 	rWheelDef.enableMotor = true;
-	rWheelDef.maxMotorTorque = 5.f;
-
+	rWheelDef.maxMotorTorque = 10.f;
+	rWheelDef.motorSpeed = 1.f;
 
 	m_world->getWorld()->CreateJoint(&lWheelDef);
 	m_world->getWorld()->CreateJoint(&rWheelDef);
+
+
+
+	auto square = m_shapes.createPolygon(4, 2, { 100,400 });
+	m_shapes[square]->setBodyType(b2_staticBody);
+	m_shapes[square]->getFixture()->SetSensor(true);
 }
 
 //*************************************************************

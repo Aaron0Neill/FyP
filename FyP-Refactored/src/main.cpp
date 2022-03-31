@@ -13,6 +13,8 @@
 #pragma comment(lib,"sfml-network.lib") 
 #endif
 
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
 #include "Game.h"
 
 int main()

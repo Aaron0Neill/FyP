@@ -90,24 +90,6 @@ void PolygonShape::toJson(jsonf& t_json)
 
 void PolygonShape::fromJson(jsonf& t_json)
 {
-	//b2Shape::Type type = t_json["ShapeType"].get<b2Shape::Type>();
-
-	//if (type == b2Shape::Type::e_edge)
-	//{
-	//	float x1, x2, y1, y2;
-
-	//	auto pointsPtr = t_json["Points"].begin();
-	//	x1 = (*pointsPtr++);
-	//	y1 = (*pointsPtr++);
-	//	x2 = (*pointsPtr++);
-	//	y2 = (*pointsPtr);
-
-	//	Vector v1(x1, y1);
-	//	Vector v2(x2, y2);
-
-	//	static_cast<b2EdgeShape*>(m_fixture->GetShape())->SetTwoSided(v1, v2);
-	//	return;
-	//}
 
 	auto posPtr = t_json["Centre"].begin();
 	float x = (*posPtr++);

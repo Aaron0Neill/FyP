@@ -6,7 +6,7 @@
 
 class IShape;
 
-using FunctionPtr = std::function<void(IShape*)>;
+using FunctionPtr = std::function<void(const IShape&)>;
 
 class ContactCallback
 {
@@ -27,7 +27,7 @@ public:
 	/// operator to invoke the callback function
 	/// </summary>
 	/// <param name="t_collider"> object it collided with </param>
-	virtual void operator()(IShape* t_collider)
+	virtual void operator()(const IShape& t_collider)
 	{
 		if (m_callback)
 			m_callback(t_collider);

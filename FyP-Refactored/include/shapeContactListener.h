@@ -27,12 +27,12 @@ public:
 		auto* bodyB = (*m_manager)[id2];
 
 		(bodyA->getFixture()->IsSensor()) ? 
-			bodyA->onTriggerEnter(bodyB) :
-			bodyA->onCollisionEnter(bodyB);
+			bodyA->onTriggerEnter(*bodyB) :
+			bodyA->onCollisionEnter(*bodyB);
 
 		(bodyB->getFixture()->IsSensor()) ? 
-			bodyB->onTriggerEnter(bodyA) :
-			bodyB->onCollisionEnter(bodyA);
+			bodyB->onTriggerEnter(*bodyA) :
+			bodyB->onCollisionEnter(*bodyA);
 	}
 
 	/// <summary>
@@ -48,12 +48,12 @@ public:
 		auto* bodyB = (*m_manager)[id2];
 
 		(bodyA->getFixture()->IsSensor()) ?
-			bodyA->onTriggerExit(bodyB) :
-			bodyA->onCollisionExit(bodyB);
+			bodyA->onTriggerExit(*bodyB) :
+			bodyA->onCollisionExit(*bodyB);
 
 		(bodyB->getFixture()->IsSensor()) ?
-			bodyB->onTriggerExit(bodyA) :
-			bodyB->onCollisionExit(bodyA);
+			bodyB->onTriggerExit(*bodyA) :
+			bodyB->onCollisionExit(*bodyA);
 	}
 private:
 	ShapeManager* m_manager;
