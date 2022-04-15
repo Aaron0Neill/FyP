@@ -34,7 +34,7 @@ ShapeID ShapeManager::createPolygon(uint8 t_sides, float t_radius, Vector t_pos)
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &s;
-	fixtureDef.density = 1.0f;
+	fixtureDef.density = 1.f;
 	newShape->m_fixture = newShape->m_body->CreateFixture(&fixtureDef);
 
 	m_shapes.push_back(newShape);
@@ -152,6 +152,8 @@ ShapeID ShapeManager::getID(b2Body* t_shape)
 	for (auto it = m_shapes.begin(); it != end; ++it)
 		if ((*it)->getBody() == t_shape)
 			return it - m_shapes.begin();
+
+	return ShapeID(-1);
 }
 
 //*************************************************************

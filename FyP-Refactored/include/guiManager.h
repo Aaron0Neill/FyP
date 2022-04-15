@@ -74,6 +74,7 @@ private:
 	void initSceneManagment();
 	void initShapeEditor();
 	void initTextures();
+	void initJoint();
 
 
 	tgui::Gui* m_gui			{ nullptr };

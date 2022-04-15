@@ -44,16 +44,38 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 	shapePos = shapePos.fromWorldSpace();
 	auto xPos = group->get<tgui::EditBox>("ShapeXValue");
 	auto yPos = group->get<tgui::EditBox>("ShapeYValue");
-	xPos->setText(std::to_string((int)shapePos.x));
-	yPos->setText(std::to_string((int)shapePos.y));
+	xPos->setText(std::to_string(shapePos.x));
+	yPos->setText(std::to_string(shapePos.y));
 
 	float angle = t_selectedShape->getBody()->GetAngle() * Rad2Deg;
 	auto rot = group->get<tgui::EditBox>("ShapeRotation");
-	rot->setText(std::to_string((int)angle));
+	rot->setText(std::to_string(angle));
 
 	auto type = t_selectedShape->getBody()->GetType();
 	auto typeBox = group->get<tgui::ComboBox>("ShapeType");
 	typeBox->setSelectedItemByIndex(type);
+
+	sf::Vector2f scale = t_selectedShape->getScale();
+	auto xScale = group->get<tgui::EditBox>("ShapeXScale");
+	auto yScale = group->get<tgui::EditBox>("ShapeYScale");
+	xScale->setText(std::to_string(scale.x));
+	yScale->setText(std::to_string(scale.y));
+
+	bool isTrigger = t_selectedShape->getFixture()->IsSensor();
+	auto TriggerBox = group->get<tgui::CheckBox>("ShapeTrigger");
+	TriggerBox->setChecked(isTrigger);
+
+	float density = t_selectedShape->getFixture()->GetDensity();
+	auto densityBox = group->get<tgui::EditBox>("ShapeDensity");
+	densityBox->setText(std::to_string(density));
+
+	float restitution = t_selectedShape->getFixture()->GetRestitution();
+	auto restitutionBox = group->get<tgui::Slider>("ShapeRestitution");
+	restitutionBox->setValue(restitution);
+
+	float friction = t_selectedShape->getFixture()->GetFriction();
+	auto frictionBox = group->get<tgui::Slider>("ShapeFriction");
+	frictionBox->setValue(friction);
 }
 
 //*************************************************************
@@ -297,17 +319,19 @@ void GUIManager::initShapeEditor()
 		- BodyType (changable)
 		- Joints (toggleable)
 	*/
-
 	float indent = 25.f;
 	float yLevel = 85.f;
+	float spacing = 45.f;
 
-	auto panel = m_gui->get<tgui::Panel>("Background");
+	tgui::Layout2d buttonSize{ 100,40 };
+
 	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
+	auto panel = m_gui->get<tgui::Panel>("Background");
 	auto shapeGroup = tgui::Group::create({ 400,1080 });
 	shapeGroup->setVisible(false);
 
 	auto shapeButton = tgui::RadioButton::create();
-	shapeButton->setSize({ 100,50 });
+	shapeButton->setSize(buttonSize);
 	shapeButton->setPosition({ 275,25 });
 
 	shapeButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
@@ -324,47 +348,47 @@ void GUIManager::initShapeEditor()
 	radioGroup->add(shapeButton, "Shape");
 
 	auto nameLabel = tgui::Label::create("Shape Name");
-	nameLabel->setSize({ 185,50 });
+	nameLabel->setSize({ 185,40 });
 	nameLabel->setPosition({ indent, yLevel });
 	nameLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	nameLabel->setTextSize(26U);
+	nameLabel->setTextSize(20U);
 	nameLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto nameBox = tgui::EditBox::create();
-	nameBox->setSize({ 185,50 });
+	nameBox->setSize({ 185,40 });
 	nameBox->setPosition({ 212.5, yLevel });
-	nameBox->setTextSize(24);
+	nameBox->setTextSize(20U);
 	nameBox->setInputValidator("^[a-zA-Z]+$");
 	nameBox->onTextChange([this](tgui::String t_newText) {
 		if (IShape* current = m_builder->getCurrentShape())
 			current->setName(t_newText.toStdString());
 		});
 
-	yLevel += 75.f;
+	yLevel += spacing;
 
 	auto idLabel = tgui::Label::create("Current Shape id: ");
-	idLabel->setSize({ 400,50 });
+	idLabel->setSize({ 400,40 });
 	idLabel->setPosition({ indent, yLevel });
 	idLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	idLabel->setTextSize(32);
+	idLabel->setTextSize(20U);
 	idLabel->getRenderer()->setTextColor(tgui::Color::White);
 
-	yLevel += 75.f;
+	yLevel += spacing;
 
 	/// <summary>
 	/// Position
 	/// </summary>
 	auto positionLabel = tgui::Label::create("Position");
-	positionLabel->setSize({ 150,50 });
+	positionLabel->setSize(buttonSize);
 	positionLabel->setPosition({ indent,yLevel });
 	positionLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	positionLabel->setTextSize(32);
+	positionLabel->setTextSize(20U);
 	positionLabel->getRenderer()->setTextColor(tgui::Color::White);
 	
 	auto xValue = tgui::EditBox::create();
 	xValue->setPosition({ 175, yLevel });
-	xValue->setSize({ 100,50 });
-	xValue->setTextSize(32);
+	xValue->setSize(buttonSize);
+	xValue->setTextSize(20U);
 	xValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
 	xValue->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
@@ -375,8 +399,8 @@ void GUIManager::initShapeEditor()
 	
 	auto yValue = tgui::EditBox::create();
 	yValue->setPosition({ 290, yLevel });
-	yValue->setSize({ 100,50 });
-	yValue->setTextSize(32);
+	yValue->setSize(buttonSize);
+	yValue->setTextSize(20U);
 	yValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
 	yValue->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
@@ -384,24 +408,23 @@ void GUIManager::initShapeEditor()
 		getEditor()->getCurrentShape()->setYPosition(stof(t_newText.toStdString()));
 		});
 
-	yLevel += 75.f;
+	yLevel += spacing;
 
 	/// <summary>
 	/// **************************
 	/// Rotation
 	/// </summary>
-
 	auto rotationLabel = tgui::Label::create("Rotation");
-	rotationLabel->setSize({ 150,50 });
+	rotationLabel->setSize(buttonSize);
 	rotationLabel->setPosition({ 25,yLevel });
 	rotationLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	rotationLabel->setTextSize(32);
+	rotationLabel->setTextSize(20U);
 	rotationLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto rotVal = tgui::EditBox::create();
-	rotVal->setSize({ 175, 50 });
+	rotVal->setSize(buttonSize);
 	rotVal->setPosition({ 200,yLevel });
-	rotVal->setTextSize(32);
+	rotVal->setTextSize(20U);
 	rotVal->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
 	rotVal->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
@@ -409,23 +432,22 @@ void GUIManager::initShapeEditor()
 		getEditor()->getCurrentShape()->setRotation(stof(t_newText.toStdString()));
 		});
 	
-	yLevel += 75.f;
+	yLevel += spacing;
 
 	/// <summary>
 	/// **************************
 	/// Type
 	/// </summary>
-
 	auto typeLabel = tgui::Label::create("Body Type");
-	typeLabel->setSize({ 175,50 });
+	typeLabel->setSize({ 175,40 });
 	typeLabel->setPosition({ 25,yLevel });
 	typeLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	typeLabel->setTextSize(32);
+	typeLabel->setTextSize(20U);
 	typeLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto typeBox = tgui::ComboBox::create();
 	typeBox->setPosition({ 200,yLevel });
-	typeBox->setSize({ 175, 50 });
+	typeBox->setSize({ 175, 40 });
 	typeBox->addItem("Static Body");
 	typeBox->addItem("Kinematic Body");
 	typeBox->addItem("Dynamic Body");
@@ -437,23 +459,23 @@ void GUIManager::initShapeEditor()
 		}
 	});
 
-	yLevel += 75.f;
+	yLevel += spacing;
 	
 	/// <summary>
 	/// **************************
 	/// Scale
 	/// </summary>
 	auto scaleLabel = tgui::Label::create("Scale");
-	scaleLabel->setSize({ 150,50 });
+	scaleLabel->setSize({ 150,40 });
 	scaleLabel->setPosition({ indent, yLevel });
 	scaleLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	scaleLabel->setTextSize(32);
+	scaleLabel->setTextSize(20U);
 	scaleLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto xScale = tgui::EditBox::create();
 	xScale->setPosition({ 175, yLevel });
-	xScale->setSize({ 100,50 });
-	xScale->setTextSize(32);
+	xScale->setSize({ 100,40 });
+	xScale->setTextSize(20U);
 	xScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
 
 	xScale->onTextChange([this](tgui::String t_newText) {
@@ -467,8 +489,8 @@ void GUIManager::initShapeEditor()
 
 	auto yScale = tgui::EditBox::create();
 	yScale->setPosition({ 290, yLevel });
-	yScale->setSize({ 100,50 });
-	yScale->setTextSize(32);
+	yScale->setSize({ 100,40 });
+	yScale->setTextSize(20U);
 	yScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
 	yScale->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
@@ -479,30 +501,102 @@ void GUIManager::initShapeEditor()
 			shape->setYScale(yScale);
 		});
 
-
-	yLevel += 75.f;
-
+	yLevel += spacing;
 
 	/// <summary>
 	/// **************************
 	/// Trigger
 	/// </summary>
 	auto triggerLabel = tgui::Label::create("Trigger");
-	triggerLabel->setSize({ 235,50 });
+	triggerLabel->setSize({ 235,40 });
 	triggerLabel->setPosition({ 25,yLevel });
 	triggerLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
-	triggerLabel->setTextSize(32);
+	triggerLabel->setTextSize(20U);
 	triggerLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto triggerCheckbox = tgui::CheckBox::create();
-	triggerCheckbox->setPosition({ 265,yLevel });
-	triggerCheckbox->setSize({50,50});
+	triggerCheckbox->setPosition({ 265, yLevel });
+	triggerCheckbox->setSize({50,40});
 	triggerCheckbox->onChange([this](bool t_newState) {
 		if (IShape* shape = m_builder->getCurrentShape())
 			shape->getFixture()->SetSensor(t_newState);
 		});
 
+	yLevel += spacing;
+
+	/// <summary> 
+	/// **************************
+	/// Density
+	/// </summary>
+	auto densityLabel = tgui::Label::create("Density");
+	densityLabel->setSize({ 235,40 });
+	densityLabel->setPosition({ 25,yLevel });
+	densityLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	densityLabel->setTextSize(20U);
+	densityLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto densityEditBox = tgui::EditBox::create();
+	densityEditBox->setPosition({ 290, yLevel });
+	densityEditBox->setSize({ 100,40 });
+	densityEditBox->setTextSize(20U);
+	densityEditBox->setInputValidator(tgui::EditBox::Validator::Float);
+	densityEditBox->onTextChange([this](tgui::String t_newText) {
+		if (!t_newText.size())
+			return;
+
+		auto density = std::stof(t_newText.toStdString());
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->getFixture()->SetDensity(density);
+		});
+
+	yLevel += spacing;
 	
+	/// <summary> 
+	/// **************************
+	/// Restitution Slider
+	/// </summary>
+	auto RestitutionLabel = tgui::Label::create("Restitution");
+	RestitutionLabel->setSize({ 235,40 });
+	RestitutionLabel->setPosition({ 25,yLevel });
+	RestitutionLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	RestitutionLabel->setTextSize(20U);
+	RestitutionLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto RestitutionSlider = tgui::Slider::create(0.f, 1.f);
+	RestitutionSlider->setStep(0.05f);
+	RestitutionSlider->setSize({ 100,20 });
+	RestitutionSlider->setPosition({ 290,yLevel });
+	RestitutionSlider->onValueChange([this](float t_newRestitution) 
+		{
+			if (IShape* shape = m_builder->getCurrentShape())
+				shape->getFixture()->SetRestitution(t_newRestitution);
+		});
+
+	yLevel += spacing;
+
+	/// <summary> 
+	/// **************************
+	/// Friction Slider
+	/// </summary>
+	auto FrictionLabel = tgui::Label::create("Friction");
+	FrictionLabel->setSize({ 235,40 });
+	FrictionLabel->setPosition({ 25,yLevel });
+	FrictionLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	FrictionLabel->setTextSize(20U);
+	FrictionLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto FrictionSlider = tgui::Slider::create(0.f, 1.f);
+	FrictionSlider->setStep(0.05f);
+	FrictionSlider->setSize({ 100,20 });
+	FrictionSlider->setPosition({ 290,yLevel });
+	FrictionSlider->onValueChange([this](float t_newRestitution)
+		{
+			if (IShape* shape = m_builder->getCurrentShape())
+				shape->getFixture()->SetFriction(t_newRestitution);
+		});
+
+
+
 	/// <summary>
 	/// **************************
 	/// add the shapes
@@ -522,6 +616,12 @@ void GUIManager::initShapeEditor()
 	shapeGroup->add(yScale, "ShapeYScale");
 	shapeGroup->add(triggerCheckbox, "ShapeTrigger");
 	shapeGroup->add(triggerLabel);
+	shapeGroup->add(densityLabel);
+	shapeGroup->add(densityEditBox, "ShapeDensity");
+	shapeGroup->add(RestitutionLabel);
+	shapeGroup->add(RestitutionSlider, "ShapeRestitution");
+	shapeGroup->add(FrictionLabel);
+	shapeGroup->add(FrictionSlider, "ShapeFriction");
 	panel->add(shapeGroup, "modificationGroup");
 }
 
@@ -544,4 +644,43 @@ void GUIManager::initTextures()
 	m_radioTexture[0] = tgui::Texture("assets/images/RadioButtonTex.png");
 	m_radioTexture[1] = tgui::Texture("assets/images/RadioButtonHover.png");
 	m_radioTexture[2] = tgui::Texture("assets/images/RadioButtonSelected.png");
+}
+
+//*************************************************************
+
+void GUIManager::initJoint()
+{
+	auto panel = m_gui->get<tgui::Panel>("Background");
+	auto distanceGroup = tgui::Group::create({ 400,1080 });
+	auto wheelGroup = tgui::Group::create({ 400,1080 });
+	distanceGroup->setVisible(false);
+	wheelGroup->setVisible(false);
+
+	//dj 
+	//dj.collideConnected; //bool
+	//dj.damping; //float
+	//dj.length; // float (curr len)
+	//dj.minLength; // float
+	//dj.maxLength; // float
+	//dj.localAnchorA; // b2Vec
+	//dj.localAnchorB; // b2vec
+	//dj.stiffness; //float
+
+
+	//wj
+	//wj.collideConnected; //bool
+	//wj.damping; //float
+	//wj.enableLimit; //bool
+	//wj.enableMotor; //bool
+	//wj.localAnchorA; // b2vec2
+	//wj.localAnchorB; // b2vec2
+	//wj.lowerTranslation; //float 
+	//wj.maxMotorTorque; //float
+	//wj.motorSpeed; //float
+	//wj.stiffness; //float
+	//wj.upperTranslation; //float 
+
+
+	panel->add(distanceGroup, "DistJoint");
+	panel->add(wheelGroup, "WheelJoint");
 }

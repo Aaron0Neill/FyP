@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "box2d/b2_distance_joint.h"
+#include "box2d/b2_wheel_joint.h"
 #include "box2d/b2_world_callbacks.h"
 #include "circleShape.h"
 #include "polygonShape.h"
@@ -17,10 +18,20 @@ using ShapeID = uint8;
 class ShapeManager
 {
 public:
+	/// <summary>
+	/// @Brief
+	/// Default constructor that will get a reference to the world through the the world singleton
+	/// </summary>
 	ShapeManager();
+
+	/// <summary>
+	/// @Brief
+	/// Destructor that will delete all the shapes that it is holding
+	/// </summary>
 	~ShapeManager();
 
 	/// <summary>
+	/// @Brief
 	/// Allows the creation of an n sided polygon at any given size and position
 	/// </summary>
 	/// <param name="t_sides"> number of sides (DEFAULTS TO SQUARE) </param>
@@ -30,6 +41,7 @@ public:
 	ShapeID createPolygon(uint8 t_sides = 4.0f, float t_radius = 1.0f, Vector t_position = Vector());
 
 	/// <summary>
+	/// @Brief
 	/// Allows for the creation of a circle of any size in any position
 	/// </summary>
 	/// <param name="t_radius"> size of the circle </param>
@@ -38,6 +50,7 @@ public:
 	ShapeID createCircle(float t_radius = 1.0f, Vector t_position = Vector());
 
 	/// <summary>
+	/// @Brief
 	/// Creates an edge shape that will be placed at the two points
 	/// (BOTH IN SCREEN SPACE)
 	/// </summary>
@@ -47,6 +60,7 @@ public:
 	ShapeID createEdge(Vector t_p1 = Vector(), Vector t_p2 = Vector(10,0));
 
 	/// <summary>
+	/// @Brief
 	/// Checks if there is a shape at any given position
 	/// </summary>
 	/// <param name="t_mousePos"> Position to check </param>
@@ -54,15 +68,40 @@ public:
 	IShape* isMouseOnShape(Vector t_mousePos);
 	
 	/// <summary>
+	/// @Brief
 	/// Updates the positions of all the shapes that have been created
 	/// </summary>
 	void update();
 
-	IShape* operator[](ShapeID t_id) { return m_shapes[t_id]; } 
+	/// <summary>
+	/// @Brief
+	/// operator [] allows the user to index into the sapes using a shape id 
+	/// </summary>
+	/// <param name="t_id"> Shape ID </param>
+	/// <returns> Shape at the given ID </returns>
+	IShape* operator[](const ShapeID& t_id) { return m_shapes[t_id]; } 
+
+	/// <summary>
+	/// @Brief
+	/// Allows the user to get all the shapes
+	/// </summary>
+	/// <returns> Vector holding all the shapes</returns>
 	std::vector<IShape*>& getShapes() { return m_shapes; }
 
+	/// <summary>
+	/// @Brief
+	/// Draws all the shapes onto a given window
+	/// </summary>
+	/// <param name="t_window"> Window to draw them too </param>
 	void draw(sf::RenderWindow* t_window);
 
+	/// <summary>
+	/// @Brief
+	/// Allows the user to get the ID of a given shape by a pointer to the shape
+	/// OR by giving it the body that the shape owns
+	/// </summary>
+	/// <param name="t_shape"> The shape you wish to get the ID of </param>
+	/// <returns> The shape ID </returns>
 	ShapeID getID(IShape* t_shape);
 	ShapeID getID(b2Body* t_shape);
 
