@@ -14,6 +14,7 @@ public:
 	~MoveState();
 
 	void handleEvent(sf::Event& e);
+	void update();
 	void render() {};
 
 private:

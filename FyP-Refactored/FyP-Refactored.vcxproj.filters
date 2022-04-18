@@ -225,6 +225,12 @@
     <ClCompile Include="src\Ishape.cpp">
       <Filter>Source Files\shapes</Filter>
     </ClCompile>
+    <ClCompile Include="src\jointEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wheelJoint.cpp">
+      <Filter>Source Files\builderState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\box2d\b2_api.h">
@@ -448,6 +454,12 @@
     </ClInclude>
     <ClInclude Include="include\ExampleScenes\IBaseScene.h">
       <Filter>Header Files\ExampleScenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jointEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wheelJoint.h">
+      <Filter>Header Files\builderStates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

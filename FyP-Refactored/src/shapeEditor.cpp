@@ -10,6 +10,7 @@ ShapeEditor::ShapeEditor(sf::RenderWindow* t_window) :
 	initFactory<RotateState>(EditState::ROTATE);
 	initFactory<SelectState>(EditState::SELECT);
 	initFactory<DistanceJointState>(EditState::DISTANCE_JOINT);
+	initFactory<WheelJointState>(EditState::WHEEL_JOINT);
 }
 
 //*************************************************************
@@ -25,6 +26,14 @@ void ShapeEditor::handleEvents(sf::Event& t_event)
 {
 	if (m_currentState)
 		m_currentState->handleEvent(t_event);
+}
+
+//*************************************************************
+
+void ShapeEditor::update()
+{
+	if (m_currentState)
+		m_currentState->update();
 }
 
 //*************************************************************

@@ -11,6 +11,7 @@
 #include "scaleState.h"
 #include "selectState.h"
 #include "shapeManager.h"
+#include "wheelJoint.h"
 #include "utils/vectorMaths.h"
 
 enum class EditState : uint8
@@ -23,6 +24,8 @@ enum class EditState : uint8
 	DISTANCE_JOINT,
 	WHEEL_JOINT
 };
+
+class JointEditor;
 
 using State = std::shared_ptr<IBuildState>;
 using StateFactory = std::unordered_map<EditState, std::function<State(sf::RenderWindow*, ShapeManager*)>>;
@@ -37,12 +40,16 @@ public:
 
 	void handleEvents(sf::Event& t_event);
 
+	void update();
+
 	void draw();
 
 	inline void addShapeManager(ShapeManager* t_manager) { m_manager = t_manager; }
+	inline void addJointEditor(JointEditor* t_editor) { m_joints = t_editor; }
 
 	State getState() { return m_currentState; }
 	IShape* getCurrentShape() { return m_currentState->getSelected(); }
+	JointEditor* getEditor() { return m_joints; }
 private:
 
 	template<typename T>
@@ -55,6 +62,7 @@ private:
 
 	State m_currentState;
 
+	JointEditor* m_joints;
 	StateFactory m_factory;
 	ShapeManager* m_manager;
 	sf::RenderWindow* m_window;

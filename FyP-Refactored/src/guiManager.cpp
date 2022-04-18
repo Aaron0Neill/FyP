@@ -10,6 +10,7 @@ void GUIManager::init(sf::RenderWindow* t_window)
 	initShapeBuild();
 	initSceneManagment();
 	initShapeEditor();
+	initJoint();
 }
 
 //*************************************************************
@@ -40,6 +41,10 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 {
 	auto group = m_gui->get<tgui::Group>("modificationGroup");
 
+	std::string name = t_selectedShape->getName();
+	auto nameBox = group->get<tgui::EditBox>("ShapeName");
+	nameBox->setText(name);
+
 	Vector shapePos = t_selectedShape->getBody()->GetPosition();
 	shapePos = shapePos.fromWorldSpace();
 	auto xPos = group->get<tgui::EditBox>("ShapeXValue");
@@ -47,9 +52,14 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 	xPos->setText(std::to_string(shapePos.x));
 	yPos->setText(std::to_string(shapePos.y));
 
+	xPos->setCaretPosition(0);
+	yPos->setCaretPosition(0);
+
 	float angle = t_selectedShape->getBody()->GetAngle() * Rad2Deg;
 	auto rot = group->get<tgui::EditBox>("ShapeRotation");
 	rot->setText(std::to_string(angle));
+
+	rot->setCaretPosition(0);
 
 	auto type = t_selectedShape->getBody()->GetType();
 	auto typeBox = group->get<tgui::ComboBox>("ShapeType");
@@ -58,8 +68,12 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 	sf::Vector2f scale = t_selectedShape->getScale();
 	auto xScale = group->get<tgui::EditBox>("ShapeXScale");
 	auto yScale = group->get<tgui::EditBox>("ShapeYScale");
+
 	xScale->setText(std::to_string(scale.x));
 	yScale->setText(std::to_string(scale.y));
+
+	xScale->setCaretPosition(0);
+	yScale->setCaretPosition(0);
 
 	bool isTrigger = t_selectedShape->getFixture()->IsSensor();
 	auto TriggerBox = group->get<tgui::CheckBox>("ShapeTrigger");
@@ -80,11 +94,41 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 
 //*************************************************************
 
+void GUIManager::updateSelectedJoint(b2Joint* t_selectedJoint)
+{
+	b2JointType type = t_selectedJoint->GetType();
+	
+	if (type == b2JointType::e_distanceJoint)
+	{
+		b2DistanceJoint* distJnt = static_cast<b2DistanceJoint*>(t_selectedJoint);
+		// update Info 
+		tgui::Group::Ptr grp = m_gui->get<tgui::Group>("DistJoint");
+
+		tgui::EditBox::Ptr currLen = grp->get<tgui::EditBox>("CurrentLength");
+		currLen->setText(std::to_string(distJnt->GetLength()));
+
+		tgui::EditBox::Ptr minLen = grp->get<tgui::EditBox>("MinLength");
+		minLen->setText(std::to_string(distJnt->GetMinLength()));
+
+		tgui::EditBox::Ptr maxLen = grp->get<tgui::EditBox>("MaxLength");
+		maxLen->setText(std::to_string(distJnt->GetMaxLength()));
+	}
+	else if (type == b2JointType::e_wheelJoint)
+	{
+
+	}
+	else
+		std::cout << "Unknown joint\n";
+
+}
+
+//*************************************************************
+
 void GUIManager::initShapeBuild()
 {
 	tgui::Panel::Ptr panel;
 	panel = tgui::Panel::create({ 400,1080 });
-	panel->setPosition({ 1920 - 400,0 });
+	panel->setPosition({ 1920,0 });
 	panel->getRenderer()->setBackgroundColor(tgui::Color(109U,26U,54U));
 	
 	tgui::Group::Ptr group;
@@ -173,15 +217,16 @@ void GUIManager::initShapeBuild()
 	distJoint->setPosition({ 50, 475 });
 	distJoint->onClick([this]() { getEditor()->setState(EditState::DISTANCE_JOINT); });
 
-	auto revoJoint = tgui::Button::create("Wheel Joint");
-	distJoint->setSize({ 300,100 });
-	distJoint->setPosition({ 50, 475 });
-	distJoint->onClick([this]() { getEditor()->setState(EditState::DISTANCE_JOINT); });
+	auto wheelJoint = tgui::Button::create("Wheel Joint");
+	wheelJoint->setSize({ 300,100 });
+	wheelJoint->setPosition({ 50, 600 });
+	wheelJoint->onClick([this]() { getEditor()->setState(EditState::WHEEL_JOINT); });
 
 	editGroup->add(moveBtn, "Move");
 	editGroup->add(rotateBtn, "Rotate");
 	editGroup->add(scaleBtn, "Scale");
 	editGroup->add(distJoint, "Distance");
+	editGroup->add(wheelJoint, "Wheel");
 
 	tgui::RadioButtonGroup::Ptr radioGroup;
 	radioGroup = tgui::RadioButtonGroup::create();
@@ -323,7 +368,7 @@ void GUIManager::initShapeEditor()
 	float yLevel = 85.f;
 	float spacing = 45.f;
 
-	tgui::Layout2d buttonSize{ 100,40 };
+	tgui::Layout2d buttonSize{ 175,40 };
 
 	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
 	auto panel = m_gui->get<tgui::Panel>("Background");
@@ -331,7 +376,7 @@ void GUIManager::initShapeEditor()
 	shapeGroup->setVisible(false);
 
 	auto shapeButton = tgui::RadioButton::create();
-	shapeButton->setSize(buttonSize);
+	shapeButton->setSize({ 100,50 });
 	shapeButton->setPosition({ 275,25 });
 
 	shapeButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
@@ -355,8 +400,8 @@ void GUIManager::initShapeEditor()
 	nameLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto nameBox = tgui::EditBox::create();
-	nameBox->setSize({ 185,40 });
-	nameBox->setPosition({ 212.5, yLevel });
+	nameBox->setSize({ 175,40 });
+	nameBox->setPosition({ 200, yLevel });
 	nameBox->setTextSize(20U);
 	nameBox->setInputValidator("^[a-zA-Z]+$");
 	nameBox->onTextChange([this](tgui::String t_newText) {
@@ -386,26 +431,35 @@ void GUIManager::initShapeEditor()
 	positionLabel->getRenderer()->setTextColor(tgui::Color::White);
 	
 	auto xValue = tgui::EditBox::create();
-	xValue->setPosition({ 175, yLevel });
-	xValue->setSize(buttonSize);
+	xValue->setPosition({ 200, yLevel });
+	xValue->setSize({ buttonSize.x / 2.f, buttonSize.y });
 	xValue->setTextSize(20U);
-	xValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	xValue->setInputValidator(tgui::EditBox::Validator::Float);
 	xValue->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
 			return;
+
+		if (t_newText.size() == 1 && t_newText[0] == '-')
+			return;
+
 		float newX = stof(t_newText.toStdString());
 		getEditor()->getCurrentShape()->setXPosition(newX);
 		});
 	
 	auto yValue = tgui::EditBox::create();
-	yValue->setPosition({ 290, yLevel });
-	yValue->setSize(buttonSize);
+	yValue->setPosition({ 287.5f, yLevel });
+	yValue->setSize({ buttonSize.x / 2.f, buttonSize.y });
 	yValue->setTextSize(20U);
-	yValue->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	yValue->setInputValidator(tgui::EditBox::Validator::Float);
 	yValue->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
 			return;
-		getEditor()->getCurrentShape()->setYPosition(stof(t_newText.toStdString()));
+
+		if (t_newText.size() == 1 && t_newText[0] == '-')
+			return;
+
+		float newY = stof(t_newText.toStdString());
+		getEditor()->getCurrentShape()->setYPosition(newY);
 		});
 
 	yLevel += spacing;
@@ -425,10 +479,14 @@ void GUIManager::initShapeEditor()
 	rotVal->setSize(buttonSize);
 	rotVal->setPosition({ 200,yLevel });
 	rotVal->setTextSize(20U);
-	rotVal->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	rotVal->setInputValidator(tgui::EditBox::Validator::Float);
 	rotVal->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
 			return;
+
+		if (t_newText.size() == 1 && t_newText[0] == '-')
+			return;
+
 		getEditor()->getCurrentShape()->setRotation(stof(t_newText.toStdString()));
 		});
 	
@@ -448,6 +506,7 @@ void GUIManager::initShapeEditor()
 	auto typeBox = tgui::ComboBox::create();
 	typeBox->setPosition({ 200,yLevel });
 	typeBox->setSize({ 175, 40 });
+	typeBox->setTextSize(16U);
 	typeBox->addItem("Static Body");
 	typeBox->addItem("Kinematic Body");
 	typeBox->addItem("Dynamic Body");
@@ -473,13 +532,16 @@ void GUIManager::initShapeEditor()
 	scaleLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto xScale = tgui::EditBox::create();
-	xScale->setPosition({ 175, yLevel });
-	xScale->setSize({ 100,40 });
+	xScale->setPosition({ 200, yLevel });
+	xScale->setSize({ buttonSize.x / 2.f, buttonSize.y });
 	xScale->setTextSize(20U);
-	xScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	xScale->setInputValidator(tgui::EditBox::Validator::Float);
 
 	xScale->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
+			return;
+
+		if (t_newText.size() == 1 && t_newText[0] == '-')
 			return;
 
 		auto xScale = std::stof(t_newText.toStdString());
@@ -488,10 +550,10 @@ void GUIManager::initShapeEditor()
 		});
 
 	auto yScale = tgui::EditBox::create();
-	yScale->setPosition({ 290, yLevel });
-	yScale->setSize({ 100,40 });
+	yScale->setPosition({ 287.5f, yLevel });
+	yScale->setSize({ buttonSize.x / 2.f, buttonSize.y });
 	yScale->setTextSize(20U);
-	yScale->setInputValidator("[+-]?[0-9]*\.?[0-9]*");
+	yScale->setInputValidator(tgui::EditBox::Validator::Float);
 	yScale->onTextChange([this](tgui::String t_newText) {
 		if (!t_newText.size())
 			return;
@@ -536,8 +598,8 @@ void GUIManager::initShapeEditor()
 	densityLabel->getRenderer()->setTextColor(tgui::Color::White);
 
 	auto densityEditBox = tgui::EditBox::create();
-	densityEditBox->setPosition({ 290, yLevel });
-	densityEditBox->setSize({ 100,40 });
+	densityEditBox->setPosition({ 200, yLevel });
+	densityEditBox->setSize(buttonSize);
 	densityEditBox->setTextSize(20U);
 	densityEditBox->setInputValidator(tgui::EditBox::Validator::Float);
 	densityEditBox->onTextChange([this](tgui::String t_newText) {
@@ -556,7 +618,7 @@ void GUIManager::initShapeEditor()
 	/// Restitution Slider
 	/// </summary>
 	auto RestitutionLabel = tgui::Label::create("Restitution");
-	RestitutionLabel->setSize({ 235,40 });
+	RestitutionLabel->setSize({ 200,40 });
 	RestitutionLabel->setPosition({ 25,yLevel });
 	RestitutionLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 	RestitutionLabel->setTextSize(20U);
@@ -564,8 +626,8 @@ void GUIManager::initShapeEditor()
 
 	auto RestitutionSlider = tgui::Slider::create(0.f, 1.f);
 	RestitutionSlider->setStep(0.05f);
-	RestitutionSlider->setSize({ 100,20 });
-	RestitutionSlider->setPosition({ 290,yLevel });
+	RestitutionSlider->setSize({ 175,20 });
+	RestitutionSlider->setPosition({ 200,yLevel + 10 });
 	RestitutionSlider->onValueChange([this](float t_newRestitution) 
 		{
 			if (IShape* shape = m_builder->getCurrentShape())
@@ -579,7 +641,7 @@ void GUIManager::initShapeEditor()
 	/// Friction Slider
 	/// </summary>
 	auto FrictionLabel = tgui::Label::create("Friction");
-	FrictionLabel->setSize({ 235,40 });
+	FrictionLabel->setSize({ 200,40 });
 	FrictionLabel->setPosition({ 25,yLevel });
 	FrictionLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 	FrictionLabel->setTextSize(20U);
@@ -587,12 +649,15 @@ void GUIManager::initShapeEditor()
 
 	auto FrictionSlider = tgui::Slider::create(0.f, 1.f);
 	FrictionSlider->setStep(0.05f);
-	FrictionSlider->setSize({ 100,20 });
-	FrictionSlider->setPosition({ 290,yLevel });
-	FrictionSlider->onValueChange([this](float t_newRestitution)
+	FrictionSlider->setSize({ 175,20 });
+	FrictionSlider->setPosition({ 200,yLevel + 10 });
+	FrictionSlider->onValueChange([this](float t_newFriction)
 		{
 			if (IShape* shape = m_builder->getCurrentShape())
-				shape->getFixture()->SetFriction(t_newRestitution);
+			{ 
+				shape->getFixture()->SetFriction(t_newFriction);
+				std::cout << "Setting friction to: " << t_newFriction << std::endl;
+			}
 		});
 
 
@@ -653,8 +718,14 @@ void GUIManager::initJoint()
 	auto panel = m_gui->get<tgui::Panel>("Background");
 	auto distanceGroup = tgui::Group::create({ 400,1080 });
 	auto wheelGroup = tgui::Group::create({ 400,1080 });
-	distanceGroup->setVisible(false);
+	distanceGroup->setVisible(true);
 	wheelGroup->setVisible(false);
+
+	float indent = 25.f;
+	float yLevel = 85.f;
+	float spacing = 45.f;
+	unsigned labelFontSize = 20U;
+	tgui::Layout2d buttonSize{ 175,40 };
 
 	//dj 
 	//dj.collideConnected; //bool
@@ -665,6 +736,164 @@ void GUIManager::initJoint()
 	//dj.localAnchorA; // b2Vec
 	//dj.localAnchorB; // b2vec
 	//dj.stiffness; //float
+
+	/// <summary>
+	/// Can Collide
+	/// </summary>
+	auto canCollideLabel = tgui::Label::create("Can Collide");
+	canCollideLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	canCollideLabel->setTextSize(labelFontSize);
+	canCollideLabel->setSize({ 175,40 });
+	canCollideLabel->setPosition({ indent, yLevel });
+	canCollideLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto canCollide = tgui::CheckBox::create();
+	canCollide->setPosition({ 265,yLevel });
+	canCollide->setSize({ 50,40 });
+	canCollide->onChange([this](bool t_currState) {
+
+		});
+
+	yLevel += spacing;
+
+	/// <summary>
+	/// Damping
+	/// </summary>
+	auto dampingLabel = tgui::Label::create("Damping");
+	dampingLabel->setPosition({indent, yLevel});
+	dampingLabel->setTextSize(labelFontSize);
+	dampingLabel->setSize({ 175,40 });
+	dampingLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	dampingLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto damping = tgui::EditBox::create();
+	damping->setInputValidator(tgui::EditBox::Validator::Float);
+	damping->setPosition({ 200,yLevel });
+	damping->setSize(buttonSize);
+
+	yLevel += spacing;
+	/// <summary>
+	/// Current Length
+	/// </summary>
+	auto currLenLabel = tgui::Label::create("Current Length");
+	currLenLabel->setPosition({ indent, yLevel });
+	currLenLabel->setTextSize(labelFontSize);
+	currLenLabel->setSize({ 175,40 });
+	currLenLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	currLenLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto currLen = tgui::EditBox::create();
+	currLen->setInputValidator(tgui::EditBox::Validator::Float);
+	currLen->setPosition({ 200,yLevel });
+	currLen->setSize(buttonSize);
+	currLen->onTextChange([this](const tgui::String& t_newString) {
+		float newLen;
+		if (!t_newString.attemptToFloat(newLen)) return;
+
+		if (auto joint = m_builder->getEditor()->getCurrentJoint())
+			static_cast<b2DistanceJoint*>(joint)->SetLength(newLen);
+		});
+
+	yLevel += spacing;
+	/// <summary>
+	/// Min Length
+	/// </summary>
+	auto minLenLabel = tgui::Label::create("Min Length");
+	minLenLabel->setPosition({ indent, yLevel });
+	minLenLabel->setTextSize(labelFontSize);
+	minLenLabel->setSize({ 175,40 });
+	minLenLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	minLenLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto minLen = tgui::EditBox::create();
+	minLen->setInputValidator(tgui::EditBox::Validator::Float);
+	minLen->setPosition({ 200,yLevel });
+	minLen->setSize(buttonSize);
+	minLen->onTextChange([this](const tgui::String& t_newString) {
+		float newLen;
+		if (!t_newString.attemptToFloat(newLen)) return;
+
+		if (auto joint = m_builder->getEditor()->getCurrentJoint())
+			static_cast<b2DistanceJoint*>(joint)->SetMinLength(newLen);
+		});
+
+
+	yLevel += spacing;
+	/// <summary>
+	/// Max Length
+	/// </summary>
+	auto maxLenLabel = tgui::Label::create("Max Length");
+	maxLenLabel->setPosition({ indent, yLevel });
+	maxLenLabel->setTextSize(labelFontSize);
+	maxLenLabel->setSize({ 175,40 });
+	maxLenLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	maxLenLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto maxLen = tgui::EditBox::create();
+	maxLen->setInputValidator(tgui::EditBox::Validator::Float);
+	maxLen->setPosition({ 200,yLevel });
+	maxLen->setSize(buttonSize);
+
+	yLevel += spacing;
+	/// <summary>
+	/// Local Anchor A
+	/// </summary>
+	auto localAnchorALabel = tgui::Label::create("Anchor A");
+	localAnchorALabel->setPosition({ indent, yLevel });
+	localAnchorALabel->setTextSize(labelFontSize);
+	localAnchorALabel->setSize({ 175,40 });
+	localAnchorALabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	localAnchorALabel->getRenderer()->setTextColor(tgui::Color::White);
+
+
+	yLevel += spacing;
+	/// <summary>
+	/// Local Anchor B
+	/// </summary>
+	auto localAnchorBLabel = tgui::Label::create("Anchor B");
+	localAnchorBLabel->setPosition({ indent, yLevel });
+	localAnchorBLabel->setTextSize(labelFontSize);
+	localAnchorBLabel->setSize({ 175,40 });
+	localAnchorBLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	localAnchorBLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+
+	yLevel += spacing;
+	/// <summary>
+	/// Stiffness 
+	/// </summary>
+	auto stiffnessLabel = tgui::Label::create("Stiffness");
+	stiffnessLabel->setPosition({ indent, yLevel });
+	stiffnessLabel->setTextSize(labelFontSize);
+	stiffnessLabel->setSize({ 175,40 });
+	stiffnessLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	stiffnessLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto stiffness = tgui::EditBox::create();
+	stiffness->setInputValidator(tgui::EditBox::Validator::Float);
+	stiffness->setPosition({ 200,yLevel });
+	stiffness->setSize(buttonSize);
+
+
+	/// <summary>
+	/// Adding 
+	/// </summary>
+	distanceGroup->add(canCollideLabel);
+	distanceGroup->add(dampingLabel);
+	distanceGroup->add(currLenLabel);
+	distanceGroup->add(maxLenLabel);
+	distanceGroup->add(minLenLabel);
+	distanceGroup->add(localAnchorALabel);
+	distanceGroup->add(localAnchorBLabel);
+	distanceGroup->add(stiffnessLabel);
+	distanceGroup->add(canCollide, "canCollide");
+	distanceGroup->add(damping, "Damping");
+	distanceGroup->add(currLen, "CurrentLength");
+	distanceGroup->add(minLen, "MinLength");
+	distanceGroup->add(maxLen, "MaxLength");
+	//distanceGroup->add(damping, "Damping");
+	//distanceGroup->add(damping, "Damping");
+	distanceGroup->add(stiffness, "Stiffness");
 
 
 	//wj

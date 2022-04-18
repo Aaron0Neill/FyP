@@ -15,7 +15,7 @@ void SelectState::handleEvent(sf::Event& e)
 	if (e.type == sf::Event::MouseButtonReleased)
 	{
 		sf::Vector2f pos = m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
-		if (pos.x < 1520)
+		if (pos.x < 1920)
 			if (m_selectedShape = m_manager->isMouseOnShape(pos))
 			{// update UI
 				tgui::Gui* gui = GUIManager::getInstance()->getGui();

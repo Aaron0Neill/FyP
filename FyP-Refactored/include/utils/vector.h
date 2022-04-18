@@ -33,6 +33,11 @@ public:
 		return operator*(PixelsPerMetre);
 	}
 
+	float magnitude()
+	{
+		return sqrt(powf(x, 2) + powf(y, 2));
+	}
+
 	static float magnitude(Vector t_from, Vector t_to)
 	{
 		Vector diff = t_from - t_to;
@@ -43,7 +48,8 @@ public:
 	Vector operator-(Vector t_rhs) { return { x - t_rhs.x, y - t_rhs.y }; }
 	Vector operator* (float t_rhs) { return { x * t_rhs, y * t_rhs }; }
 	Vector operator/(float t_rhs) { return { x / t_rhs, y / t_rhs }; }
-	void operator+=(Vector t_rhs) { x += t_rhs.x; y += t_rhs.y; };
+	void operator+=(Vector t_rhs) { x += t_rhs.x; y += t_rhs.y; }
+	void operator/=(float t_rhs) { x /= t_rhs; y /= t_rhs; }
 
 	// = operator
 	Vector operator=(b2Vec2& t_rhs) { return { t_rhs }; };

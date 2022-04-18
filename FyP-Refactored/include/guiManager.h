@@ -9,6 +9,7 @@
 
 #include "shapeEditor.h"
 #include "levelLoader.h"
+#include "jointEditor.h"
 
 #include <iostream>
 
@@ -49,6 +50,8 @@ public:
 	/// </summary>
 	/// <param name="t_selectedShape"></param>
 	void updateSelectedShape(IShape* t_selectedShape);
+
+	void updateSelectedJoint(b2Joint* t_selectedJoint);
 
 	/// <summary>
 	/// Set Functions 

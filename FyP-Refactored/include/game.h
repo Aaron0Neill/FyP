@@ -17,6 +17,7 @@
 #include "shapeEditor.h"
 #include "worldManager.h"
 #include "shapeContactListener.h"
+#include "jointEditor.h"
 
 class Game
 {
@@ -56,14 +57,13 @@ private:
 	sf::RenderWindow* m_window{ nullptr };
 
 	ShapeManager m_shapes;
-
 	WorldManager* m_world { nullptr };
-
 	ShapeEditor* m_builder;
-
+	JointEditor* m_jointEditor;
 	GUIManager* m_gui;
-
 	LevelLoader* m_levelManager;
+
+	b2DistanceJoint* m_testJoint;
 };
 
 #endif

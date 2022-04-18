@@ -113,6 +113,7 @@ void ShapeManager::update()
 	for (auto& shape : m_shapes)
 		shape->update();
 
+#ifdef BUILD_SRC
 	size_t jointCount = m_joints.size();
 	if (m_jointsArray.getVertexCount() < m_joints.size() * 2)
 		m_jointsArray.resize(jointCount * 2U);
@@ -123,6 +124,7 @@ void ShapeManager::update()
 		m_jointsArray[vertIndex].position = Vector(m_joints[i]->GetBodyA()->GetPosition()).fromWorldSpace();
 		m_jointsArray[vertIndex+1].position = Vector(m_joints[i]->GetBodyB()->GetPosition()).fromWorldSpace();
 	}
+#endif
 }
 
 //*************************************************************
@@ -132,7 +134,9 @@ void ShapeManager::draw(sf::RenderWindow* t_window)
 	for (auto& shape : m_shapes)
 		shape->draw(t_window);
 
+#ifdef BUILD_SRC
 	t_window->draw(m_jointsArray);
+#endif
 }
 
 //*************************************************************
@@ -175,11 +179,33 @@ b2Joint* ShapeManager::createDistanceJoint(IShape* t_bodyA, IShape* t_bodyB)
 
 	jointDef.Initialize(bodyA, bodyB, bodyA->GetPosition(), bodyB->GetPosition());
 
-	WorldManager::getInstance()->getWorld()->CreateJoint(&jointDef);
-
-	m_joints.push_back(m_world->CreateJoint(&jointDef));
 	size_t size = m_joints.size();
-	return m_joints[size-1];
+	m_joints.push_back(m_world->CreateJoint(&jointDef));
+	return m_joints[size];
+}
+
+//*************************************************************
+
+b2Joint* ShapeManager::createWheelJoint(ShapeID t_bodyA, ShapeID t_bodyB)
+{
+	IShape* bodyA = m_shapes[t_bodyA];
+	IShape* bodyB = m_shapes[t_bodyB];
+	return createWheelJoint(bodyA, bodyB);
+}
+
+//*************************************************************
+
+b2Joint* ShapeManager::createWheelJoint(IShape* t_bodyA, IShape* t_bodyB)
+{
+	b2WheelJointDef wheelJoint;
+	b2Body* bodyA = t_bodyA->getBody();
+	b2Body* bodyB = t_bodyB->getBody();
+
+	wheelJoint.Initialize(bodyA, bodyB, bodyB->GetPosition(), {0,1});
+
+	size_t size = m_joints.size();
+	m_joints.push_back(m_world->CreateJoint(&wheelJoint));
+	return m_joints[size];
 }
 
 //*************************************************************

@@ -88,6 +88,8 @@ public:
 	/// <returns> Vector holding all the shapes</returns>
 	std::vector<IShape*>& getShapes() { return m_shapes; }
 
+	std::vector<b2Joint*> getJoints() { return m_joints; }
+
 	/// <summary>
 	/// @Brief
 	/// Draws all the shapes onto a given window
@@ -108,6 +110,9 @@ public:
 	b2Joint* createDistanceJoint(ShapeID, ShapeID);
 	b2Joint* createDistanceJoint(IShape*, IShape*);
 
+	b2Joint* createWheelJoint(ShapeID, ShapeID);
+	b2Joint* createWheelJoint(IShape*, IShape*);
+
 	void startWorld();
 
 	void saveShapes(jsonf& t_data);
@@ -123,10 +128,12 @@ private:
 	b2BodyDef generateBodyDef(Vector pos);
 
 	std::vector<IShape*> m_shapes;
-
 	std::vector<b2Joint*> m_joints;
 
+#ifdef BUILD_SRC
+
 	sf::VertexArray m_jointsArray{ sf::Lines };
+#endif
 
 	ShapeID m_currentID { 0 };
 

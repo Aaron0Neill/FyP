@@ -62,6 +62,7 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\guiManager.cpp" />
     <ClCompile Include="src\Ishape.cpp" />
+    <ClCompile Include="src\jointEditor.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\moveState.cpp" />
     <ClCompile Include="src\polygonShape.cpp" />
@@ -72,6 +73,7 @@
     <ClCompile Include="src\shapeManager.cpp" />
     <ClCompile Include="src\utils\levelLoader.cpp" />
     <ClCompile Include="src\utils\vectorMaths.cpp" />
+    <ClCompile Include="src\wheelJoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\box2d\b2_api.h" />
@@ -125,6 +127,7 @@
     <ClInclude Include="include\guiManager.h" />
     <ClInclude Include="include\IbuildState.h" />
     <ClInclude Include="include\Ishape.h" />
+    <ClInclude Include="include\jointEditor.h" />
     <ClInclude Include="include\moveState.h" />
     <ClInclude Include="include\polygonShape.h" />
     <ClInclude Include="include\rotateState.h" />
@@ -138,6 +141,7 @@
     <ClInclude Include="include\utils\levelLoader.h" />
     <ClInclude Include="include\utils\vector.h" />
     <ClInclude Include="include\utils\vectorMaths.h" />
+    <ClInclude Include="include\wheelJoint.h" />
     <ClInclude Include="include\worldManager.h" />
     <ClInclude Include="src\box2d\dynamics\b2_chain_circle_contact.h" />
     <ClInclude Include="src\box2d\dynamics\b2_chain_polygon_contact.h" />
@@ -196,7 +200,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);BUILD_SRC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SFML_SDK)\include;$(TGUI)\include;include;include/utils;.</AdditionalIncludeDirectories>
     </ClCompile>

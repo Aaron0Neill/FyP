@@ -2,6 +2,7 @@
 #include <iostream>
 
 IShape* IBuildState::m_selectedShape { nullptr };
+b2Joint* IBuildState::m_selectedJoint { nullptr };
 
 CreateState::CreateState(sf::RenderWindow* t_window, ShapeManager* t_manager) :
 	IBuildState(t_window, t_manager),
@@ -37,7 +38,7 @@ void CreateState::handleEvent(sf::Event& e)
 	else if (e.type == sf::Event::MouseButtonPressed)
 	{
 		if (e.mouseButton.button == sf::Mouse::Left)
-			if (m_centrePoint.x < (1920.f - 400.f))
+			if (m_centrePoint.x < 1920.f)
 				if (m_currentShape >= ShapeType::TRIANGLE && m_currentShape <= ShapeType::OCTAGON)
 					m_manager->createPolygon(m_currentPoints, 1, m_centrePoint);
 				else if (m_currentShape == ShapeType::CIRCLE)
