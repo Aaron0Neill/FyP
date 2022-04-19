@@ -22,6 +22,7 @@ public:
 	inline virtual b2Body* getBody()				{ return m_body; }
 	inline virtual sf::Vector2f getScale() const	{ return m_scale; }
 	inline virtual std::string getName() const 		{ return m_name; }
+	inline virtual Vector getWorldPos() const		{ return Vector(m_body->GetPosition()).fromWorldSpace(); }
 
 
 	/// <summary>

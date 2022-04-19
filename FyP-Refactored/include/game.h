@@ -56,7 +56,7 @@ private:
 	sf::RenderWindow* createWindow(std::string t_title);
 	sf::RenderWindow* m_window{ nullptr };
 
-	ShapeManager m_shapes;
+	ShapeManager* m_shapes;
 	WorldManager* m_world { nullptr };
 	ShapeEditor* m_builder;
 	JointEditor* m_jointEditor;

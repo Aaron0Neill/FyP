@@ -11,7 +11,16 @@ public:
 	RotateState(sf::RenderWindow* t_window, ShapeManager* t_manager);
 	~RotateState() = default;
 
+	/// <summary>
+	/// Handles the rotation of the selected shape, 
+	/// rotates based on angle from the original click
+	/// </summary>
+	/// <param name="e"></param>
 	void handleEvent(sf::Event& e)override;
+
+	/// <summary>
+	/// Renders a preview for the user to see 
+	/// </summary>
 	void render()override;
 
 private:

@@ -54,6 +54,9 @@ public:
 	/// <param name="t_radius"> size of the polygon </param>
 	/// <returns> points for the size </returns>
 	static b2Vec2* getPoints(uint8 const t_sides, float t_radius);
+
+	inline sf::VertexArray getDrawing() { return m_vertex; }
+
 private:
 	PolygonShape() = default;
 

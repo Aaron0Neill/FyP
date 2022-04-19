@@ -12,7 +12,14 @@ public:
 	ScaleState(sf::RenderWindow* t_window, ShapeManager* t_manager);
 	~ScaleState() = default;
 
+	/// <summary>
+	/// Handles the scaling of the shape
+	/// Scale is set to the distance from the centre of the shape to the mouse position
+	/// </summary>
+	/// <param name="e">Current window event</param>
 	void handleEvent(sf::Event& e)override;
+
+
 	void render()override;
 
 private:

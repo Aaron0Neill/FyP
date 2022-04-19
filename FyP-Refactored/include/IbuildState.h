@@ -21,6 +21,11 @@ public:
 	/// </summary>
 	/// <returns> Currently selected shape </returns>
 	virtual IShape* getSelected() { return m_selectedShape; }
+
+	/// <summary>
+	/// Allows other classes to access the most recently selected joint
+	/// </summary>
+	/// <returns> The most recently selected joint </returns>
 	virtual b2Joint* getSelectedJoint() { return m_selectedJoint; }
 
 protected:

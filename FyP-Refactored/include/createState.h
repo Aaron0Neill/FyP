@@ -3,6 +3,9 @@
 
 #include "IbuildState.h"
 
+/// <summary>
+/// Enumertaor to easily pass what type of shape you wish to create in the state
+/// </summary>
 enum class ShapeType : uint8_t
 {
 	NONE		= 255U,
@@ -57,7 +60,7 @@ private:
 	/// </summary>
 	void showShape();
 
-	Vector m_vertices[b2_maxPolygonVertices];
+	Vector m_vertices[b2_maxPolygonVertices]; // maximum possible number of vertices to be drawn
 	Vector m_centrePoint;
 	float m_scale{ 1.f };
 	sf::VertexArray m_drawing{ sf::LinesStrip };

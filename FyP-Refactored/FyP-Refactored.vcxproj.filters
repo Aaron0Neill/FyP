@@ -37,9 +37,6 @@
     <Filter Include="Source Files\builderState">
       <UniqueIdentifier>{2895f174-bdfa-42ec-971b-f9e81b80250f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ExampleScenes">
-      <UniqueIdentifier>{a47ac7c3-6692-4c82-9376-c7a19110694b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -445,15 +442,6 @@
     </ClInclude>
     <ClInclude Include="include\utils\ContactCallback.h">
       <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ExampleScenes\Platformer.h">
-      <Filter>Header Files\ExampleScenes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ExampleScenes\SceneManager.h">
-      <Filter>Header Files\ExampleScenes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ExampleScenes\IBaseScene.h">
-      <Filter>Header Files\ExampleScenes</Filter>
     </ClInclude>
     <ClInclude Include="include\jointEditor.h">
       <Filter>Header Files</Filter>

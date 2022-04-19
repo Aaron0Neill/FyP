@@ -68,9 +68,19 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 	sf::Vector2f scale = t_selectedShape->getScale();
 	auto xScale = group->get<tgui::EditBox>("ShapeXScale");
 	auto yScale = group->get<tgui::EditBox>("ShapeYScale");
+	auto xyscale = group->get<tgui::EditBox>("ShapeScale");
 
-	xScale->setText(std::to_string(scale.x));
-	yScale->setText(std::to_string(scale.y));
+	if (t_selectedShape->getFixture()->GetType() == b2Shape::Type::e_circle)
+	{
+		xyscale->setVisible(true);
+		xyscale->setText(std::to_string(scale.x));
+	}
+	else
+	{
+		xyscale->setVisible(false);
+		xScale->setText(std::to_string(scale.x));
+		yScale->setText(std::to_string(scale.y));
+	}
 
 	xScale->setCaretPosition(0);
 	yScale->setCaretPosition(0);
@@ -537,16 +547,13 @@ void GUIManager::initShapeEditor()
 	xScale->setTextSize(20U);
 	xScale->setInputValidator(tgui::EditBox::Validator::Float);
 
-	xScale->onTextChange([this](tgui::String t_newText) {
-		if (!t_newText.size())
-			return;
+	xScale->onTextChange([this](const tgui::String& t_newText) {
+		float newScale;
 
-		if (t_newText.size() == 1 && t_newText[0] == '-')
-			return;
+		if (!t_newText.attemptToFloat(newScale)) return;
 
-		auto xScale = std::stof(t_newText.toStdString());
 		if (IShape* shape = m_builder->getCurrentShape())
-			shape->setXScale(xScale);
+			shape->setXScale(newScale);
 		});
 
 	auto yScale = tgui::EditBox::create();
@@ -554,13 +561,28 @@ void GUIManager::initShapeEditor()
 	yScale->setSize({ buttonSize.x / 2.f, buttonSize.y });
 	yScale->setTextSize(20U);
 	yScale->setInputValidator(tgui::EditBox::Validator::Float);
-	yScale->onTextChange([this](tgui::String t_newText) {
-		if (!t_newText.size())
-			return;
+	yScale->onTextChange([this](const tgui::String& t_newText) {
+		float newScale;
 
-		auto yScale = std::stof(t_newText.toStdString());
+		if (!t_newText.attemptToFloat(newScale)) return;
+
 		if (IShape* shape = m_builder->getCurrentShape())
-			shape->setYScale(yScale);
+			shape->setYScale(newScale);
+		});
+
+	auto xyScale = tgui::EditBox::create();
+	xyScale->setPosition({ 200.f, yLevel });
+	xyScale->setVisible(false);
+	xyScale->setSize({ buttonSize.x, buttonSize.y });
+	xyScale->setTextSize(20U);
+	xyScale->setInputValidator(tgui::EditBox::Validator::Float);
+	xyScale->onTextChange([this](const tgui::String& t_newText) {
+		float newScale;
+
+		if (!t_newText.attemptToFloat(newScale)) return;
+
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setScale(newScale);
 		});
 
 	yLevel += spacing;
@@ -679,6 +701,7 @@ void GUIManager::initShapeEditor()
 	shapeGroup->add(scaleLabel);
 	shapeGroup->add(xScale, "ShapeXScale");
 	shapeGroup->add(yScale, "ShapeYScale");
+	shapeGroup->add(xyScale, "ShapeScale");
 	shapeGroup->add(triggerCheckbox, "ShapeTrigger");
 	shapeGroup->add(triggerLabel);
 	shapeGroup->add(densityLabel);
@@ -718,7 +741,7 @@ void GUIManager::initJoint()
 	auto panel = m_gui->get<tgui::Panel>("Background");
 	auto distanceGroup = tgui::Group::create({ 400,1080 });
 	auto wheelGroup = tgui::Group::create({ 400,1080 });
-	distanceGroup->setVisible(true);
+	distanceGroup->setVisible(false);
 	wheelGroup->setVisible(false);
 
 	float indent = 25.f;
@@ -832,7 +855,7 @@ void GUIManager::initJoint()
 	auto maxLen = tgui::EditBox::create();
 	maxLen->setInputValidator(tgui::EditBox::Validator::Float);
 	maxLen->setPosition({ 200,yLevel });
-	maxLen->setSize(buttonSize);
+	maxLen->setSize({ 50,40 });
 
 	yLevel += spacing;
 	/// <summary>

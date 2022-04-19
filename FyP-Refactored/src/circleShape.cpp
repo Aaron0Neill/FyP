@@ -75,13 +75,14 @@ void CircleShape::setYScale(float t_newScale)
 
 void CircleShape::toJson(jsonf& t_json)
 {
+	t_json["Name"] = m_name;
 	t_json["ShapeType"] = m_fixture->GetType();
 
 	Vector pos = m_body->GetPosition();
 	pos = pos.fromWorldSpace();
 	t_json["Centre"] = { pos.x, pos.y };
 
-	t_json["Scale"] = { m_scale.x, m_scale.y };
+	t_json["Scale"] = m_scale.x;
 	t_json["Rotation"] = m_body->GetAngle() * Rad2Deg;
 	t_json["BodyType"] = m_body->GetType();
 }
@@ -90,6 +91,8 @@ void CircleShape::toJson(jsonf& t_json)
 
 void CircleShape::fromJson(jsonf& t_json)
 {
+	m_name = t_json["Name"].get<std::string>();
+
 	auto posPtr = t_json["Centre"].begin();
 
 	float xPos = (*posPtr++);
@@ -97,12 +100,8 @@ void CircleShape::fromJson(jsonf& t_json)
 
 	setPosition({xPos, yPos});
 
-	auto scalePtr = t_json["Scale"].begin();
-	float xScale = (*scalePtr++);
-	float yScale = *scalePtr;
-
-	setXScale(xScale);
-	setYScale(yScale);
+	float scale = *t_json["Scale"].begin();
+	setScale(scale);
 
 	float rot = t_json["Rotation"].get<float>();
 	setRotation(rot);

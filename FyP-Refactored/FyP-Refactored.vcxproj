@@ -119,9 +119,6 @@
     <ClInclude Include="include\circleShape.h" />
     <ClInclude Include="include\createState.h" />
     <ClInclude Include="include\distanceJoint.h" />
-    <ClInclude Include="include\ExampleScenes\IBaseScene.h" />
-    <ClInclude Include="include\ExampleScenes\Platformer.h" />
-    <ClInclude Include="include\ExampleScenes\SceneManager.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\guiManager.h" />

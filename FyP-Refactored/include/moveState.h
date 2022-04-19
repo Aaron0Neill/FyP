@@ -13,8 +13,19 @@ public:
 	MoveState(sf::RenderWindow* t_window, ShapeManager* t_manager);
 	~MoveState();
 
+	/// <summary>
+	/// Checks if you have clicked any shapes or arrows and handles
+	/// accordingly
+	/// </summary>
+	/// <param name="e"> Current event on the window </param>
 	void handleEvent(sf::Event& e);
+
+	/// <summary>
+	/// Updates the position of the arrows 
+	/// </summary>
 	void update();
+
+
 	void render() {};
 
 private:

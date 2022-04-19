@@ -9,9 +9,10 @@
 #include "box2d/b2_world_callbacks.h"
 #include "circleShape.h"
 #include "polygonShape.h"
-#include "worldManager.h"
 #include "vector.h"
 #include "json.hpp"
+
+class ContactListener;
 
 using ShapeID = uint8;
 
@@ -22,7 +23,7 @@ public:
 	/// @Brief
 	/// Default constructor that will get a reference to the world through the the world singleton
 	/// </summary>
-	ShapeManager();
+	ShapeManager(b2World* t_world);
 
 	/// <summary>
 	/// @Brief
@@ -83,6 +84,14 @@ public:
 
 	/// <summary>
 	/// @Brief
+	/// Allows the user to search for a shape by name
+	/// </summary>
+	/// <param name="t_name"> Name of the shape </param>
+	/// <returns> The shape at the name </returns>
+	IShape* find(const std::string& t_name);
+
+	/// <summary>
+	/// @Brief
 	/// Allows the user to get all the shapes
 	/// </summary>
 	/// <returns> Vector holding all the shapes</returns>
@@ -139,5 +148,7 @@ private:
 
 	b2World* m_world;
 };
+
+#include "shapeContactListener.h"
 
 #endif

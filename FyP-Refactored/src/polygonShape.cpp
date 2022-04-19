@@ -64,6 +64,7 @@ void PolygonShape::toJson(jsonf& t_json)
 	b2Shape::Type type = m_fixture->GetType();
 
 	t_json["ShapeType"] = type;
+	t_json["Name"] = m_name;
 
 	if (type == b2Shape::Type::e_polygon)
 	{
@@ -90,7 +91,7 @@ void PolygonShape::toJson(jsonf& t_json)
 
 void PolygonShape::fromJson(jsonf& t_json)
 {
-
+	m_name = t_json["Name"].get<std::string>();
 	auto posPtr = t_json["Centre"].begin();
 	float x = (*posPtr++);
 	float y = (*posPtr);

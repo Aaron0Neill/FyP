@@ -1,8 +1,10 @@
 #include <shapeManager.h>
 
-ShapeManager::ShapeManager()
+ShapeManager::ShapeManager(b2World* t_world) : 
+	m_world(t_world)
 {
-	m_world = WorldManager::getInstance()->getWorld();
+	ContactListener* listener = new ContactListener(this);
+	m_world->SetContactListener(listener);
 }
 
 //*************************************************************
@@ -129,6 +131,17 @@ void ShapeManager::update()
 
 //*************************************************************
 
+IShape* ShapeManager::find(const std::string& t_name)
+{
+	for (auto& shape : m_shapes)
+		if (shape->m_name == t_name)
+			return shape;
+
+	return nullptr;
+}
+
+//*************************************************************
+
 void ShapeManager::draw(sf::RenderWindow* t_window)
 {
 	for (auto& shape : m_shapes)
@@ -179,8 +192,12 @@ b2Joint* ShapeManager::createDistanceJoint(IShape* t_bodyA, IShape* t_bodyB)
 
 	jointDef.Initialize(bodyA, bodyB, bodyA->GetPosition(), bodyB->GetPosition());
 
+	jointDef.minLength = jointDef.length / 2.f;
+	jointDef.maxLength = jointDef.length * 2.f;
+
 	size_t size = m_joints.size();
 	m_joints.push_back(m_world->CreateJoint(&jointDef));
+	std::cout << m_joints.size() << std::endl;
 	return m_joints[size];
 }
 
@@ -201,10 +218,16 @@ b2Joint* ShapeManager::createWheelJoint(IShape* t_bodyA, IShape* t_bodyB)
 	b2Body* bodyA = t_bodyA->getBody();
 	b2Body* bodyB = t_bodyB->getBody();
 
-	wheelJoint.Initialize(bodyA, bodyB, bodyB->GetPosition(), {0,1});
+	wheelJoint.Initialize(bodyA, bodyB, bodyB->GetPosition(), { 0,1 });
+
+	wheelJoint.enableLimit = true;
+	wheelJoint.lowerTranslation = -0.5f;
+	wheelJoint.upperTranslation = 0.5f;
 
 	size_t size = m_joints.size();
 	m_joints.push_back(m_world->CreateJoint(&wheelJoint));
+
+	std::cout << m_joints.size() << std::endl;
 	return m_joints[size];
 }
 
