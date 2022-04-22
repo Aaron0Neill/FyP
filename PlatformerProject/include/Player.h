@@ -1,6 +1,7 @@
 #pragma once
 
-#include "PolygonShape.h"
+#include "shapeManager.h"
+#include "BulletPool.h"
 
 class Player
 {
@@ -10,9 +11,13 @@ public:
 	void update(sf::Time t_dt);
 
 	void jump();
+
+	void handleEvent(sf::Event& t_event, sf::RenderWindow* t_window);
 private:
 	void moveLeft(sf::Time t_dt);
 	void moveRight(sf::Time t_dt);
+
+	BulletPool m_bullets;
 
 	const float m_terminalVelocity;
 	float m_incrementalVelocity;

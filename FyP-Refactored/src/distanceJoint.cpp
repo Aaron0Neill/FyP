@@ -1,7 +1,7 @@
 #include "distanceJoint.h"
 
-DistanceJointState::DistanceJointState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
-	IBuildState(t_window, t_manager)
+DistanceJointState::DistanceJointState(sf::RenderWindow* t_window) : 
+	IBuildState(t_window)
 {
 }
 

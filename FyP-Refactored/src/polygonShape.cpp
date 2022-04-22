@@ -54,17 +54,22 @@ void PolygonShape::update()
 
 void PolygonShape::draw(sf::RenderWindow* t_window)
 {
-	t_window->draw(m_vertex);
+	t_window->draw(m_vertex, m_state);
 }
 
 //*************************************************************
 
 void PolygonShape::toJson(jsonf& t_json)
 {
+	TextureManager* tm = TextureManager::getInstance();
 	b2Shape::Type type = m_fixture->GetType();
 
 	t_json["ShapeType"] = type;
 	t_json["Name"] = m_name;
+	t_json["Tag"] = m_tag;
+
+	if (m_state.texture)
+		t_json["Texture"] = tm->findName(m_state.texture);
 
 	if (type == b2Shape::Type::e_polygon)
 	{
@@ -92,22 +97,33 @@ void PolygonShape::toJson(jsonf& t_json)
 void PolygonShape::fromJson(jsonf& t_json)
 {
 	m_name = t_json["Name"].get<std::string>();
+	if (t_json.contains("Tag"))
+		m_tag = t_json["Tag"].get<std::string>();
+
 	auto posPtr = t_json["Centre"].begin();
 	float x = (*posPtr++);
 	float y = (*posPtr);
 
-	int32 polyCount = t_json["PolyCount"].get<int32>();
+	if (!m_state.texture)
+	{
+		int32 polyCount = t_json["PolyCount"].get<int32>();
 
-	if (polyCount == 4)
-	{
-		float size = 1.f / 1.5f;
-		static_cast<b2PolygonShape*>(m_fixture->GetShape())->SetAsBox(size,size);
-	}
-	else
-	{
-		auto points = getPoints(polyCount, 1);
-		static_cast<b2PolygonShape*>(m_fixture->GetShape())->Set(points, polyCount);
-		delete points;
+		if (polyCount == 4)
+		{
+			float size = 1.f / 1.5f;
+			static_cast<b2PolygonShape*>(m_fixture->GetShape())->SetAsBox(size,size);
+		}
+		else
+		{
+			auto points = getPoints(polyCount, 1);
+			static_cast<b2PolygonShape*>(m_fixture->GetShape())->Set(points, polyCount);
+			delete points;
+		}
+
+		m_vertex.resize(polyCount + 1);
+
+		for (size_t i = 0; i < polyCount + 1; ++i)
+			m_vertex[i].color = sf::Color(40U, 40U, 40U, 255U);
 	}
 
 	setPosition({ x,y });
@@ -159,9 +175,7 @@ void PolygonShape::updatePolygon()
 		Vector vertice = shape->m_vertices[i % shape->m_count];
 		Vector rotation = { (cosAngle * vertice.x) - (sinAngle * vertice.y),
 							(cosAngle * vertice.y) + (sinAngle * vertice.x)};
-		vertexPos = rotation + centre;
+		vertexPos = { rotation + centre };
 		m_vertex[i].position = vertexPos.fromWorldSpace();
-
-		m_vertex[i].color = {40U,40U,40U};
 	}
 }

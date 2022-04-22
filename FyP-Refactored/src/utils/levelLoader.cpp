@@ -21,6 +21,7 @@ void LevelLoader::saveLevel(const std::string& t_levelPath)
 
 void LevelLoader::loadLevel(const std::string& t_levelPath)
 {
+	m_managerPtr->reset();
 	std::ifstream file(t_levelPath);
 
 	jsonf data;
@@ -31,11 +32,24 @@ void LevelLoader::loadLevel(const std::string& t_levelPath)
 		file.close();
 	}
 
+	ShapeID currID = 0;
 	for (auto& shape : data["shapes"])
 	{
 		b2Shape::Type type = shape["ShapeType"].get<b2Shape::Type>();
 
-		ShapeID currID = 0;
+
+		if (shape.contains("Texture"))
+		{
+			auto name = shape["Texture"].get<std::string>();
+			TextureManager* tm = TextureManager::getInstance();
+			if (tm->loadTexture(name, m_path + "/" + name))
+			{
+				currID = m_managerPtr->createSprite(name, { 0,0 });
+				(*m_managerPtr)[currID]->fromJson(shape);
+				continue;
+			}
+		}
+
 
 		if (type == b2Shape::Type::e_polygon)
 			currID = m_managerPtr->createPolygon();

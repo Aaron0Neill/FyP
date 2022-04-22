@@ -1,7 +1,7 @@
 #include "scaleState.h"
 
-ScaleState::ScaleState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
-	IBuildState(t_window, t_manager)
+ScaleState::ScaleState(sf::RenderWindow* t_window) : 
+	IBuildState(t_window)
 {
 	m_points[0].color = sf::Color::Black;
 	m_points[1].color = sf::Color::Black;

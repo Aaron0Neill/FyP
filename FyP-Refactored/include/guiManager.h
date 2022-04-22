@@ -90,6 +90,8 @@ private:
 	tgui::RadioButton::Ptr m_buildButton	{ nullptr };
 	tgui::RadioButton::Ptr m_editButton		{ nullptr };
 	tgui::RadioButton::Ptr m_shapeButton	{ nullptr };
+	tgui::RadioButton::Ptr m_distButton		{ nullptr };
+	tgui::RadioButton::Ptr m_wheelButton	{ nullptr };
 };
 
 #endif

@@ -1,7 +1,7 @@
 #include "rotateState.h"
 
-RotateState::RotateState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
-	IBuildState(t_window, t_manager)
+RotateState::RotateState(sf::RenderWindow* t_window) : 
+	IBuildState(t_window)
 {
 }
 

@@ -1,0 +1,9 @@
+{
+    "joints":null,
+    "shapes":[
+        {"BodyType":2,"Centre":[600.0,500.0],"Name":"Test","PolyCount":4,"Rotation":0.0,"Scale":[3.0,1.0],"ShapeType":2,"Texture":"TestTexture.png"},{
+            "BodyType":0,"Name":"","Points":[0.0,1080.0,2320.0,1080.0],"Rotation":0.0,"Scale":[1.0,1.0],"ShapeType":1},{
+                "BodyType":2,"Centre":[1463.86962890625,158.66668701171875],"Name":"","PolyCount":4,"Rotation":0.0,"Scale":[1.0,1.0],"ShapeType":2},{
+                    "BodyType":2,"Centre":[187.86956787109375,145.33334350585938],"Name":"Grass","PolyCount":4,"Rotation":0.0,"Scale":[1.0,1.0],"ShapeType":2,"Texture":"grass.png"},{
+                        "BodyType":2,"Centre":[585.04345703125,153.33334350585938],"Name":"Minecraft","PolyCount":4,"Rotation":0.0,"Scale":[1.0,1.0],"ShapeType":2,"Texture":"Minecraft.png"},{
+                            "BodyType":2,"Centre":[974.6522216796875,149.33331298828125],"Name":"newTest","PolyCount":4,"Rotation":0.0,"Scale":[1.0,1.0],"ShapeType":2,"Texture":"TestTexture.png"}]}

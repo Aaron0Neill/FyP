@@ -1,7 +1,7 @@
 #include "wheelJoint.h"
 
-WheelJointState::WheelJointState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
-	IBuildState(t_window, t_manager)
+WheelJointState::WheelJointState(sf::RenderWindow* t_window) : 
+	IBuildState(t_window)
 {
 }
 

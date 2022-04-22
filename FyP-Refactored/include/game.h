@@ -15,8 +15,9 @@
 #include "levelLoader.h"
 #include "shapeManager.h"
 #include "shapeEditor.h"
-#include "worldManager.h"
 #include "shapeContactListener.h"
+#include "TextureManager.h"
+#include "worldManager.h"
 #include "jointEditor.h"
 
 class Game
@@ -64,6 +65,9 @@ private:
 	LevelLoader* m_levelManager;
 
 	b2DistanceJoint* m_testJoint;
+
+	b2RevoluteJoint* m_revJoint;
+	sf::Texture test;
 };
 
 #endif

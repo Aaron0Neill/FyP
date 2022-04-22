@@ -1,8 +1,8 @@
 #ifdef BUILD_SRC
 #include "jointEditor.h"
 
-JointEditor::JointEditor(ShapeManager& t_manager, sf::RenderWindow* t_window) :
-	m_manager(t_manager), m_window(t_window)
+JointEditor::JointEditor(sf::RenderWindow* t_window) :
+	m_manager(*ShapeManager::getInstance()), m_window(t_window)
 {
 	float radius = 15.f;
 	m_template.setRadius(radius);

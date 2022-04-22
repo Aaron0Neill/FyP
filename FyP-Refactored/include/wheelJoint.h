@@ -8,7 +8,7 @@ class WheelJointState :
 	public IBuildState
 {
 public:
-	WheelJointState(sf::RenderWindow* t_window, ShapeManager* t_manager);
+	WheelJointState(sf::RenderWindow* t_window);
 	~WheelJointState() = default;
 
 	/// <summary>

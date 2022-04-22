@@ -8,8 +8,8 @@
 class LevelLoader
 {
 public:
-	LevelLoader(ShapeManager* t_manager) :
-		m_managerPtr(t_manager) {};
+	LevelLoader() :
+		m_managerPtr(ShapeManager::getInstance()), m_path("assets/textures") {};
 	~LevelLoader()=default;
 
 	/// <summary>
@@ -26,6 +26,7 @@ public:
 
 private:
 	ShapeManager* m_managerPtr;
+	std::string m_path;
 };
 
 #endif

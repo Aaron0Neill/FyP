@@ -10,7 +10,7 @@ class MoveState :
 	public IBuildState
 {
 public:
-	MoveState(sf::RenderWindow* t_window, ShapeManager* t_manager);
+	MoveState(sf::RenderWindow* t_window);
 	~MoveState();
 
 	/// <summary>

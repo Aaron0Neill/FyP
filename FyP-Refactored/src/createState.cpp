@@ -1,12 +1,12 @@
 #include "createState.h"
-#include <iostream>
+#include "guiManager.h"
 
 IShape* IBuildState::m_selectedShape { nullptr };
 b2Joint* IBuildState::m_selectedJoint { nullptr };
 
-CreateState::CreateState(sf::RenderWindow* t_window, ShapeManager* t_manager) :
-	IBuildState(t_window, t_manager),
-	m_centrePoint({})
+CreateState::CreateState(sf::RenderWindow* t_window) :
+	IBuildState(t_window),
+	m_centrePoint({}), m_currentShape(ShapeType::NONE)
 {
 	m_drawing.resize(b2_maxPolygonVertices + 1);
 	for (int i = 0; i < b2_maxPolygonVertices; ++i)
@@ -17,6 +17,8 @@ CreateState::CreateState(sf::RenderWindow* t_window, ShapeManager* t_manager) :
 	m_circle.setOutlineColor({ 40U,40U,40U,255U });
 	m_circle.setRadius(PixelsPerMetre);
 	m_circle.setOrigin({ PixelsPerMetre, PixelsPerMetre });
+
+	m_currentSprite.setColor(sf::Color(255U, 255U, 255U, 100U));
 }
 
 //*************************************************************
@@ -55,25 +57,34 @@ void CreateState::handleEvent(sf::Event& e)
 						for (int i = 0; i < 2; ++i)
 							m_drawing[i].position = { -10.f,-10.f };
 					}
+				else if (m_currentShape == ShapeType::SPRITE)
+					if (m_textureLoaded)
+						m_manager->createSprite(m_currentName, m_centrePoint);
+	}
+	else if (sf::Event::MouseWheelScrolled == e.type)
+	{
+
 	}
 }
 
 //*************************************************************
 
 void CreateState::render()
-{ 
-	if (m_currentShape != ShapeType::NONE && m_currentShape != ShapeType::CIRCLE)
+{
+	if (m_currentShape >= ShapeType::EDGE && m_currentShape < ShapeType::CIRCLE)
 		m_window->draw(&m_drawing[0], m_currentPoints + 1, sf::LinesStrip);
-	else 	if (m_currentShape >= ShapeType::CIRCLE)
+	else if (m_currentShape == ShapeType::CIRCLE)
 		m_window->draw(m_circle);
+	else if (m_currentShape == ShapeType::SPRITE)
+		m_window->draw(m_currentSprite);
 }
 
 //*************************************************************
 
-void CreateState::updateShape(ShapeType t_sides)
+void CreateState::updateShape(ShapeType t_type)
 {
-	m_currentShape = t_sides;
-	switch (t_sides)
+	m_currentShape = t_type;
+	switch (t_type)
 	{
 	case ShapeType::NONE:
 		break;
@@ -88,8 +99,12 @@ void CreateState::updateShape(ShapeType t_sides)
 	case ShapeType::HEXAGON:
 	case ShapeType::SEPTAGON:
 	case ShapeType::OCTAGON:
-		m_currentPoints = (uint8_t)t_sides;
+		m_currentPoints = (uint8_t)t_type;
 		showShape();
+		break;
+	case ShapeType::SPRITE:
+		loadSprite();
+		break;
 	default:
 		break;
 	}
@@ -127,8 +142,18 @@ void CreateState::updateDrawing()
 	else if (m_currentShape == ShapeType::CIRCLE)
 		m_circle.setPosition(m_centrePoint);
 	else if (m_currentShape == ShapeType::EDGE)
+	{
 		if (m_drawing[0].position.x != -10.f)
 			m_drawing[1].position = m_centrePoint;
+	}
+	else if (m_currentShape == ShapeType::SPRITE)
+	{
+		if (m_textureLoaded)
+		{
+			Vector size = m_currentSprite.getTexture()->getSize();
+			m_currentSprite.setPosition(m_centrePoint - size / 2.f);
+		}
+	}
 }
 
 //*************************************************************
@@ -141,4 +166,40 @@ void CreateState::showShape()
 		m_vertices[i] = Vector(points[i]);
 
 	delete points;
+}
+
+//*************************************************************
+
+void CreateState::loadSprite()
+{
+	m_textureLoaded = false;
+	tgui::Gui* gui = GUIManager::getInstance()->getGui();
+
+	auto fileLoader = tgui::FileDialog::create("Load Texture");
+	fileLoader->setPath("assets/Textures");
+	fileLoader->setMultiSelect(false);
+	fileLoader->setFileMustExist(true);
+	fileLoader->setFileTypeFilters({
+		{"Texture", { "*.png" }}
+		});
+	fileLoader->onFileSelect([this](const std::vector<tgui::Filesystem::Path>& t_file) {
+		if (t_file.size())
+		{
+			std::string fileName = t_file[0].getFilename().toStdString();
+			std::string filePath = t_file.at(0).getParentPath().asString().toStdString();
+			filePath += "/" + t_file[0].getFilename().toStdString();
+
+			TextureManager* tm = TextureManager::getInstance();
+
+			if (tm->loadTexture(fileName, filePath))
+			{
+				Texture tx = tm->getTexture(fileName);
+				m_currentName = fileName;
+				m_currentSprite.setTexture(*tx);
+				m_currentSprite.setTextureRect({ 0,0,(int)tx->getSize().x, (int)tx->getSize().y });
+				m_textureLoaded = true;
+			}
+		}
+		});
+	gui->add(fileLoader);
 }

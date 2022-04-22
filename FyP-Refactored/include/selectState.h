@@ -7,7 +7,7 @@ class SelectState :
 	public IBuildState
 {
 public:
-	SelectState(sf::RenderWindow* t_window, ShapeManager* t_manager);
+	SelectState(sf::RenderWindow* t_window);
 	~SelectState() = default;
 
 	/// <summary>

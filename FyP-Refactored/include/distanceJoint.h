@@ -8,7 +8,7 @@ class DistanceJointState :
 	public IBuildState
 {
 public:
-	DistanceJointState(sf::RenderWindow* t_window, ShapeManager* t_manager);
+	DistanceJointState(sf::RenderWindow* t_window);
 	~DistanceJointState() = default;
 
 	/// <summary>

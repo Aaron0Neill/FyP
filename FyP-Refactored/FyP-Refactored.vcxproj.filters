@@ -449,5 +449,8 @@
     <ClInclude Include="include\wheelJoint.h">
       <Filter>Header Files\builderStates</Filter>
     </ClInclude>
+    <ClInclude Include="include\TextureManager.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

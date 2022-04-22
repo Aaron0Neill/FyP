@@ -1,8 +1,8 @@
 #include "..\include\moveState.h"
 #include "guiManager.h"
 
-MoveState::MoveState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
-	IBuildState(t_window, t_manager)
+MoveState::MoveState(sf::RenderWindow* t_window) : 
+	IBuildState(t_window)
 {
 	initArrows();
 }

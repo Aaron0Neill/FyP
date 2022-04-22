@@ -3,7 +3,8 @@
 void IShape::setPosition(Vector t_pos)
 {
 	float angle = m_body->GetAngle();
-	m_body->SetTransform(t_pos.toWorldSpace(), angle);
+	Vector newPos = t_pos.toWorldSpace();
+	m_body->SetTransform(newPos, angle);
 }
 
 //*************************************************************

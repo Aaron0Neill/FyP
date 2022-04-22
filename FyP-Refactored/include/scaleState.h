@@ -9,7 +9,7 @@ class ScaleState :
 {
 public:
 
-	ScaleState(sf::RenderWindow* t_window, ShapeManager* t_manager);
+	ScaleState(sf::RenderWindow* t_window);
 	~ScaleState() = default;
 
 	/// <summary>

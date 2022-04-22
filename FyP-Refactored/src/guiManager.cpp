@@ -22,9 +22,9 @@ void GUIManager::handleEvent(sf::Event& e)
 	if (sf::Event::KeyPressed == e.type)
 	{
 		if (sf::Keyboard::C == e.key.code)
-		{
 			m_buildButton->setChecked(true);
-		}
+		//else if (sf::Keyboard::Q == e.key.code)
+		//	m_distButton->setChecked(true);
 	}
 }
 
@@ -44,6 +44,10 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 	std::string name = t_selectedShape->getName();
 	auto nameBox = group->get<tgui::EditBox>("ShapeName");
 	nameBox->setText(name);
+
+	std::string tag = t_selectedShape->getTag();
+	auto tagBox = group->get<tgui::EditBox>("ShapeTag");
+	tagBox->setText(tag);
 
 	Vector shapePos = t_selectedShape->getBody()->GetPosition();
 	shapePos = shapePos.fromWorldSpace();
@@ -110,6 +114,8 @@ void GUIManager::updateSelectedJoint(b2Joint* t_selectedJoint)
 	
 	if (type == b2JointType::e_distanceJoint)
 	{
+		m_distButton->setChecked(true);
+
 		b2DistanceJoint* distJnt = static_cast<b2DistanceJoint*>(t_selectedJoint);
 		// update Info 
 		tgui::Group::Ptr grp = m_gui->get<tgui::Group>("DistJoint");
@@ -147,7 +153,7 @@ void GUIManager::initShapeBuild()
 	
 	float picSize = 150.f;
 	tgui::Layout2d startPos{ 25.f,125.f };
-	tgui::Layout2d rowOffset{ 0.f,200.f };
+	tgui::Layout2d rowOffset{ 0.f,160.f };
 	tgui::Layout2d colOffset{ 200.f,0.f };
 
 	int index = 0;
@@ -186,7 +192,7 @@ void GUIManager::initShapeBuild()
 	circleptr->setWidgetName("Circle");
 	circleptr->setPosition(startPos + rowOffset * 3.f);
 	circleptr->onClick([this]() {
-		static_cast<CreateState*>(getEditor()->getState().get())->updateShape(ShapeType::CIRCLE);
+		static_cast<CreateState*>(m_builder->getState().get())->updateShape(ShapeType::CIRCLE);
 	});
 
 	group->add(circleptr, circleptr->getWidgetName());
@@ -195,13 +201,22 @@ void GUIManager::initShapeBuild()
 	for (auto& ptr : pics)
 	{
 		ptr->onClick([this, i]() {
-			static_cast<CreateState*>(getEditor()->getState().get())->updateShape(static_cast<ShapeType>(i));
+			static_cast<CreateState*>(m_builder->getState().get())->updateShape(static_cast<ShapeType>(i));
 			});
 
 		group->add(ptr, ptr->getWidgetName());
 		++i;
 	}
 
+	tgui::Texture spritePlaceholder("assets/images/Placeholder.png");
+
+	tgui::Picture::Ptr spriteLoader = tgui::Picture::create(spritePlaceholder);
+	spriteLoader->setPosition(startPos + rowOffset * 4.f);
+	spriteLoader->onClick([this]() {
+		static_cast<CreateState*>(m_builder->getState().get())->updateShape(ShapeType::SPRITE);
+		});
+
+	group->add(spriteLoader, "Placeholder");
 	panel->add(group, "BuildGroup");
 
 	auto editGroup = tgui::Group::create({ 400,1080 });
@@ -380,27 +395,27 @@ void GUIManager::initShapeEditor()
 
 	tgui::Layout2d buttonSize{ 175,40 };
 
-	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
 	auto panel = m_gui->get<tgui::Panel>("Background");
 	auto shapeGroup = tgui::Group::create({ 400,1080 });
 	shapeGroup->setVisible(false);
 
-	auto shapeButton = tgui::RadioButton::create();
-	shapeButton->setSize({ 100,50 });
-	shapeButton->setPosition({ 275,25 });
+	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
+	m_shapeButton = tgui::RadioButton::create();
+	m_shapeButton->setSize({ 100,50 });
+	m_shapeButton->setPosition({ 275,25 });
 
-	shapeButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
-	shapeButton->getRenderer()->setTextureUncheckedHover(m_radioTexture[1]);
-	shapeButton->getRenderer()->setTextureChecked(m_radioTexture[2]);
+	m_shapeButton->getRenderer()->setTextureUnchecked(m_radioTexture[0]);
+	m_shapeButton->getRenderer()->setTextureUncheckedHover(m_radioTexture[1]);
+	m_shapeButton->getRenderer()->setTextureChecked(m_radioTexture[2]);
 
-	shapeButton->onClick([this, shapeGroup]() {
+	m_shapeButton->onCheck([this, shapeGroup]() {
 		getEditor()->setState(EditState::SELECT);
 		shapeGroup->setVisible(true);
 		});
-	shapeButton->onUncheck([shapeGroup]() {
+	m_shapeButton->onUncheck([shapeGroup]() {
 		shapeGroup->setVisible(false);
 		});
-	radioGroup->add(shapeButton, "Shape");
+	radioGroup->add(m_shapeButton, "Shape");
 
 	auto nameLabel = tgui::Label::create("Shape Name");
 	nameLabel->setSize({ 185,40 });
@@ -417,6 +432,25 @@ void GUIManager::initShapeEditor()
 	nameBox->onTextChange([this](tgui::String t_newText) {
 		if (IShape* current = m_builder->getCurrentShape())
 			current->setName(t_newText.toStdString());
+		});
+
+	yLevel += spacing;
+
+	auto tagLabel = tgui::Label::create("Shape Tag");
+	tagLabel->setSize({ 185,40 });
+	tagLabel->setPosition({ indent, yLevel });
+	tagLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	tagLabel->setTextSize(20U);
+	tagLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto tagBox = tgui::EditBox::create();
+	tagBox->setSize({ 175,40 });
+	tagBox->setPosition({ 200, yLevel });
+	tagBox->setTextSize(20U);
+	tagBox->setInputValidator("^[a-zA-Z]+$");
+	tagBox->onTextChange([this](tgui::String t_newText) {
+		if (IShape* current = m_builder->getCurrentShape())
+			current->setTag(t_newText.toStdString());
 		});
 
 	yLevel += spacing;
@@ -446,14 +480,12 @@ void GUIManager::initShapeEditor()
 	xValue->setTextSize(20U);
 	xValue->setInputValidator(tgui::EditBox::Validator::Float);
 	xValue->onTextChange([this](tgui::String t_newText) {
-		if (!t_newText.size())
-			return;
+		float newX;
 
-		if (t_newText.size() == 1 && t_newText[0] == '-')
-			return;
+		if (!t_newText.attemptToFloat(newX)) return;
 
-		float newX = stof(t_newText.toStdString());
-		getEditor()->getCurrentShape()->setXPosition(newX);
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setXPosition(newX);
 		});
 	
 	auto yValue = tgui::EditBox::create();
@@ -462,14 +494,12 @@ void GUIManager::initShapeEditor()
 	yValue->setTextSize(20U);
 	yValue->setInputValidator(tgui::EditBox::Validator::Float);
 	yValue->onTextChange([this](tgui::String t_newText) {
-		if (!t_newText.size())
-			return;
+		float newY;
 
-		if (t_newText.size() == 1 && t_newText[0] == '-')
-			return;
+		if (!t_newText.attemptToFloat(newY)) return;
 
-		float newY = stof(t_newText.toStdString());
-		getEditor()->getCurrentShape()->setYPosition(newY);
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setYPosition(newY);
 		});
 
 	yLevel += spacing;
@@ -491,13 +521,12 @@ void GUIManager::initShapeEditor()
 	rotVal->setTextSize(20U);
 	rotVal->setInputValidator(tgui::EditBox::Validator::Float);
 	rotVal->onTextChange([this](tgui::String t_newText) {
-		if (!t_newText.size())
-			return;
+		float rot;
 
-		if (t_newText.size() == 1 && t_newText[0] == '-')
-			return;
+		if (!t_newText.attemptToFloat(rot)) return;
 
-		getEditor()->getCurrentShape()->setRotation(stof(t_newText.toStdString()));
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setRotation(rot);
 		});
 	
 	yLevel += spacing;
@@ -523,9 +552,7 @@ void GUIManager::initShapeEditor()
 
 	typeBox->onItemSelect([this](int t_index) {
 		if (IShape* currentShape = m_builder->getCurrentShape())
-		{
 			currentShape->setBodyType((b2BodyType)t_index);
-		}
 	});
 
 	yLevel += spacing;
@@ -625,10 +652,10 @@ void GUIManager::initShapeEditor()
 	densityEditBox->setTextSize(20U);
 	densityEditBox->setInputValidator(tgui::EditBox::Validator::Float);
 	densityEditBox->onTextChange([this](tgui::String t_newText) {
-		if (!t_newText.size())
-			return;
+		float density; 
 
-		auto density = std::stof(t_newText.toStdString());
+		if (!t_newText.attemptToFloat(density)) return;
+
 		if (IShape* shape = m_builder->getCurrentShape())
 			shape->getFixture()->SetDensity(density);
 		});
@@ -676,10 +703,7 @@ void GUIManager::initShapeEditor()
 	FrictionSlider->onValueChange([this](float t_newFriction)
 		{
 			if (IShape* shape = m_builder->getCurrentShape())
-			{ 
 				shape->getFixture()->SetFriction(t_newFriction);
-				std::cout << "Setting friction to: " << t_newFriction << std::endl;
-			}
 		});
 
 
@@ -690,6 +714,8 @@ void GUIManager::initShapeEditor()
 	/// </summary>
 	shapeGroup->add(nameLabel);
 	shapeGroup->add(nameBox, "ShapeName");
+	shapeGroup->add(tagLabel);
+	shapeGroup->add(tagBox, "ShapeTag");
 	shapeGroup->add(idLabel, "ShapeID");
 	shapeGroup->add(xValue, "ShapeXValue");
 	shapeGroup->add(yValue, "ShapeYValue");
@@ -739,6 +765,7 @@ void GUIManager::initTextures()
 void GUIManager::initJoint()
 {
 	auto panel = m_gui->get<tgui::Panel>("Background");
+
 	auto distanceGroup = tgui::Group::create({ 400,1080 });
 	auto wheelGroup = tgui::Group::create({ 400,1080 });
 	distanceGroup->setVisible(false);
@@ -749,6 +776,28 @@ void GUIManager::initJoint()
 	float spacing = 45.f;
 	unsigned labelFontSize = 20U;
 	tgui::Layout2d buttonSize{ 175,40 };
+
+	auto radioGroup = m_gui->get<tgui::RadioButtonGroup>("Radio");
+
+	m_distButton = tgui::RadioButton::create();
+	m_distButton->setVisible(false);
+	m_distButton->onCheck([distanceGroup]() {
+		distanceGroup->setVisible(true);
+		});
+	m_distButton->onUncheck([distanceGroup]() {
+		distanceGroup->setVisible(false);
+		});
+	radioGroup->add(m_distButton, "DistEditor");
+
+	m_wheelButton = tgui::RadioButton::create();
+	m_wheelButton->setVisible(false);
+	m_wheelButton->onCheck([wheelGroup]() {
+		wheelGroup->setVisible(true);
+		});
+	m_wheelButton->onUncheck([wheelGroup]() {
+		wheelGroup->setVisible(false);
+		});
+	radioGroup->add(m_wheelButton, "WheelEditor");
 
 	//dj 
 	//dj.collideConnected; //bool
@@ -855,7 +904,7 @@ void GUIManager::initJoint()
 	auto maxLen = tgui::EditBox::create();
 	maxLen->setInputValidator(tgui::EditBox::Validator::Float);
 	maxLen->setPosition({ 200,yLevel });
-	maxLen->setSize({ 50,40 });
+	maxLen->setSize(buttonSize);
 
 	yLevel += spacing;
 	/// <summary>

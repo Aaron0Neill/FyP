@@ -28,7 +28,7 @@ enum class EditState : uint8
 class JointEditor;
 
 using State = std::shared_ptr<IBuildState>;
-using StateFactory = std::unordered_map<EditState, std::function<State(sf::RenderWindow*, ShapeManager*)>>;
+using StateFactory = std::unordered_map<EditState, std::function<State(sf::RenderWindow*)>>;
 
 class ShapeEditor
 {
@@ -44,7 +44,6 @@ public:
 
 	void draw();
 
-	inline void addShapeManager(ShapeManager* t_manager) { m_manager = t_manager; }
 	inline void addJointEditor(JointEditor* t_editor) { m_joints = t_editor; }
 
 	State getState() { return m_currentState; }
@@ -55,8 +54,8 @@ private:
 	template<typename T>
 	void initFactory(EditState t_state)
 	{
-		m_factory.emplace(t_state, [](sf::RenderWindow* t_window, ShapeManager* t_manager) {
-			return std::make_shared<T>(t_window, t_manager);
+		m_factory.emplace(t_state, [](sf::RenderWindow* t_window) {
+			return std::make_shared<T>(t_window);
 			});
 	};
 
@@ -64,7 +63,7 @@ private:
 
 	JointEditor* m_joints;
 	StateFactory m_factory;
-	ShapeManager* m_manager;
+	ShapeManager& m_manager;
 	sf::RenderWindow* m_window;
 };
 

@@ -4,6 +4,7 @@
 #include "utils/ContactCallback.h"
 #include "utils/json.hpp"
 #include "utils/vector.h"
+#include "TextureManager.h"
 
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
@@ -22,6 +23,7 @@ public:
 	inline virtual b2Body* getBody()				{ return m_body; }
 	inline virtual sf::Vector2f getScale() const	{ return m_scale; }
 	inline virtual std::string getName() const 		{ return m_name; }
+	inline virtual std::string getTag() const 		{ return m_tag; }
 	inline virtual Vector getWorldPos() const		{ return Vector(m_body->GetPosition()).fromWorldSpace(); }
 
 
@@ -37,6 +39,7 @@ public:
 	virtual void setYScale		(float t_newScale)		=0;
 	virtual void setBodyType	(b2BodyType t_type)		{ m_body->SetType(t_type); }
 	virtual void setName		(std::string t_name)	{ m_name = t_name; }
+	virtual void setTag			(std::string t_tag)		{ m_tag = t_tag; }
 
 	virtual void toJson			(jsonf& t_json)			=0;
 	virtual void fromJson		(jsonf& t_json)			=0;
@@ -52,9 +55,11 @@ protected:
 	friend class ShapeManager;
 
 	std::string m_name;
+	std::string m_tag;
 	b2Body* m_body			{ nullptr };
 	b2Fixture* m_fixture	{ nullptr };
 	sf::Vector2f m_scale	{ 1.f, 1.f };
+	mutable bool m_destroy	{ false };
 };
 
 #endif

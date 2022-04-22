@@ -8,7 +8,7 @@ class RotateState :
 	public IBuildState
 {
 public:
-	RotateState(sf::RenderWindow* t_window, ShapeManager* t_manager);
+	RotateState(sf::RenderWindow* t_window);
 	~RotateState() = default;
 
 	/// <summary>

@@ -8,7 +8,7 @@
 class JointEditor
 {
 public:
-	JointEditor(ShapeManager& t_manager, sf::RenderWindow* t_window);
+	JointEditor(sf::RenderWindow* t_window);
 	~JointEditor() = default;
 
 	void handleEvent(sf::Event& e);

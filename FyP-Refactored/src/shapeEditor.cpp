@@ -1,8 +1,9 @@
 #include "shapeEditor.h"
 
 ShapeEditor::ShapeEditor(sf::RenderWindow* t_window) :
-	m_window(t_window), 
-	m_currentState(nullptr)
+	m_window(t_window),
+	m_currentState(nullptr),
+	m_manager(*ShapeManager::getInstance())
 {
 	initFactory<CreateState>(EditState::CREATE);
 	initFactory<MoveState>(EditState::MOVE);
@@ -17,7 +18,7 @@ ShapeEditor::ShapeEditor(sf::RenderWindow* t_window) :
 
 void ShapeEditor::setState(EditState t_newState)
 {
-	m_currentState = m_factory[t_newState](m_window, m_manager);
+	m_currentState = m_factory[t_newState](m_window);
 }
 
 //*************************************************************

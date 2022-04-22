@@ -5,15 +5,23 @@ PlatformScene::PlatformScene(sf::RenderWindow* t_window) :
 	IBaseScene(t_window)
 {
 	m_world = new b2World({ 0,9.8f });
-	m_shapeManager = new ShapeManager(m_world);
+	m_shapeManager = ShapeManager::getInstance();
+	m_shapeManager->setWorld(m_world);
 
-	LevelLoader levelloader(m_shapeManager);
+	auto tm = TextureManager::getInstance();
+	tm->loadTexture("Bullet", "assets/textures/bullet.png");
 
+	LevelLoader levelloader;
 	levelloader.loadLevel("../FyP-Refactored/assets/levels/Platform.json");
 
-	m_player = new Player(m_shapeManager->find("Player"));
+	(*m_shapeManager)[0]->setTag("Platform");
 
-	m_body = new MovingPlatform(m_shapeManager->find("Platform"));
+	m_player = new Player(m_shapeManager->find("Player"));
+	m_body = new MovingPlatform(m_shapeManager->find("Mover"));
+
+	auto id = m_shapeManager->createPolygon(4, 1, { 100,100 });
+	(*m_shapeManager)[id]->setYScale(2.5f);
+	(*m_shapeManager)[id]->setTag("Enemy");
 }
 
 //*************************************************************
@@ -25,6 +33,8 @@ void PlatformScene::handleEvents()
 	{
 		if (e.type == sf::Event::Closed)
 			m_window->close();
+
+		m_player->handleEvent(e, m_window);
 	}
 }
 

@@ -5,7 +5,8 @@ Game::Game()
 	m_world = WorldManager::getInstance();
 	m_window = createWindow("SFML Basic");
 
-	m_shapes = new ShapeManager(m_world->getWorld());
+	m_shapes = ShapeManager::getInstance();
+	m_shapes->setWorld(m_world->getWorld());
 
 	sf::Image icon;
 	if (icon.loadFromFile("assets/images/icon.png"))
@@ -21,18 +22,34 @@ Game::Game()
 	m_gui->init(m_window);
 
 	m_builder = new ShapeEditor(m_window);
-	m_builder->addShapeManager(m_shapes);
 
-	m_jointEditor = new JointEditor(*m_shapes, m_window);
+	m_jointEditor = new JointEditor(m_window);
 
 	m_builder->addJointEditor(m_jointEditor);
 
-	m_levelManager = new LevelLoader(m_shapes);
+	m_levelManager = new LevelLoader();
 
 	m_gui->addBuilder(m_builder);
 	m_gui->addLevelLoader(m_levelManager);
-
+	
 	auto floorID = m_shapes->createEdge({ 0,viewSize.y }, viewSize);
+
+
+	//auto hinge = m_shapes->createPolygon(4, 0.5, { 400,400 });
+	//(*m_shapes)[hinge]->setBodyType(b2_staticBody);
+	//
+	//auto pf = m_shapes->createPolygon(4, 0.5, { 400,400 });
+	//(*m_shapes)[pf]->setXScale(20);
+	//(*m_shapes)[pf]->getBody()->SetGravityScale(0);
+	//
+	//b2RevoluteJointDef rev;
+	//rev.Initialize((*m_shapes)[pf]->getBody(), (*m_shapes)[hinge]->getBody(), (*m_shapes)[hinge]->getBody()->GetPosition());
+	//
+	//rev.enableMotor = true;
+	//rev.maxMotorTorque = 120;
+	//rev.motorSpeed = 0;
+	//
+	//m_revJoint = static_cast<b2RevoluteJoint*>(m_world->getWorld()->CreateJoint(&rev));
 }
 
 //*************************************************************
@@ -86,11 +103,13 @@ void Game::processEvents()
 		m_jointEditor->handleEvent(e);
 
 		if (e.type == sf::Event::KeyPressed)
-			if (e.key.code == sf::Keyboard::Tab)
+			if (e.key.code == sf::Keyboard::Q)
 			{
 				m_world->startWorld();
 				m_shapes->startWorld();
 			}
+			else if (e.key.code == sf::Keyboard::Tilde)
+				m_shapes->reset();
 	}
 }
 
@@ -105,6 +124,8 @@ void Game::update(sf::Time t_dTime)
 	m_builder->update();
 
 	m_jointEditor->update();
+
+	//m_revJoint->SetMotorSpeed(m_revJoint->GetJointAngle() * -0.1);
 }
 
 //*************************************************************

@@ -7,6 +7,7 @@
 #include "box2d/b2_distance_joint.h"
 #include "box2d/b2_wheel_joint.h"
 #include "box2d/b2_world_callbacks.h"
+#include "TextureManager.h"
 #include "circleShape.h"
 #include "polygonShape.h"
 #include "vector.h"
@@ -19,17 +20,11 @@ using ShapeID = uint8;
 class ShapeManager
 {
 public:
-	/// <summary>
-	/// @Brief
-	/// Default constructor that will get a reference to the world through the the world singleton
-	/// </summary>
-	ShapeManager(b2World* t_world);
+	static ShapeManager* getInstance();
+	ShapeManager(const ShapeManager&) = delete;
+	void operator=(const ShapeManager&) = delete;
 
-	/// <summary>
-	/// @Brief
-	/// Destructor that will delete all the shapes that it is holding
-	/// </summary>
-	~ShapeManager();
+	void setWorld(b2World* t_world);
 
 	/// <summary>
 	/// @Brief
@@ -67,6 +62,9 @@ public:
 	/// <param name="t_mousePos"> Position to check </param>
 	/// <returns> The shape that's at the point NULL if no shapes</returns>
 	IShape* isMouseOnShape(Vector t_mousePos);
+
+	ShapeID createSprite(Texture t_texture, Vector t_centre);
+	ShapeID createSprite(std::string t_textureName, Vector t_centre);
 	
 	/// <summary>
 	/// @Brief
@@ -126,7 +124,26 @@ public:
 
 	void saveShapes(jsonf& t_data);
 	void saveJoints(jsonf& t_data);
+
+	void destroy(ShapeID t_id);
+	void destroy(IShape* t_shape);
+	void destroy(b2Body* t_body);
+	void destroy(const IShape& t_other);
+
+	/// <summary>
+	/// @Brief
+	/// Allows the user to remove all the shapes and delete everything created
+	/// </summary>
+	void reset();
 private:
+
+	ShapeManager();
+
+	/// <summary>
+	/// @Brief
+	/// Destructor that will delete all the shapes that it is holding
+	/// </summary>
+	~ShapeManager();
 
 	/// <summary>
 	/// Function to remove similar code through the shapes
@@ -136,6 +153,8 @@ private:
 	/// <returns> a body definition </returns>
 	b2BodyDef generateBodyDef(Vector pos);
 
+	std::vector<IShape*>::iterator destroyShape(IShape* t_shape);
+
 	std::vector<IShape*> m_shapes;
 	std::vector<b2Joint*> m_joints;
 
@@ -143,8 +162,6 @@ private:
 
 	sf::VertexArray m_jointsArray{ sf::Lines };
 #endif
-
-	ShapeID m_currentID { 0 };
 
 	b2World* m_world;
 };

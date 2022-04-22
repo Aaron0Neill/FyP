@@ -8,8 +8,8 @@
 class IBuildState
 {
 public:
-	IBuildState(sf::RenderWindow* t_window, ShapeManager* t_manager)
-		: m_window(t_window), m_manager(t_manager) {}
+	IBuildState(sf::RenderWindow* t_window)
+		: m_window(t_window), m_manager(ShapeManager::getInstance()) {}
 
 	virtual ~IBuildState() = default;
 	virtual void handleEvent(sf::Event& e) = 0;

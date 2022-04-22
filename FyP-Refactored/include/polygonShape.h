@@ -57,6 +57,8 @@ public:
 
 	inline sf::VertexArray getDrawing() { return m_vertex; }
 
+	inline const sf::Texture* getTexture() { return m_state.texture; }
+
 private:
 	PolygonShape() = default;
 
@@ -71,6 +73,8 @@ private:
 	friend class ShapeManager;
 
 	sf::VertexArray m_vertex{ sf::TriangleFan };
+
+	sf::RenderStates m_state;
 };
 
 #endif

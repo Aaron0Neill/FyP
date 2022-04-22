@@ -91,11 +91,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SFML_SDK)/include;include;../FyP-Refactored/include;../FyP-Refactored/include/utils;include/box2d;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\aaron\Documents\College Work\FYP\FyP\Bin-Int\Debug\FyP-Refactored;$(SFML_SDK)/lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)/Bin-Int/Debug/FyP-Refactored;$(SFML_SDK)/lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>shapeManager.obj;polygonShape.obj;Ishape.obj;circleShape.obj;levelLoader.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -190,6 +191,8 @@
     <ClInclude Include="include\box2d\b2_world.h" />
     <ClInclude Include="include\box2d\b2_world_callbacks.h" />
     <ClInclude Include="include\box2d\box2d.h" />
+    <ClInclude Include="include\Bullet.h" />
+    <ClInclude Include="include\BulletPool.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\IBaseScene.h" />
@@ -254,6 +257,7 @@
     <ClCompile Include="src\box2d\dynamics\b2_world.cpp" />
     <ClCompile Include="src\box2d\dynamics\b2_world_callbacks.cpp" />
     <ClCompile Include="src\box2d\rope\b2_rope.cpp" />
+    <ClCompile Include="src\BulletPool.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />

@@ -11,7 +11,7 @@ class ContactListener :
 	public b2ContactListener
 {
 public:
-	ContactListener(ShapeManager* t_manager) : m_manager(t_manager) {};
+	ContactListener() : m_manager(*ShapeManager::getInstance()) { };
 	~ContactListener() = default;
 
 	/// <summary>
@@ -20,11 +20,11 @@ public:
 	/// <param name="t_contact"></param>
 	virtual void BeginContact(b2Contact* t_contact)override
 	{
-		ShapeID id1 = m_manager->getID(t_contact->GetFixtureA()->GetBody());
-		ShapeID id2 = m_manager->getID(t_contact->GetFixtureB()->GetBody());
+		ShapeID id1 = m_manager.getID(t_contact->GetFixtureA()->GetBody());
+		ShapeID id2 = m_manager.getID(t_contact->GetFixtureB()->GetBody());
 		
-		auto* bodyA = (*m_manager)[id1];
-		auto* bodyB = (*m_manager)[id2];
+		auto* bodyA = m_manager[id1];
+		auto* bodyB = m_manager[id2];
 
 		(bodyA->getFixture()->IsSensor()) ? 
 			bodyA->onTriggerEnter(*bodyB) :
@@ -41,11 +41,13 @@ public:
 	/// <param name="t_contact"></param>
 	virtual void EndContact(b2Contact* t_contact)override
 	{
-		ShapeID id1 = m_manager->getID(t_contact->GetFixtureA()->GetBody());
-		ShapeID id2 = m_manager->getID(t_contact->GetFixtureB()->GetBody());
+		ShapeID id1 = m_manager.getID(t_contact->GetFixtureA()->GetBody());
+		ShapeID id2 = m_manager.getID(t_contact->GetFixtureB()->GetBody());
 
-		auto* bodyA = (*m_manager)[id1];
-		auto* bodyB = (*m_manager)[id2];
+		if (id1 == 255 || id2 == 255) return;
+
+		auto* bodyA = m_manager[id1];
+		auto* bodyB = m_manager[id2];
 
 		(bodyA->getFixture()->IsSensor()) ?
 			bodyA->onTriggerExit(*bodyB) :
@@ -56,7 +58,7 @@ public:
 			bodyB->onCollisionExit(*bodyA);
 	}
 private:
-	ShapeManager* m_manager;
+	ShapeManager& m_manager;
 };
 
 

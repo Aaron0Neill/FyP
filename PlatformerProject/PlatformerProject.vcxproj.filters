@@ -204,6 +204,12 @@
     <ClInclude Include="include\MovingPlatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BulletPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -357,6 +363,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MovingPlatform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BulletPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

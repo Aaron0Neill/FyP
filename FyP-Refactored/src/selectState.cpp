@@ -1,8 +1,8 @@
 #include "selectState.h"
 #include "guiManager.h"
 
-SelectState::SelectState(sf::RenderWindow* t_window, ShapeManager* t_manager) : 
-	IBuildState(t_window, t_manager)
+SelectState::SelectState(sf::RenderWindow* t_window) : 
+	IBuildState(t_window)
 {
 	if (m_selectedShape)
 		updateUI();
