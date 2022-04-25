@@ -22,6 +22,10 @@ public:
 	{
 		ShapeID id1 = m_manager.getID(t_contact->GetFixtureA()->GetBody());
 		ShapeID id2 = m_manager.getID(t_contact->GetFixtureB()->GetBody());
+
+		constexpr ShapeID NULL_ID = std::numeric_limits<ShapeID>::max();
+
+		if (id1 == NULL_ID || id2 == NULL_ID) return;
 		
 		auto* bodyA = m_manager[id1];
 		auto* bodyB = m_manager[id2];
@@ -44,7 +48,9 @@ public:
 		ShapeID id1 = m_manager.getID(t_contact->GetFixtureA()->GetBody());
 		ShapeID id2 = m_manager.getID(t_contact->GetFixtureB()->GetBody());
 
-		if (id1 == 255 || id2 == 255) return;
+		constexpr ShapeID NULL_ID = std::numeric_limits<ShapeID>::max();
+
+		if (id1 == NULL_ID || id2 == NULL_ID) return;
 
 		auto* bodyA = m_manager[id1];
 		auto* bodyB = m_manager[id2];

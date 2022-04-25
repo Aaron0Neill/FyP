@@ -1,15 +1,43 @@
 #include <circleShape.h>
 
+CircleShape::CircleShape() : CircleShape(1.f)
+{
+}
+
+//*************************************************************
+
 CircleShape::CircleShape(float t_radius)
 {
 	m_circle.setFillColor(sf::Color(40U,40U,40U,255U));
 	m_circle.setRadius(t_radius);
 	m_circle.setOrigin(t_radius, t_radius);
 
-	m_circle.setPointCount((size_t)(t_radius * PixelsPerMetre));
+	m_circle.setPointCount((size_t)(t_radius));
 
 	m_vertices[0].position = {t_radius, t_radius}; // centre
 	m_vertices[1].position = { 0, t_radius }; // top
+}
+
+//*************************************************************
+
+CircleShape::CircleShape(const CircleShape& t_copy)
+{
+	m_name		= t_copy.m_name;
+	m_tag		= t_copy.m_tag;
+	m_destroy	= t_copy.m_destroy;
+	m_scale		= t_copy.m_scale;
+	m_circle	= t_copy.m_circle;
+}
+
+//*************************************************************
+
+void CircleShape::operator=(const CircleShape& t_other)
+{
+	m_name		= t_other.m_name;
+	m_tag		= t_other.m_tag;
+	m_destroy	= t_other.m_destroy;
+	m_scale		= t_other.m_scale;
+	m_circle	= t_other.m_circle;
 }
 
 //*************************************************************
@@ -32,8 +60,11 @@ void CircleShape::update()
 
 void CircleShape::draw(sf::RenderWindow* t_window)
 {
-	t_window->draw(m_circle);
-	t_window->draw(m_vertices,2, sf::Lines);
+	if (m_visible)
+	{
+		t_window->draw(m_circle);
+		t_window->draw(m_vertices,2, sf::Lines);
+	}
 }
 
 //*************************************************************
@@ -57,18 +88,6 @@ void CircleShape::setScale(float t_scale)
 
 		m_body->SetAwake(true);
 	}
-}
-
-//*************************************************************
-
-void CircleShape::setXScale(float t_newScale)
-{
-}
-
-//*************************************************************
-
-void CircleShape::setYScale(float t_newScale)
-{
 }
 
 //*************************************************************

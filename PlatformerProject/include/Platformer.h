@@ -6,13 +6,14 @@
 
 #include "Player.h"
 #include "MovingPlatform.h"
+#include "EnemySpawner.h"
 
 class PlatformScene : 
 	public IBaseScene
 {
 public:
 	PlatformScene(sf::RenderWindow* t_window);
-	~PlatformScene() = default;
+	~PlatformScene();
 
 	/// <summary>
 	/// 
@@ -35,7 +36,8 @@ private:
 	b2World* m_world				{ nullptr };
 
 	Player* m_player				{ nullptr };
-	MovingPlatform* m_body		{ nullptr };
+	MovingPlatform* m_body			{ nullptr };
+	EnemySpawner* m_spawner			{ nullptr };
 
 	uint8 m_velocityIterations		{ 6 };
 	uint8 m_positionIterations		{ 2 };

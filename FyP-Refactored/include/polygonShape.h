@@ -59,8 +59,10 @@ public:
 
 	inline const sf::Texture* getTexture() { return m_state.texture; }
 
-private:
 	PolygonShape() = default;
+	PolygonShape(const PolygonShape& t_copy);
+	void operator=(const PolygonShape& t_other);
+private:
 
 	/// <summary>
 	/// Only update if the shape is actually polygon

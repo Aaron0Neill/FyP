@@ -7,10 +7,6 @@
 #include <box2d/b2_math.h>
 #include <SFML/System/Vector2.hpp>
 
-#ifdef BUILD_SRC
-#include <TGUI/Layout.hpp>
-#endif
-
 class Vector 
 {
 public:
@@ -20,10 +16,6 @@ public:
 	~Vector	() = default;
 	Vector	(float t_x, float t_y)			: x(t_x), y(t_y) {};
 	Vector	(b2Vec2 t_vec)					: x(t_vec.x), y(t_vec.y) {};
-#ifdef BUILD_SRC
-	Vector	(tgui::Vector2f t_vec)			: x(t_vec.x), y(t_vec.y) {}
-	Vector	(tgui::Layout2d t_lay)			: x(t_lay.getValue().x), y(t_lay.getValue().y) {}
-#endif
 	Vector	(sf::Vector2f t_vec)				: x(t_vec.x), y(t_vec.y) {};
 	Vector	(sf::Vector2i t_vec)				: x((float)t_vec.x), y((float)t_vec.y) {};
 	Vector	(sf::Vector2u t_vec)				: x((float)t_vec.x), y((float)t_vec.y) {};
@@ -65,9 +57,6 @@ public:
 	operator b2Vec2()			{ return { x,y }; };
 	operator sf::Vector2f()		{ return { x,y }; };
 	operator sf::Vector2i()		{ return { (int)x,(int)y }; };
-#ifdef BUILD_SRC
-	operator tgui::Layout2d()	{ return { x, y }; }
-#endif
 };
 
 #endif

@@ -34,6 +34,7 @@ Game::Game()
 	
 	auto floorID = m_shapes->createEdge({ 0,viewSize.y }, viewSize);
 
+	IShape::setDebugView(true);
 
 	//auto hinge = m_shapes->createPolygon(4, 0.5, { 400,400 });
 	//(*m_shapes)[hinge]->setBodyType(b2_staticBody);
@@ -102,11 +103,16 @@ void Game::processEvents()
 
 		m_jointEditor->handleEvent(e);
 
+		if (e.type == sf::Event::MouseButtonPressed)
+		{
+
+		}
+
 		if (e.type == sf::Event::KeyPressed)
 			if (e.key.code == sf::Keyboard::Q)
 			{
-				m_world->startWorld();
-				m_shapes->startWorld();
+				m_world->wakeShapes();
+				m_shapes->wakeShapes();
 			}
 			else if (e.key.code == sf::Keyboard::Tilde)
 				m_shapes->reset();
@@ -117,13 +123,12 @@ void Game::processEvents()
 
 void Game::update(sf::Time t_dTime)
 {
-	m_world->update(t_dTime);
-
 	m_shapes->update();
 
 	m_builder->update();
 
 	m_jointEditor->update();
+	m_world->update(t_dTime);
 
 	//m_revJoint->SetMotorSpeed(m_revJoint->GetJointAngle() * -0.1);
 }

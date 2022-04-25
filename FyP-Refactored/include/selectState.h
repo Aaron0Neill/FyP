@@ -23,6 +23,8 @@ private:
 	/// with the relevant shape.
 	/// </summary>
 	void updateUI();
+
+	IShape* m_template;
 };
 
 #endif

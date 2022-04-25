@@ -1,6 +1,4 @@
 #pragma once
-#ifdef BUILD_SRC
-
 #include "shapeManager.h"
 #include "guiManager.h"
 #include "vectorMaths.h"
@@ -26,4 +24,3 @@ private:
 	sf::CircleShape m_template;
 	b2Joint* m_selectedJoint	{ nullptr };
 };
-#endif

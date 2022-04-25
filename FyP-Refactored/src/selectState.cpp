@@ -24,6 +24,23 @@ void SelectState::handleEvent(sf::Event& e)
 				updateUI();
 			}
 	}
+	else if (e.type == sf::Event::KeyPressed)
+	{
+		if (m_selectedShape)
+		{
+			if (e.key.code == sf::Keyboard::Delete)
+			{
+				m_manager->destroy(m_selectedShape);
+				m_selectedShape = nullptr;
+			}
+		
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+				if (e.key.code == sf::Keyboard::C)
+					m_template = m_selectedShape;
+				else if (e.key.code == sf::Keyboard::V)
+					m_manager->instantiate(*m_template);
+		}
+	}
 }
 
 void SelectState::updateUI()

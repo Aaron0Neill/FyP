@@ -27,8 +27,8 @@ public:
 	/// Set Function
 	/// </summary>
 	void setScale	(float t_scale)		override;
-	void setXScale	(float t_newScale)	override;
-	void setYScale	(float t_newScale)	override;
+	void setXScale	(float t_newScale)	override{};
+	void setYScale	(float t_newScale)	override{};
 
 	/// <summary>
 	/// Conversion to and from JSON 
@@ -39,9 +39,12 @@ public:
 
 	inline sf::CircleShape getDrawing() { return m_circle; }
 
+	CircleShape();
+	CircleShape(float t_radius);
+	CircleShape(const CircleShape& t_copy);
+	void operator=(const CircleShape& t_other);
 private:
 	friend class ShapeManager;
-	CircleShape(float t_radius);
 
 	sf::CircleShape m_circle;
 	sf::Vertex m_vertices[2];

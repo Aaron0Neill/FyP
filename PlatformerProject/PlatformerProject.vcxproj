@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="DLL|Win32">
+      <Configuration>DLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DLL|x64">
+      <Configuration>DLL</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -52,6 +60,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DLL|Win32'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DLL|x64'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -96,7 +110,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/Bin-Int/Debug/FyP-Refactored;$(SFML_SDK)/lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)/Bin-Int/Debug/FyP-Refactored;$(SFML_SDK)/lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>shapeManager.obj;polygonShape.obj;Ishape.obj;circleShape.obj;levelLoader.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -193,6 +207,8 @@
     <ClInclude Include="include\box2d\box2d.h" />
     <ClInclude Include="include\Bullet.h" />
     <ClInclude Include="include\BulletPool.h" />
+    <ClInclude Include="include\Enemy.h" />
+    <ClInclude Include="include\EnemySpawner.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\IBaseScene.h" />
@@ -258,6 +274,8 @@
     <ClCompile Include="src\box2d\dynamics\b2_world_callbacks.cpp" />
     <ClCompile Include="src\box2d\rope\b2_rope.cpp" />
     <ClCompile Include="src\BulletPool.cpp" />
+    <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\EnemySpawner.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />

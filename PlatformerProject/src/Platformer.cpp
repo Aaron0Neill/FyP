@@ -16,12 +16,22 @@ PlatformScene::PlatformScene(sf::RenderWindow* t_window) :
 
 	(*m_shapeManager)[0]->setTag("Platform");
 
-	m_player = new Player(m_shapeManager->find("Player"));
-	m_body = new MovingPlatform(m_shapeManager->find("Mover"));
 
-	auto id = m_shapeManager->createPolygon(4, 1, { 100,100 });
-	(*m_shapeManager)[id]->setYScale(2.5f);
-	(*m_shapeManager)[id]->setTag("Enemy");
+	IShape* playerShape = m_shapeManager->find("Player");
+	m_player = new Player(playerShape);
+
+	IShape* pf = m_shapeManager->find("Mover");
+	m_body = new MovingPlatform(pf);
+
+	IShape* enemy = m_shapeManager->findByTag("Enemy");
+	m_spawner = new EnemySpawner(enemy);
+}
+
+PlatformScene::~PlatformScene()
+{
+	delete m_player;
+	delete m_body; 
+	delete m_spawner;
 }
 
 //*************************************************************
@@ -48,6 +58,8 @@ void PlatformScene::update(sf::Time t_dt)
 	m_player->update(t_dt);
 
 	m_body->update(t_dt);
+
+	m_spawner->update(t_dt);
 }
 
 //*************************************************************

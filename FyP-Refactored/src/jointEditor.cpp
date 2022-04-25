@@ -1,4 +1,3 @@
-#ifdef BUILD_SRC
 #include "jointEditor.h"
 
 JointEditor::JointEditor(sf::RenderWindow* t_window) :
@@ -47,6 +46,9 @@ void JointEditor::handleEvent(sf::Event& e)
 void JointEditor::update()
 {
 	size_t size = m_manager.getJoints().size();
+	if (m_joints.size() >= size)
+		m_joints.resize(size);
+
 	for (size_t i = 0; i < size; ++i)
 	{
 		if (i >= m_joints.size())
@@ -68,5 +70,3 @@ void JointEditor::draw()
 	for (auto& circ : m_joints)
 		m_window->draw(circ);
 }
-
-#endif

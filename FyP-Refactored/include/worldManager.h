@@ -20,7 +20,7 @@ public:
 		m_world->Step(t_dt.asSeconds(), m_velocityIterations, m_positionIterations);
 	};
 	
-	void startWorld() { m_world->SetGravity({ 0,9.8f }); }
+	void wakeShapes() { m_world->SetGravity({ 0,9.8f }); }
 
 	b2World* operator->() { return m_world; }
 

@@ -1,5 +1,7 @@
 #include <polygonShape.h>
 
+bool IShape::m_debugView = false;
+
 void PolygonShape::setScale(float t_newScale)
 {
 	setXScale(t_newScale);
@@ -54,7 +56,11 @@ void PolygonShape::update()
 
 void PolygonShape::draw(sf::RenderWindow* t_window)
 {
-	t_window->draw(m_vertex, m_state);
+	if (m_visible)
+		t_window->draw(m_vertex, m_state);
+
+	if (IShape::m_debugView)
+		t_window->draw(&m_vertex[0], m_vertex.getVertexCount(), sf::LinesStrip);
 }
 
 //*************************************************************
@@ -67,6 +73,7 @@ void PolygonShape::toJson(jsonf& t_json)
 	t_json["ShapeType"] = type;
 	t_json["Name"] = m_name;
 	t_json["Tag"] = m_tag;
+	t_json["Visible"] = m_visible;
 
 	if (m_state.texture)
 		t_json["Texture"] = tm->findName(m_state.texture);
@@ -90,6 +97,10 @@ void PolygonShape::toJson(jsonf& t_json)
 	t_json["Scale"] = { m_scale.x, m_scale.y };
 	t_json["Rotation"] = m_body->GetAngle() * Rad2Deg;
 	t_json["BodyType"] = m_body->GetType();
+	t_json["Sensor"] = m_fixture->IsSensor();
+	t_json["Density"] = m_fixture->GetDensity();
+	t_json["Restitution"] = m_fixture->GetRestitution();
+	t_json["Friction"] = m_fixture->GetFriction();
 }
 
 //*************************************************************
@@ -99,6 +110,9 @@ void PolygonShape::fromJson(jsonf& t_json)
 	m_name = t_json["Name"].get<std::string>();
 	if (t_json.contains("Tag"))
 		m_tag = t_json["Tag"].get<std::string>();
+
+	if (t_json.contains("Visible"))
+		m_visible = t_json["Visible"].get<bool>();
 
 	auto posPtr = t_json["Centre"].begin();
 	float x = (*posPtr++);
@@ -142,6 +156,29 @@ void PolygonShape::fromJson(jsonf& t_json)
 	auto bodyType = t_json["BodyType"].get<b2BodyType>();
 	setBodyType(bodyType);
 
+	if (t_json.find("Sensor") != t_json.end())
+	{
+		bool sensor = t_json["Sensor"].get<bool>();
+		m_fixture->SetSensor(sensor);
+	}
+
+	if (t_json.find("Density") != t_json.end())
+	{
+		float density = t_json["Density"].get<float>();
+		m_fixture->SetDensity(density);
+	}
+
+	if (t_json.find("Restitution") != t_json.end())
+	{
+		float restitution = t_json["Restitution"].get<float>();
+		m_fixture->SetRestitution(restitution);
+	}
+
+	if (t_json.find("Friction") != t_json.end())
+	{
+		float friction = t_json["Friction"].get<float>();
+		m_fixture->SetFriction(friction);
+	}
 }
 
 //*************************************************************
@@ -156,6 +193,30 @@ b2Vec2* PolygonShape::getPoints(uint8 const t_sides, float t_radius)
 		points[i] = { cos(interiorAngle * i) * t_radius, sin(interiorAngle * i) * t_radius };
 
 	return points;
+}
+
+//*************************************************************
+
+PolygonShape::PolygonShape(const PolygonShape& t_copy)
+{
+	m_name		= t_copy.m_name;
+	m_tag		= t_copy.m_tag;
+	m_state		= t_copy.m_state;
+	m_destroy	= t_copy.m_destroy;
+	m_scale		= t_copy.m_scale;
+	m_vertex	= t_copy.m_vertex;
+}
+
+//*************************************************************
+
+void PolygonShape::operator=(const PolygonShape& t_other)
+{
+	m_name		= t_other.m_name;
+	m_tag		= t_other.m_tag;
+	m_state		= t_other.m_state;
+	m_destroy	= t_other.m_destroy;
+	m_scale		= t_other.m_scale;
+	m_vertex	= t_other.m_vertex;
 }
 
 //*************************************************************

@@ -31,24 +31,24 @@
     <Filter Include="Source Files\Box2D\Rope">
       <UniqueIdentifier>{a8998b29-e20b-41db-bf48-3ee1be128106}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{27f41472-3839-4c3c-8f09-49743e2e72a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entities">
+      <UniqueIdentifier>{8a6aecdd-3a87-46e4-beda-09f25483e8d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities">
+      <UniqueIdentifier>{c826e806-9e07-4eae-9586-973bc1ec9b6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{1253666a-9438-4f83-baee-9a4615241ef9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\globals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IBaseScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Platformer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SceneManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\box2d\b2_api.h">
@@ -198,16 +198,34 @@
     <ClInclude Include="src\box2d\dynamics\b2_polygon_contact.h">
       <Filter>Source Files\Box2D\Dynamics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Player.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\IBaseScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="include\MovingPlatform.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\MainMenu.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Platformer.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneManager.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="include\Bullet.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enemy.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MovingPlatform.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Player.h">
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="include\BulletPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EnemySpawner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -216,12 +234,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platformer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\box2d\collision\b2_broad_phase.cpp">
@@ -359,14 +371,26 @@
     <ClCompile Include="src\box2d\rope\b2_rope.cpp">
       <Filter>Source Files\Box2D\Rope</Filter>
     </ClCompile>
-    <ClCompile Include="src\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MovingPlatform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\BulletPool.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnemySpawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enemy.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MovingPlatform.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platformer.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainMenu.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

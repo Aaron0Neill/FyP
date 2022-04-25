@@ -93,7 +93,7 @@ void MoveState::initArrows()
 		Vector size = { 75,50 };
 		auto horizPic = tgui::Picture::create(arrowTex, true);
 		horizPic->setPosition(pos.x, pos.y - size.y / 2.f);
-		horizPic->setSize(size);
+		horizPic->setSize({ size.x, size.y });
 		horizPic->onMousePress([this, &s, horizPic, &pos](tgui::Vector2f t_mousePos) {
 			m_editingX = true;
 			m_selectedShape = s;
@@ -103,7 +103,7 @@ void MoveState::initArrows()
 
 		auto verticalPic = tgui::Picture::create(arrowTex, true);
 		verticalPic->setPosition(pos.x - size.y / 2.f, pos.y);
-		verticalPic->setSize(size);
+		verticalPic->setSize({ size.x, size.y });
 		verticalPic->setRotation(-90);
 		verticalPic->onMousePress([this, &s, verticalPic, &pos](tgui::Vector2f t_mousePos) {
 			m_editingY = true;
@@ -133,7 +133,7 @@ void MoveState::updateArrows()
 	for (int i = 0; i < size; ++i)
 	{
 		Vector pos = Vector((*m_manager)[i]->getBody()->GetPosition()).fromWorldSpace();
-		Vector size = m_horizontalGroup->getWidgets()[i]->getSize();
+		auto size = m_horizontalGroup->getWidgets()[i]->getSize();
 		m_horizontalGroup->getWidgets()[i]->setPosition({ pos.x, pos.y - size.y / 2.f });
 		m_verticalGroup->getWidgets()[i]->setPosition({ pos.x - size.y / 2.f, pos.y });
 	}

@@ -161,10 +161,16 @@ ShapeID ShapeManager::createSprite(Texture t_texture, Vector t_centre)
 	return ShapeID(m_shapes.size() - 1);
 }
 
+//*************************************************************
+
 ShapeID ShapeManager::createSprite(std::string t_textureName, Vector t_centre)
 {
 	TextureManager* tm = TextureManager::getInstance();
 	Texture tex = tm->getTexture(t_textureName);
+
+	if (!tex)
+		return std::numeric_limits<ShapeID>::max();
+
 	return createSprite(tex, t_centre);
 }
 
@@ -181,13 +187,11 @@ void ShapeManager::update()
 	}
 
 	for (auto& shape : m_shapes)
-	{
 		shape->update();
-	}
 
 #ifdef BUILD_SRC
 	size_t jointCount = m_joints.size();
-	if (m_jointsArray.getVertexCount() < m_joints.size() * 2)
+	if (m_jointsArray.getVertexCount() != m_joints.size() * 2)
 		m_jointsArray.resize(jointCount * 2U);
 
 	for (size_t i = 0; i < jointCount; ++i)
@@ -205,6 +209,17 @@ IShape* ShapeManager::find(const std::string& t_name)
 {
 	for (auto& shape : m_shapes)
 		if (shape->m_name == t_name)
+			return shape;
+
+	return nullptr;
+}
+
+//*************************************************************
+
+IShape* ShapeManager::findByTag(const std::string& t_tag)
+{
+	for (auto& shape : m_shapes)
+		if (shape->m_tag == t_tag)
 			return shape;
 
 	return nullptr;
@@ -234,14 +249,12 @@ ShapeID ShapeManager::getID(IShape* t_shape)
 
 ShapeID ShapeManager::getID(b2Body* t_shape)
 {
-	auto end = m_shapes.end();
+	for (auto& shape : m_shapes)
+		if (shape && !shape->m_destroy)
+			if (shape->m_body && shape->m_body == t_shape)
+				return ShapeID(&shape - &m_shapes[0]);
 
-	for (auto it = m_shapes.begin(); it != end; ++it)
-		if (IShape* shape = *it)
-			if (shape->getBody() == t_shape)
-				return it - m_shapes.begin();
-
-	return ShapeID(255);
+	return std::numeric_limits<ShapeID>::max();
 }
 
 //*************************************************************
@@ -289,6 +302,7 @@ b2Joint* ShapeManager::createWheelJoint(IShape* t_bodyA, IShape* t_bodyB)
 	b2Body* bodyB = t_bodyB->getBody();
 
 	wheelJoint.Initialize(bodyA, bodyB, bodyB->GetPosition(), { 0,1 });
+	wheelJoint.enableLimit = true;
 
 	size_t size = m_joints.size();
 	m_joints.push_back(m_world->CreateJoint(&wheelJoint));
@@ -299,7 +313,7 @@ b2Joint* ShapeManager::createWheelJoint(IShape* t_bodyA, IShape* t_bodyB)
 
 //*************************************************************
 
-void ShapeManager::startWorld()
+void ShapeManager::wakeShapes()
 {
 	for (auto& shape : m_shapes)
 		shape->getBody()->SetAwake(true);
@@ -357,6 +371,8 @@ void ShapeManager::destroy(b2Body* t_body)
 	destroy(*iter);
 }
 
+//*************************************************************
+
 void ShapeManager::destroy(const IShape& t_other)
 {
 	t_other.m_destroy = true;
@@ -364,8 +380,40 @@ void ShapeManager::destroy(const IShape& t_other)
 
 //*************************************************************
 
+IShape* ShapeManager::instantiate(IShape& t_shapeToCopy, Vector t_copyPos)
+{
+	// copy the shape info and create it inside the vector 
+	if (t_shapeToCopy.m_fixture->GetType() == b2Shape::Type::e_circle)
+		return instantiateCircle(t_shapeToCopy, t_copyPos);
+
+	if (t_shapeToCopy.m_fixture->GetShape()->GetType() == b2Shape::Type::e_polygon)
+		return instantiateShape(t_shapeToCopy, t_copyPos);
+}
+
+//*************************************************************
+
+void ShapeManager::clone(IShape& t_toClone, IShape& t_target)
+{
+	b2BodyDef bodyDef;
+	cloneBodyDef(t_toClone.m_body, bodyDef);
+	t_target.m_body = m_world->CreateBody(&bodyDef);
+
+	b2FixtureDef fixtureDef;
+	cloneFixtureDef(t_toClone.m_fixture, fixtureDef);
+	t_target.m_fixture = t_target.m_body->CreateFixture(&fixtureDef);
+
+	static_cast<PolygonShape&>(t_target) = static_cast<PolygonShape&>(t_toClone);
+}
+
+//*************************************************************
+
 void ShapeManager::reset()
 {
+	for (b2Joint* joint : m_joints)
+		m_world->DestroyJoint(joint);
+
+	m_jointsArray.clear();
+
 	for (IShape* shape : m_shapes)
 	{
 		m_world->DestroyBody(shape->getBody());
@@ -373,8 +421,6 @@ void ShapeManager::reset()
 	}
 	m_shapes.clear();
 
-	for (b2Joint* joint : m_joints)
-		m_world->DestroyJoint(joint);
 
 	m_joints.clear();
 }
@@ -384,9 +430,49 @@ void ShapeManager::reset()
 b2BodyDef ShapeManager::generateBodyDef(Vector t_pos)
 {
 	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position = t_pos;
+	bodyDef.type		= b2_dynamicBody;
+	bodyDef.position	= t_pos;
 	return bodyDef;
+}
+
+//*************************************************************
+
+b2FixtureDef ShapeManager::generateFixtureDef(b2Shape* t_shape)
+{
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape =		t_shape;
+	fixtureDef.density =	1;
+	return fixtureDef;
+}
+
+//*************************************************************
+
+void ShapeManager::cloneBodyDef(b2Body* t_original, b2BodyDef& t_clone)
+{
+	t_clone.position		= t_original->GetPosition();
+	t_clone.angle			= t_original->GetAngle();
+	t_clone.linearVelocity	= t_original->GetLinearVelocity();
+	t_clone.angularVelocity = t_original->GetAngularVelocity();
+	t_clone.linearDamping	= t_original->GetLinearDamping();
+	t_clone.angularDamping	= t_original->GetAngularDamping();
+	t_clone.allowSleep		= t_original->IsSleepingAllowed();
+	t_clone.awake			= t_original->IsAwake();
+	t_clone.fixedRotation	= t_original->IsFixedRotation();
+	t_clone.bullet			= t_original->IsBullet();
+	t_clone.type			= t_original->GetType();
+	t_clone.enabled			= t_original->IsEnabled();
+	t_clone.gravityScale	= t_original->GetGravityScale();
+}
+
+//*************************************************************
+
+void ShapeManager::cloneFixtureDef(b2Fixture* t_original, b2FixtureDef& t_clone)
+{
+	t_clone.shape		= t_original->GetShape();
+	t_clone.density		= t_original->GetDensity();
+	t_clone.friction	= t_original->GetFriction();
+	t_clone.isSensor	= t_original->IsSensor();
+	t_clone.restitution = t_original->GetRestitution();
 }
 
 //*************************************************************
@@ -394,7 +480,59 @@ b2BodyDef ShapeManager::generateBodyDef(Vector t_pos)
 std::vector<IShape*>::iterator ShapeManager::destroyShape(IShape* t_shape)
 {
 	auto iter = std::find_if(m_shapes.begin(), m_shapes.end(), [t_shape](IShape* t_current) { return t_current == t_shape; });
+
+	b2Body* body = (*iter)->getBody();
+	auto curr = m_joints.begin();
+
+	for(; curr != m_joints.end(); ++curr)
+		if ((*curr)->GetBodyA() == body || (*curr)->GetBodyB() == body)
+		{
+			m_world->DestroyJoint(*curr);
+			curr = m_joints.erase(curr);
+			if (curr == m_joints.end())break;
+		}
+	
+
 	m_world->DestroyBody((*iter)->getBody());
 	delete* iter;
 	return m_shapes.erase(iter);
+}
+
+//*************************************************************
+
+IShape* ShapeManager::instantiateShape(IShape& t_shape, Vector t_pos)
+{
+	PolygonShape& shape = static_cast<PolygonShape&>(t_shape);
+
+	PolygonShape* newShape = new PolygonShape(shape);
+	
+	b2BodyDef copyDef;
+	cloneBodyDef(t_shape.m_body, copyDef);
+	newShape->m_body = m_world->CreateBody(&copyDef);
+
+	b2FixtureDef copyFix;
+	cloneFixtureDef(t_shape.m_fixture, copyFix);
+	newShape->m_fixture = newShape->m_body->CreateFixture(&copyFix);
+
+	m_shapes.push_back(newShape);
+	return newShape;
+}
+
+//*************************************************************
+
+IShape* ShapeManager::instantiateCircle(IShape& t_circle, Vector t_pos)
+{
+	CircleShape& shape = static_cast<CircleShape&>(t_circle);
+	CircleShape* newShape = new CircleShape(shape);
+
+	b2BodyDef copyDef;
+	cloneBodyDef(t_circle.m_body, copyDef);
+	newShape->m_body = m_world->CreateBody(&copyDef);
+
+	b2FixtureDef copyFix;
+	cloneFixtureDef(t_circle.m_fixture, copyFix);
+	newShape->m_fixture = newShape->m_body->CreateFixture(&copyFix);
+
+	m_shapes.push_back(newShape);
+	return newShape;
 }

@@ -18,14 +18,6 @@ void GUIManager::init(sf::RenderWindow* t_window)
 void GUIManager::handleEvent(sf::Event& e)
 {
 	m_gui->handleEvent(e);
-
-	if (sf::Event::KeyPressed == e.type)
-	{
-		if (sf::Keyboard::C == e.key.code)
-			m_buildButton->setChecked(true);
-		//else if (sf::Keyboard::Q == e.key.code)
-		//	m_distButton->setChecked(true);
-	}
 }
 
 //*************************************************************
@@ -92,6 +84,10 @@ void GUIManager::updateSelectedShape(IShape* t_selectedShape)
 	bool isTrigger = t_selectedShape->getFixture()->IsSensor();
 	auto TriggerBox = group->get<tgui::CheckBox>("ShapeTrigger");
 	TriggerBox->setChecked(isTrigger);
+
+	bool isVisible = t_selectedShape->getVisible();
+	auto visibleBox = group->get<tgui::CheckBox>("ShapeVisible");
+	visibleBox->setChecked(isVisible);
 
 	float density = t_selectedShape->getFixture()->GetDensity();
 	auto densityBox = group->get<tgui::EditBox>("ShapeDensity");
@@ -635,6 +631,27 @@ void GUIManager::initShapeEditor()
 
 	yLevel += spacing;
 
+	/// <summary>
+	/// **************************
+	/// Visible
+	/// </summary>
+	auto visibleLabel = tgui::Label::create("Visible");
+	visibleLabel->setSize({ 235,40 });
+	visibleLabel->setPosition({ 25,yLevel });
+	visibleLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+	visibleLabel->setTextSize(20U);
+	visibleLabel->getRenderer()->setTextColor(tgui::Color::White);
+
+	auto visibleBox = tgui::CheckBox::create();
+	visibleBox->setPosition({ 265, yLevel });
+	visibleBox->setSize({ 50,40 });
+	visibleBox->onChange([this](bool t_newState) {
+		if (IShape* shape = m_builder->getCurrentShape())
+			shape->setVisible(t_newState);
+		});
+
+	yLevel += spacing;
+
 	/// <summary> 
 	/// **************************
 	/// Density
@@ -728,8 +745,10 @@ void GUIManager::initShapeEditor()
 	shapeGroup->add(xScale, "ShapeXScale");
 	shapeGroup->add(yScale, "ShapeYScale");
 	shapeGroup->add(xyScale, "ShapeScale");
-	shapeGroup->add(triggerCheckbox, "ShapeTrigger");
 	shapeGroup->add(triggerLabel);
+	shapeGroup->add(triggerCheckbox, "ShapeTrigger");
+	shapeGroup->add(visibleLabel);
+	shapeGroup->add(visibleBox, "ShapeVisible");
 	shapeGroup->add(densityLabel);
 	shapeGroup->add(densityEditBox, "ShapeDensity");
 	shapeGroup->add(RestitutionLabel);
