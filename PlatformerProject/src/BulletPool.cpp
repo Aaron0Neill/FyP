@@ -26,8 +26,6 @@ void BulletPool::init(Vector t_pos, Vector t_velo)
 			m_manager->destroy(bullet);
 			m_manager->destroy(t_other);
 		}
-		else if (t_other.getTag() == "Platform")
-			m_manager->destroy(bullet);
 		});
 	
 	m_bullets.push_back({ bullet, m_bulletTimer });
